@@ -4,26 +4,27 @@
     <item
         android:id="@+id/navigation_feed"
         android:icon="@drawable/ic_nav_feed"
-        android:title="@string/title_home" />
+        android:title="@string/title_feed" />
 
     <item
         android:id="@+id/navigation_search"
         android:icon="@drawable/ic_nav_search"
-        android:title="@string/title_dashboard" />
+        android:title="@string/title_search" />
 
     <item
         android:id="@+id/placeholder"
         android:enabled="false"
+        android:checkable="false"
         android:title="" />
 
     <item
         android:id="@+id/navigation_notification"
         android:icon="@drawable/ic_nav_notification"
-        android:title="@string/title_notifications" />
+        android:title="@string/title_notification" />
 
     <item
         android:id="@+id/navigation_profile"
         android:icon="@drawable/ic_nav_profile"
-        android:title="@string/title_notifications" />
+        android:title="@string/title_profile" />
 
 </menu>

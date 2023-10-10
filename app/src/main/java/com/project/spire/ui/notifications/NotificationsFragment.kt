@@ -22,6 +22,7 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         val notificationsViewModel =
             ViewModelProvider(this).get(NotificationsViewModel::class.java)
 

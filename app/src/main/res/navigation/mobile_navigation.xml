@@ -7,20 +7,26 @@
 
     <fragment
         android:id="@+id/navigation_feed"
-        android:name="com.project.spire.ui.profile.ProfileFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_profile" />
+        android:name="com.project.spire.ui.feed.FeedFragment"
+        android:label="@string/title_feed"
+        tools:layout="@layout/fragment_feed" />
 
     <fragment
         android:id="@+id/navigation_search"
         android:name="com.project.spire.ui.search.SearchFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/title_search"
         tools:layout="@layout/fragment_search" />
 
     <fragment
         android:id="@+id/navigation_notification"
         android:name="com.project.spire.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/title_notification"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.project.spire.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
 
 </navigation>
