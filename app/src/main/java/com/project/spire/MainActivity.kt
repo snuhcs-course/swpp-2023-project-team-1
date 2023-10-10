@@ -26,6 +26,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (supportActionBar != null) {
+            supportActionBar!!.hide()
+        }
         val navView: BottomNavigationView = binding.bottomNavigationView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)

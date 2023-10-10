@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.project.spire.SignInActivity"
+    android:padding="30dp"
+    >
+
+    <ImageView
+        android:id="@+id/Logo"
+        android:layout_width="119dp"
+        android:layout_height="81dp"
+        android:layout_marginTop="120dp"
+        android:src="@drawable/logo"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/EmailInput"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/Logo"
+        android:hint="Email"
+        android:layout_marginTop="20dp"
+        app:endIconMode="clear_text"
+        app:boxBackgroundColor="#F2F2F2"
+        app:boxStrokeWidth="0dp"
+        android:layout_marginHorizontal="4dp"
+        app:boxCornerRadiusBottomEnd="6sp"
+        app:boxCornerRadiusBottomStart="6sp"
+        app:boxCornerRadiusTopEnd="6sp"
+        app:boxCornerRadiusTopStart="6sp"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:inputType="textEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/PasswordInput"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/EmailInput"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:layout_marginTop="5dp"
+        app:endIconMode="password_toggle"
+        app:boxBackgroundColor="#F2F2F2"
+        app:boxStrokeWidth="0dp"
+        android:layout_marginHorizontal="4dp"
+        app:boxCornerRadiusBottomEnd="6sp"
+        app:boxCornerRadiusBottomStart="6sp"
+        app:boxCornerRadiusTopEnd="6sp"
+        app:boxCornerRadiusTopStart="6sp"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <TextView
+        android:id="@+id/ForgotTextBtn"
+        style="@style/TextBtnBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forgot Password?"
+        android:layout_marginHorizontal="4dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/PasswordInput"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/SignUpBtn"
+        style="@style/Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Log-In"
+        app:layout_constraintTop_toBottomOf="@id/ForgotTextBtn"
+        android:layout_marginHorizontal="4dp"
+        />
+
+    <TextView
+        android:id="@+id/OrText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="or"
+        android:textSize="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignUpBtn"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/SignInWithGoogle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:buttonSize="wide"
+        app:layout_constraintTop_toBottomOf="@id/OrText"
+        app:boxCornerRadiusBottomEnd="6sp"
+        app:boxCornerRadiusBottomStart="6sp"
+        app:boxCornerRadiusTopEnd="6sp"
+        app:boxCornerRadiusTopStart="6sp"
+        />
+
+    <TextView
+        android:id="@+id/SignupText"
+        style="@style/SmallText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Don't have an account?"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintRight_toLeftOf="@+id/SignupTextBtn" />
+
+    <TextView
+        android:id="@+id/SignupTextBtn"
+        style="@style/TextBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign up"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/SignupText"
+        app:layout_constraintRight_toRightOf="parent"
+        android:paddingHorizontal="15dp"
+        />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

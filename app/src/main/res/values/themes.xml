@@ -13,8 +13,10 @@
         <item name="colorOnSecondary">@color/black</item>
 
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@android:color/transparent</item>
-
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <!-- <item name="android:statusBarColor">@android:color/transparent</item> -->
+      
         <!-- Customize your theme here. -->
     </style>
 </resources>
