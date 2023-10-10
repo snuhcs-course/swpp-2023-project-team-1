@@ -6,27 +6,40 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.example.spire.R
+import com.example.spire.databinding.FragmentFeedBinding
+import com.example.spire.databinding.FragmentProfileBinding
+import com.project.spire.ui.profile.ProfileViewModel
 
 class FeedFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = FeedFragment()
-    }
+    private var _binding: FragmentFeedBinding? = null
 
-    private lateinit var viewModel: FeedViewModel
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_feed, container, false)
+    ): View {
+        val homeViewModel =
+            ViewModelProvider(this).get(FeedViewModel::class.java)
+
+        _binding = FragmentFeedBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+        val textView: TextView = binding.textFeed
+        homeViewModel.text.observe(viewLifecycleOwner) {
+            textView.text = it
+        }
+        return root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(FeedViewModel::class.java)
-        // TODO: Use the ViewModel
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
-
 }
