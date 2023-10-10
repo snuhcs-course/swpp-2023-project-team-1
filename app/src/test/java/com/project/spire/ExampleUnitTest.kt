@@ -1,4 +1,4 @@
-package com.example.spire
+package com.project.spire
 
 import org.junit.Test
 

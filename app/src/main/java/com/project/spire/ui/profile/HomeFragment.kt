@@ -1,4 +1,4 @@
-package com.example.spire.ui.home
+package com.project.spire.ui.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
