@@ -19,7 +19,7 @@
         app:layout_constraintVertical_chainStyle="packed" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/IdInput"
+        android:id="@+id/EmailInput"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,12 +27,18 @@
         android:hint="ID"
         android:layout_marginTop="20dp"
         app:endIconMode="clear_text"
+        app:boxBackgroundColor="#F2F2F2"
+        app:boxStrokeWidth="0dp"
+        android:layout_marginHorizontal="4dp"
+        app:boxCornerRadiusBottomEnd="6sp"
+        app:boxCornerRadiusBottomStart="6sp"
+        app:boxCornerRadiusTopEnd="6sp"
+        app:boxCornerRadiusTopStart="6sp"
         >
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#F2F2F2"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -42,18 +48,24 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/IdInput"
+        app:layout_constraintTop_toBottomOf="@id/EmailInput"
         android:hint="Password"
         android:inputType="textPassword"
         android:layout_marginTop="5dp"
         app:endIconMode="password_toggle"
+        app:boxBackgroundColor="#F2F2F2"
+        app:boxStrokeWidth="0dp"
+        android:layout_marginHorizontal="4dp"
+        app:boxCornerRadiusBottomEnd="6sp"
+        app:boxCornerRadiusBottomStart="6sp"
+        app:boxCornerRadiusTopEnd="6sp"
+        app:boxCornerRadiusTopStart="6sp"
         >
 
         <com.google.android.material.textfield.TextInputEditText
             android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#F2F2F2"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -68,12 +80,19 @@
         android:hint="Username"
         android:layout_marginTop="5dp"
         app:endIconMode="clear_text"
+        app:boxBackgroundColor="#F2F2F2"
+        app:boxStrokeWidth="0dp"
+        android:layout_marginHorizontal="4dp"
+        app:boxCornerRadiusBottomEnd="6sp"
+        app:boxCornerRadiusBottomStart="6sp"
+        app:boxCornerRadiusTopEnd="6sp"
+        app:boxCornerRadiusTopStart="6sp"
+
         >
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#F2F2F2"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -87,6 +106,7 @@
         android:layout_height="wrap_content"
         android:text="Sign Up"
         app:layout_constraintTop_toBottomOf="@id/UsernameInput"
+        android:layout_marginHorizontal="4dp"
         />
 
 

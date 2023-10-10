@@ -16,6 +16,12 @@ class SignInActivity : AppCompatActivity() {
         binding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (supportActionBar != null) {
+            supportActionBar!!.hide()
+        }
+
+
+
         val signUpButton: TextView = binding.SignupTextBtn
 
         signUpButton.setOnClickListener {
@@ -23,4 +29,5 @@ class SignInActivity : AppCompatActivity() {
         }
 
     }
+
 }

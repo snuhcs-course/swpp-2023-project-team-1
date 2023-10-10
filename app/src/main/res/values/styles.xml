@@ -20,4 +20,12 @@
         <item name="android:textColor">#4942E4</item>
     </style>
 
+    <style name="CustomTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:statusBarColor">#00000000</item>
+    </style>
+
+
+
 </resources>

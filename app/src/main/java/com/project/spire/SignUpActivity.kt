@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
-import com.example.spire.R
 import com.example.spire.databinding.ActivitySignUpBinding
 
 class SignUpActivity : AppCompatActivity() {
@@ -13,6 +12,10 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (supportActionBar != null) {
+            supportActionBar!!.hide()
+        }
 
         val loginTextBtn: TextView = binding.LoginTextBtn
 
