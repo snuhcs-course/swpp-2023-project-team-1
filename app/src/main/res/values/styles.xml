@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="create_post_fab" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="android:foreground">@drawable/ic_nav_create_post</item>
+    </style>
+</resources>
