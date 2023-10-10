@@ -24,10 +24,10 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/nav_bar_height"
             android:layout_marginEnd="16dp"
             app:elevation="0dp"
-            app:labelVisibilityMode="labeled"
+            app:labelVisibilityMode="unlabeled"
             android:background="@android:color/transparent"
             app:menu="@menu/bottom_nav_menu"  />
 
