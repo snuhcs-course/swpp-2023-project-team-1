@@ -14,31 +14,32 @@
         android:layout_height="match_parent"
         app:defaultNavHost="true"
         app:navGraph="@navigation/mobile_navigation" />
-    
+
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom" >
+        android:layout_gravity="bottom">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_view"
             android:layout_width="match_parent"
             android:layout_height="@dimen/nav_bar_height"
             android:layout_marginEnd="16dp"
-            app:elevation="0dp"
-            app:labelVisibilityMode="unlabeled"
             android:background="@android:color/transparent"
-            app:menu="@menu/bottom_nav_menu"  />
+            app:elevation="0dp"
+            app:itemIconSize="@dimen/nav_bar_icon_size"
+            app:itemIconTint="@drawable/selector_bg_nav_icon"
+            app:labelVisibilityMode="unlabeled"
+            app:menu="@menu/bottom_nav_menu" />
 
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_nav_create_post"
+        style="@style/create_post_fab"
+        android:layout_width="@dimen/nav_bar_create_post_btn_size"
+        android:layout_height="@dimen/nav_bar_create_post_btn_size"
         app:layout_anchor="@id/bottom_app_bar" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

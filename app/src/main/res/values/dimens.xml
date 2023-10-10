@@ -4,4 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="nav_bar_height">75dp</dimen>
+    <dimen name="nav_bar_icon_size">24dp</dimen>
+    <dimen name="nav_bar_create_post_btn_size">60dp</dimen>
 </resources>
