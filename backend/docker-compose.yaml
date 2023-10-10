@@ -1,0 +1,50 @@
+version: "3.8"
+
+# For local development, only database is running
+#
+# docker-compose up -d
+# uvicorn app.main:app --reload
+#
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+      args:
+        USER_ID: $API_CONTAINER_USER_ID
+        GROUP_ID: $API_CONTAINER_GROUP_ID
+        USER_NAME: $API_CONTAINER_USER_NAME
+        ostype: "Mac"
+    container_name: api
+    hostname: api
+    volumes:
+      - ./:/home
+    env_file:
+      - .env
+    tty: true
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+    depends_on:
+      - db
+
+  db:
+    restart: always
+    image: postgres:15.3
+    volumes:
+      - ${POSTGRES_HOME_DIR}/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DEFAULT_DATABASE_DB}
+      - POSTGRES_USER=${DEFAULT_DATABASE_USER}
+      - POSTGRES_PASSWORD=${DEFAULT_DATABASE_PASSWORD}
+    env_file:
+      - .env
+    ports:
+      - "${DEFAULT_DATABASE_PORT}:5432"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: "bridge"

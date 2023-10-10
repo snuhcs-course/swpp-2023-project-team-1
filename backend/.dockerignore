@@ -1,0 +1,20 @@
+.gitignore
+.git
+.pre-commit-config.yaml
+LICENSE
+db
+venv
+.mypy_cache
+.vscode
+.DS_Store
+.idea
+README.md
+log.txt
+
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# ignore local poetry venv folder
+.venv
