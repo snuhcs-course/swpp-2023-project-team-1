@@ -9,9 +9,9 @@
 
     <ImageView
         android:id="@+id/Logo"
-        android:layout_width="119dp"
-        android:layout_height="81dp"
-        android:layout_marginTop="120dp"
+        android:layout_width="138dp"
+        android:layout_height="98dp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/logo"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -20,23 +20,18 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/EmailInput"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/FilledEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/Logo"
-        android:hint="ID"
+        android:hint="Email"
         android:layout_marginTop="20dp"
         app:endIconMode="clear_text"
-        app:boxBackgroundColor="#F2F2F2"
-        app:boxStrokeWidth="0dp"
         android:layout_marginHorizontal="4dp"
-        app:boxCornerRadiusBottomEnd="6sp"
-        app:boxCornerRadiusBottomStart="6sp"
-        app:boxCornerRadiusTopEnd="6sp"
-        app:boxCornerRadiusTopStart="6sp"
         >
 
         <com.google.android.material.textfield.TextInputEditText
+            android:inputType="textEmailAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
@@ -45,21 +40,15 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/PasswordInput"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/FilledEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/EmailInput"
         android:hint="Password"
         android:inputType="textPassword"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         app:endIconMode="password_toggle"
-        app:boxBackgroundColor="#F2F2F2"
-        app:boxStrokeWidth="0dp"
         android:layout_marginHorizontal="4dp"
-        app:boxCornerRadiusBottomEnd="6sp"
-        app:boxCornerRadiusBottomStart="6sp"
-        app:boxCornerRadiusTopEnd="6sp"
-        app:boxCornerRadiusTopStart="6sp"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -70,34 +59,24 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/UsernameInput"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/FilledEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/PasswordInput"
         android:hint="Username"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         app:endIconMode="clear_text"
-        app:boxBackgroundColor="#F2F2F2"
-        app:boxStrokeWidth="0dp"
+        app:prefixText="\@"
         android:layout_marginHorizontal="4dp"
-        app:boxCornerRadiusBottomEnd="6sp"
-        app:boxCornerRadiusBottomStart="6sp"
-        app:boxCornerRadiusTopEnd="6sp"
-        app:boxCornerRadiusTopStart="6sp"
-
         >
-
+        
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
-
     </com.google.android.material.textfield.TextInputLayout>
-
-
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/SignUpBtn"
@@ -107,23 +86,24 @@
         android:text="Sign Up"
         app:layout_constraintTop_toBottomOf="@id/UsernameInput"
         android:layout_marginHorizontal="4dp"
+        android:layout_marginTop="20dp"
         />
-
-
 
     <TextView
         android:id="@+id/LoginText"
-        style="@style/SmallText"
+        style="@style/NormalText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Already signed up?"
+        android:text="Already signed up? "
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintRight_toLeftOf="@+id/LoginTextBtn" />
+        app:layout_constraintRight_toLeftOf="@+id/GoToLoginTextBtn"
+        android:paddingVertical="10dp"
+        />
 
     <TextView
-        android:id="@+id/LoginTextBtn"
+        android:id="@+id/GoToLoginTextBtn"
         style="@style/TextBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -131,10 +111,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/LoginText"
         app:layout_constraintRight_toRightOf="parent"
-        android:paddingHorizontal="15dp"
+        android:paddingVertical="10dp"
         />
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

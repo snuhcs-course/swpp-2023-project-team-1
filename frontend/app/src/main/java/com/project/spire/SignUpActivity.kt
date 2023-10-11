@@ -17,10 +17,10 @@ class SignUpActivity : AppCompatActivity() {
             supportActionBar!!.hide()
         }
 
-        val loginTextBtn: TextView = binding.LoginTextBtn
+        val goToLoginTextBtn: TextView = binding.GoToLoginTextBtn
 
-        loginTextBtn.setOnClickListener {
-            startActivity(Intent(this, SignInActivity::class.java))
+        goToLoginTextBtn.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
         }
 
 

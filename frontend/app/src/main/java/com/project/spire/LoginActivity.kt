@@ -5,15 +5,15 @@ import android.os.Bundle
 
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.spire.databinding.ActivitySignInBinding
+import com.example.spire.databinding.ActivityLoginBinding
 
 
-class SignInActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySignInBinding
+class LoginActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySignInBinding.inflate(layoutInflater)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         if (supportActionBar != null) {
@@ -22,9 +22,9 @@ class SignInActivity : AppCompatActivity() {
 
 
 
-        val signUpButton: TextView = binding.SignupTextBtn
+        val goToSignupTextBtn: TextView = binding.GoToSignupTextBtn
 
-        signUpButton.setOnClickListener {
+        goToSignupTextBtn.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
         }
 
