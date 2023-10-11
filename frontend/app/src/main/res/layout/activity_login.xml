@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.project.spire.SignInActivity"
+    tools:context="com.project.spire.LoginActivity"
     android:padding="30dp"
     >
 
     <ImageView
         android:id="@+id/Logo"
-        android:layout_width="119dp"
-        android:layout_height="81dp"
-        android:layout_marginTop="120dp"
+        android:layout_width="138dp"
+        android:layout_height="98dp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/logo"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -21,20 +21,14 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/EmailInput"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/FilledEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/Logo"
         android:hint="Email"
         android:layout_marginTop="20dp"
         app:endIconMode="clear_text"
-        app:boxBackgroundColor="#F2F2F2"
-        app:boxStrokeWidth="0dp"
         android:layout_marginHorizontal="4dp"
-        app:boxCornerRadiusBottomEnd="6sp"
-        app:boxCornerRadiusBottomStart="6sp"
-        app:boxCornerRadiusTopEnd="6sp"
-        app:boxCornerRadiusTopStart="6sp"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -47,21 +41,15 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/PasswordInput"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/FilledEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/EmailInput"
         android:hint="Password"
         android:inputType="textPassword"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         app:endIconMode="password_toggle"
-        app:boxBackgroundColor="#F2F2F2"
-        app:boxStrokeWidth="0dp"
         android:layout_marginHorizontal="4dp"
-        app:boxCornerRadiusBottomEnd="6sp"
-        app:boxCornerRadiusBottomStart="6sp"
-        app:boxCornerRadiusTopEnd="6sp"
-        app:boxCornerRadiusTopStart="6sp"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -75,15 +63,14 @@
 
     <TextView
         android:id="@+id/ForgotTextBtn"
-        style="@style/TextBtnBlue"
+        style="@style/SmallTextBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Forgot Password?"
         android:layout_marginHorizontal="4dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/PasswordInput"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:paddingVertical="10dp"
         />
 
     <androidx.appcompat.widget.AppCompatButton
@@ -91,7 +78,7 @@
         style="@style/Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Log-In"
+        android:text="Log In"
         app:layout_constraintTop_toBottomOf="@id/ForgotTextBtn"
         android:layout_marginHorizontal="4dp"
         />
@@ -101,12 +88,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="or"
-        android:textSize="16dp"
+        style="@style/NormalText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/SignUpBtn"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp"
         />
 
     <com.google.android.gms.common.SignInButton
@@ -115,6 +101,7 @@
         android:layout_height="wrap_content"
         app:buttonSize="wide"
         app:layout_constraintTop_toBottomOf="@id/OrText"
+        android:layout_marginTop="10dp"
         app:boxCornerRadiusBottomEnd="6sp"
         app:boxCornerRadiusBottomStart="6sp"
         app:boxCornerRadiusTopEnd="6sp"
@@ -123,17 +110,19 @@
 
     <TextView
         android:id="@+id/SignupText"
-        style="@style/SmallText"
+        style="@style/NormalText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Don't have an account?"
+        android:text="Don't have an account? "
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintRight_toLeftOf="@+id/SignupTextBtn" />
+        app:layout_constraintRight_toLeftOf="@+id/GoToSignupTextBtn"
+        android:paddingVertical="10dp"
+        />
 
     <TextView
-        android:id="@+id/SignupTextBtn"
+        android:id="@+id/GoToSignupTextBtn"
         style="@style/TextBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -141,7 +130,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/SignupText"
         app:layout_constraintRight_toRightOf="parent"
-        android:paddingHorizontal="15dp"
+        android:paddingVertical="10dp"
         />
 
 

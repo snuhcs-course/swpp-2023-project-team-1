@@ -25,7 +25,7 @@
 
 
         <activity
-            android:name="com.project.spire.SignInActivity"
+            android:name="com.project.spire.LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_sign_in"
             >
