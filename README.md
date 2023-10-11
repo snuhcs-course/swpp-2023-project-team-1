@@ -66,7 +66,7 @@ In your local environment, Build and run using the docker-compose.local.yaml fil
 
 ```sh
 docker compose -f docker-compose.local.yaml up -d --build 
-uvicorn app.main:app --reload --log-level debug --host 0.0.0.0 --port 8000
+uvicorn app.main:spire_app --reload --log-level debug --host 0.0.0.0 --port 8000
 ```
 ### Production
 
