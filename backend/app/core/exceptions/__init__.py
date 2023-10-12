@@ -1,5 +1,6 @@
 from .token import *
 from .base import *
+from .user import *
 
 __all__ = [
     "DecodeTokenException",
@@ -12,4 +13,7 @@ __all__ = [
     "UnprocessableEntity",
     "DuplicateValueException",
     "ConflictException",
+    "PasswordDoesNotMatchException",
+    "DuplicateEmailOrUsernameException",
+    "UserNotFoundException",
 ]
