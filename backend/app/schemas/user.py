@@ -36,3 +36,6 @@ class LoginResponse(BaseModel):
     user_id: UUID4 = Field(..., description="User Id")
     username: str = Field(..., description="Username")
 
+class CheckUserInfoResponse(BaseModel):
+    email_exists: bool | None = None
+    username_exists: bool | None = None
