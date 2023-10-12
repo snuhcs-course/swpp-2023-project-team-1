@@ -6,4 +6,13 @@
     <string name="title_search">Search</string>
     <string name="title_notification">Notifications</string>
     <string name="title_profile">Profile</string>
+    <string name="title_create_post">Create Post</string>
+    <string name="title_edit_profile">Edit Profile</string>
+
+
+
+    <string name="email_helper_text">Must be a valid email address</string>
+    <string name="password_helper_text">Must be at least 8 characters</string>
+    <string name="username_helper_text">Must be at least 8 characters</string>
+
 </resources>

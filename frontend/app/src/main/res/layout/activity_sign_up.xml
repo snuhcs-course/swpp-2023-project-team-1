@@ -11,7 +11,7 @@
         android:id="@+id/Logo"
         android:layout_width="138dp"
         android:layout_height="98dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/logo"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -28,7 +28,6 @@
         android:layout_marginTop="20dp"
         app:endIconMode="clear_text"
         android:layout_marginHorizontal="4dp"
-        app:helperText="Must be a valid email address"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -47,10 +46,9 @@
         app:layout_constraintTop_toBottomOf="@id/EmailInput"
         android:hint="Password"
         android:inputType="textPassword"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         app:endIconMode="password_toggle"
         android:layout_marginHorizontal="4dp"
-        app:helperText="Must be at least 8 characters"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -68,11 +66,10 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/PasswordInput"
         android:hint="Username"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         app:endIconMode="clear_text"
         app:prefixText="\@"
         android:layout_marginHorizontal="4dp"
-        app:helperText="Must be at least 8 characters"
         >
         
         <com.google.android.material.textfield.TextInputEditText

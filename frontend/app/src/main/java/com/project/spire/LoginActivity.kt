@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.View.OnFocusChangeListener
 import android.widget.Button
-
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.spire.R
 import com.example.spire.databinding.ActivityLoginBinding
-import java.util.concurrent.TimeUnit
 
 
 class LoginActivity : AppCompatActivity() {
@@ -27,7 +27,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
-
         val goToSignupTextBtn: TextView = binding.GoToSignupTextBtn
 
         goToSignupTextBtn.setOnClickListener {
@@ -41,56 +40,55 @@ class LoginActivity : AppCompatActivity() {
 
 
 
-        emailInput.editText?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        emailInput.editText?.setOnFocusChangeListener(OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                emailInput.helperText = resources.getString(R.string.email_helper_text)
                 emailInput.error = null
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                emailInput.isErrorEnabled = false
+            } else {
+                emailInput.helperText = ""
             }
         })
 
-        passwordInput.editText?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        passwordInput.editText?.setOnFocusChangeListener(OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                passwordInput.helperText = resources.getString(R.string.password_helper_text)
                 passwordInput.error = null
-            }
+                passwordInput.isErrorEnabled = false
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            } else {
+                passwordInput.helperText = ""
             }
         })
+
 
 
 
 
         loginBtn.setOnClickListener {
+
+
             val email = emailInput.editText?.text.toString()
             val password = passwordInput.editText?.text.toString()
 
-
-            emailInput.error=null
-            passwordInput.error=null
 
             emailInput.clearFocus()
             passwordInput.clearFocus()
             var IsValid = true
 
-            //TODO: Add Validate email, password, and username Logic
+            //TODO: Add login logic here
 
             if (email.isEmpty()) {
-                IsValid= false
+                IsValid = false
                 emailInput.error = "Email is required"
-                emailInput.requestFocus()
+
+
             }
             if (password.isEmpty()) {
-                IsValid= false
+                IsValid = false
                 passwordInput.error = "Password is required"
-                passwordInput.requestFocus()
+
+
             }
 
             if (IsValid) {
@@ -99,8 +97,7 @@ class LoginActivity : AppCompatActivity() {
                 //TimeUnit.MILLISECONDS.sleep(2000)
 
                 var succeed = true
-                if (succeed)
-                {
+                if (succeed) {
                     binding.LoadingIndicator.hide()
                     val intent = Intent(this, MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -112,13 +109,7 @@ class LoginActivity : AppCompatActivity() {
                 }
 
 
-
-
             }
-
-
-
-
 
 
         }
@@ -126,9 +117,20 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        val logined = false
+        if (logined) {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+
+        }
 
 
-
+    }
 
 
 }

@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.spire.R
 
 import com.example.spire.databinding.ActivitySignUpBinding
 import java.util.concurrent.TimeUnit
@@ -39,41 +40,38 @@ class SignUpActivity : AppCompatActivity() {
 
 
 
-        emailInput.editText?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        emailInput.editText?.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                emailInput.helperText = resources.getString(R.string.email_helper_text)
                 emailInput.error = null
+                emailInput.isErrorEnabled = false
+            } else {
+                emailInput.helperText = ""
             }
+        }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-        })
 
-        passwordInput.editText?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        passwordInput.editText?.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                passwordInput.helperText = resources.getString(R.string.password_helper_text)
                 passwordInput.error = null
+                passwordInput.isErrorEnabled = false
+            } else {
+                passwordInput.helperText = ""
             }
+        }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-        })
-        usernameInput.editText?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+        usernameInput.editText?.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                usernameInput.helperText = resources.getString(R.string.username_helper_text)
                 usernameInput.error = null
+                usernameInput.isErrorEnabled = false
+            } else {
+                usernameInput.helperText = ""
             }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-        })
-
+        }
 
 
 
@@ -83,31 +81,30 @@ class SignUpActivity : AppCompatActivity() {
             val username = usernameInput.editText?.text.toString()
 
 
-            emailInput.error=null
-            passwordInput.error=null
-            usernameInput.error=null
 
             emailInput.clearFocus()
             passwordInput.clearFocus()
             usernameInput.clearFocus()
+
+
             var IsValid = true
 
             //TODO: Add Validate email, password, and username Logic
 
             if (email.isEmpty()) {
-                IsValid= false
+                IsValid = false
+
                 emailInput.error = "Email is required"
-                emailInput.requestFocus()
+
             }
             if (password.isEmpty()) {
-                IsValid= false
+                IsValid = false
                 passwordInput.error = "Password is required"
-                passwordInput.requestFocus()
+
             }
             if (username.isEmpty()) {
-                IsValid= false
+                IsValid = false
                 usernameInput.error = "Username is required"
-                usernameInput.requestFocus()
             }
 
             if (IsValid) {
@@ -116,12 +113,8 @@ class SignUpActivity : AppCompatActivity() {
                 //TimeUnit.MILLISECONDS.sleep(2000)
 
 
-
-
-
                 var succeed = true
-                if (succeed)
-                {
+                if (succeed) {
 
                     binding.LoadingIndicator.hide()
                     val intent = Intent(this, MainActivity::class.java)
@@ -134,13 +127,7 @@ class SignUpActivity : AppCompatActivity() {
                 }
 
 
-
-
             }
-
-
-
-
 
 
         }
