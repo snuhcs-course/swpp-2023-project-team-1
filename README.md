@@ -1,4 +1,82 @@
 # swpp-2023-project-team-1
+# Development Rule
+## 1. Git
+### 1.1 Branch Naming
+#### main
+The branch that can be released as product.
+
+`main`
+
+#### develop
+The branch being developed for next release.
+
+`develop`
+
+#### feature
+The branch where features are developed.
+
+`feat/{feature-name}`
+
+#### release
+The branch preparing for this release
+
+`release-{version}`
+
+#### hotfix
+The branch that fixes bugs encountered in the released version
+
+`hotfix-{version}`
+
+### 1.2 Commit Rule
+|type|description|
+|---|---|
+|feat|New features|
+|fix|Bug fix|
+|build|Modifying build-related files, installing or deleting modules|
+|chore|Other minor changes|
+|docs|Document modifications|
+|style|Code style and Format|
+|refactor|Code refactoring|
+|test|Modifying for test code|
+|perf|Performance improvements|
+
+`[feat] {new feature}`
+`[chore] {minor changes}`
+
+* * *
+
+## 2. Merge and Resolve Conflicts
+### 2.1 Rebase and Merge
+Rebase does not leave any commit history, so the commit history becomes cleaner.
+
+<img src="https://i.ibb.co/mtydnwh/rebase.jpg" width="500px"/>
+
+### 2.2 Resolve Conflicts in Local
+
+To resolve conflicts that occur when trying to merge your branch into the main branch
+
+```bash
+### Now you are in {your branch}
+
+### Move to main branch and pull
+git checkout main
+git pull
+
+### Move to {your branch} and merge main
+git checkout {your branch}
+git merge main
+
+### Resolve Conflicts on your code editor.
+
+### Push your code
+git push
+```
+
+### 2.3 Pull Request
+
+`Merge Pull request`
+
+* * *
 # Frontend
 * * *
 # Backend
