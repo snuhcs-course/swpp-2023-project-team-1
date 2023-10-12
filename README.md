@@ -2,15 +2,15 @@
 # Development Rule
 ## 1. Git
 ### 1.1 Branch Naming
-#### master
+#### main
 The branch that can be released as product.
 
-`master`
+`main`
 
 #### develop
 The branch being developed for next release.
 
-`devlop`
+`develop`
 
 #### feature
 The branch where features are developed.
