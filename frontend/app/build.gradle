@@ -67,6 +67,11 @@ dependencies {
     implementation 'androidx.compose.material3:material3'
     implementation 'com.google.android.gms:play-services-base:18.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    // HTTP Communication
+    implementation'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation'com.google.code.gson:gson:2.8.9'
+    implementation'com.squareup.retrofit2:converter-gson:2.4.0'
     
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
