@@ -40,8 +40,8 @@ The branch that fixes bugs encountered in the released version
 |test|Modifying for test code|
 |perf|Performance improvements|
 
-`feat: {new feature}`
-`chore: {minor changes}`
+`[feat] {new feature}`
+`[chore] {minor changes}`
 
 * * *
 
@@ -64,17 +64,17 @@ git pull
 
 ### Move to {your branch} and rebase main
 git checkout {your branch}
-git rebase main
+git merge main
 
 ### Resolve Conflicts on your code editor.
 
 ### Push your code
-git push origin -f "your branch"
+git push
 ```
 
 ### 2.3 Pull Request
 
-`Rebase and Merge`
+`Merge Pull request`
 
 * * *
 # Frontend
