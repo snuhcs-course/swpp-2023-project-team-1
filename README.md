@@ -62,7 +62,7 @@ To resolve conflicts that occur when trying to merge your branch into the main b
 git checkout main
 git pull
 
-### Move to {your branch} and rebase main
+### Move to {your branch} and merge main
 git checkout {your branch}
 git merge main
 
