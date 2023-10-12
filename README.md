@@ -59,7 +59,7 @@ To resolve conflicts that occur when trying to merge your branch into the main b
 ### Now you are in {your branch}
 
 ### Move to main branch and pull
-git chekout main
+git checkout main
 git pull
 
 ### Move to {your branch} and rebase main
