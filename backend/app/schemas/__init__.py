@@ -1,5 +1,6 @@
 from .jwt import *
 from .user import *
+from .auth import *
 
 __all__ = [
     JwtToken,
@@ -10,6 +11,9 @@ __all__ = [
     LoginRequest,
     LoginResponse,
     CheckUserInfoResponse,
+    RefreshTokenResponse,
+    VerifyTokenRequest,
+    RefreshTokenResponse,
 ]
 
 class ExceptionResponseSchema(BaseModel):
