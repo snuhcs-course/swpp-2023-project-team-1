@@ -66,15 +66,15 @@ class UserService:
         
         await session.commit()
 
+    @Transactional()
+    async def delete_user_by_id(self, user_id: UUID4, session: AsyncSession) -> User:
+        user = await get_my_info_by_id(user_id, session)
+        if not user:
+            raise UserNotFoundException("User not found")
 
-async def delete_user_by_id(user_id: UUID4, session: AsyncSession) -> User:
-    user = await get_my_info_by_id(user_id, session)
-    if not user:
-        raise UserNotFoundException("User not found")
-
-    await session.delete(user)
-    await session.commit()
-    return user
+        await session.delete(user)
+        await session.commit()
+        return user
 
 async def check_user_email(email: str, session: AsyncSession):
     print("email", email)

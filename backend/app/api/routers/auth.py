@@ -1,5 +1,5 @@
 from typing_extensions import Annotated
-from fastapi import APIRouter, Depends, Form, Query, Request
+from fastapi import APIRouter, Depends, Form, Query, Request, Response
 from pydantic import Json
 from app.core.exceptions.base import BadRequestException
 from app.core.fastapi.dependency.permission import AllowAll, IsAuthenticated, PermissionDependency
@@ -7,7 +7,9 @@ from app.schemas.user import CheckUserInfoResponse, LoginRequest, LoginResponse,
 from app.services.user_service import UserService, check_user_email, check_username
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.schemas import ExceptionResponseSchema
+from app.schemas.auth import RefreshTokenRequest, VerifyTokenRequest
+from app.services.jwt_service import JwtService
+from app.schemas.jwt import JwtToken
 
 
 auth_router = APIRouter()
@@ -17,7 +19,6 @@ auth_router = APIRouter()
     response_model=LoginResponse,
     summary="Register New User",
     description="Create user and return tokens",
-    dependencies=[Depends(PermissionDependency([AllowAll]))],
 )
 async def create_user(
     req: UserCreate,
@@ -59,10 +60,9 @@ async def logout(req: Request):
     response_model=CheckUserInfoResponse,
     summary="Check email or username exists",
     description="Check email or username exists",
-    dependencies=[Depends(PermissionDependency([AllowAll]))],
 )
 async def check_user_exists(
-    db: AsyncSession = Depends(get_db_transactional_session),
+    session: AsyncSession = Depends(get_db_transactional_session),
     email: str = Query(None, description="Email"),
     username: str = Query(None, description="Username"),
 ):
@@ -71,8 +71,35 @@ async def check_user_exists(
 
     out = {}
     if email:
-        out["email_exists"] = await check_user_email(email=email, session=db)
+        out["email_exists"] = await check_user_email(email=email, session=session)
     if username:
-        out["username_exists"] = await check_username(username=username, session=db)
+        out["username_exists"] = await check_username(username=username, session=session)
     return out
 
+
+@auth_router.post("/verify")
+async def verify_token(request: VerifyTokenRequest):
+    await JwtService().verify_token(token=request.access_token)
+    return Response(status_code=200)
+
+@auth_router.post(
+    "/refresh",
+    response_model=JwtToken,
+)
+async def refresh_token(request: RefreshTokenRequest):
+    jwt_token = await JwtService().create_jwt_token(
+        access_token=request.access_token, refresh_token=request.refresh_token
+    )
+    return jwt_token
+
+@auth_router.delete(
+    "/unregister",
+    summary="Unregister user",
+    description="Unregister user From Spire",
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
+)
+async def delete_user(
+    req: Request,
+):  
+    await UserService().delete_user_by_id(req.user.id)
+    return {"message": f"User {req.user.id} deleted successfully"}
