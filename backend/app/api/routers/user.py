@@ -4,7 +4,6 @@ from pydantic import Json
 from app.core.exceptions.base import BadRequestException
 from app.core.fastapi.dependency.permission import AllowAll, IsAuthenticated, PermissionDependency
 from app.schemas.user import CheckUserInfoResponse, LoginRequest, LoginResponse, UserCreate
-from app.services.user_service import UserService, check_user_email, check_username
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
 

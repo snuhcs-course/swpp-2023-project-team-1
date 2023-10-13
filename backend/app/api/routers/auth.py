@@ -1,10 +1,9 @@
-from typing_extensions import Annotated
 from fastapi import APIRouter, Depends, Form, Query, Request, Response
 from pydantic import Json
 from app.core.exceptions.base import BadRequestException
-from app.core.fastapi.dependency.permission import AllowAll, IsAuthenticated, PermissionDependency
+from app.core.fastapi.dependency.permission import IsAuthenticated, PermissionDependency
 from app.schemas.user import CheckUserInfoResponse, LoginRequest, LoginResponse, UserCreate
-from app.services.user_service import UserService, check_user_email, check_username
+from app.services.auth_service import AuthService, check_user_email, check_username
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.auth import RefreshTokenRequest, VerifyTokenRequest
@@ -23,14 +22,14 @@ auth_router = APIRouter()
 async def create_user(
     req: UserCreate,
 ):
-    user_svc = UserService()
-    user = await user_svc.create_user(
+    auth_svc = AuthService()
+    user = await auth_svc.create_user(
         email=req.email,
         username=req.username,
         password=req.password,
     )
 
-    res= await user_svc.login(email=req.email, password=req.password)
+    res= await auth_svc.login(email=req.email, password=req.password)
 
     return res
 
@@ -41,7 +40,7 @@ async def create_user(
     description="Login with email and return tokens",
 )
 async def login(req: LoginRequest):
-    res = await UserService().login(email=req.email, password=req.password)
+    res = await AuthService().login(email=req.email, password=req.password)
     return res
 
 @auth_router.get(
@@ -51,7 +50,7 @@ async def login(req: LoginRequest):
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
 async def logout(req: Request):
-    await UserService().logout(req.user.id)
+    await AuthService().logout(req.user.id)
     return {"message": "Logout Success"}
 
 # check email or username exists
@@ -101,5 +100,5 @@ async def refresh_token(request: RefreshTokenRequest):
 async def delete_user(
     req: Request,
 ):  
-    await UserService().delete_user_by_id(req.user.id)
+    await AuthService().delete_user_by_id(req.user.id)
     return {"message": f"User {req.user.id} deleted successfully"}

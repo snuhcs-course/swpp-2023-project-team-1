@@ -3,7 +3,6 @@ from typing import Type
 from fastapi import Request
 from fastapi.openapi.models import APIKey, APIKeyIn
 from fastapi.security.base import SecurityBase
-from app.services.user_service import UserService
 from app.core.exceptions import CustomException, UnauthorizedException
 
 
