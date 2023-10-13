@@ -11,3 +11,6 @@ __all__ = [
     LoginResponse,
     CheckUserInfoResponse,
 ]
+
+class ExceptionResponseSchema(BaseModel):
+    error: str = Field(..., description="Error message")
