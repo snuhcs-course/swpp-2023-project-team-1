@@ -9,5 +9,5 @@ class DecodeTokenException(CustomException):
 
 class ExpiredTokenException(CustomException):
     code = 400
-    error_code = "TOKEN__EXPIRE_TOKEN"
+    error_code = "TOKEN__EXPIRED_TOKEN"
     message = "expired token"
