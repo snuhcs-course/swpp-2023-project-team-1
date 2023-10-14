@@ -15,7 +15,4 @@ class User(Base, TimestampMixin):
     hashed_password: Mapped[str] = mapped_column(String(100), nullable=False)
     is_super_user: Mapped[bool] = mapped_column(Boolean, server_default= expression.false(), nullable=False, default=False)
 
-    class Config:
-        orm_mode = True
-
 
