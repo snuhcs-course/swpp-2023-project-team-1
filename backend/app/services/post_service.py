@@ -3,6 +3,7 @@ from sqlalchemy import or_, select, and_
 from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.post import Post
+from app.schemas.post import PostBase, PostGetResponse
 from app.core.exceptions.post import PostNotFoundException
 
 
@@ -15,13 +16,34 @@ class PostService:
         await session.commit()
         return post
 
+    @Transactional()
+    async def get_post(self, post_id: UUID4, session: AsyncSession, **kwargs) -> Post:
+        result = await session.execute(select(Post).where(and_(Post.id == post_id)))
 
-    # @Transactional()
-    # async def delete_post_by_id(self, post_id: UUID4, session: AsyncSession) -> Post:
-    #     post = await get_my_info_by_id(user_id, session)
-    #     if not post:
-    #         raise PostNotFoundException("Post not found")
+        post: Post | None = result.scalars().first()
 
-    #     await session.delete(post)
-    #     await session.commit()
-    #     return post
+        if not post:
+            raise PostNotFoundException("Post not found")
+
+        response = PostGetResponse(
+            user_id = post.user_id,
+            content = post.content, 
+            post_image_url = post.post_image_url,
+            created_at = post.created_at,
+            updated_at = post.updated_at
+        )
+
+        return response
+
+    @Transactional()
+    async def delete_post_by_id(self, post_id: UUID4, session: AsyncSession) -> Post:
+        result = await session.execute(select(Post).where(and_(Post.id == post_id)))
+
+        post: Post | None = result.scalars().first()
+
+        if not post:
+            raise PostNotFoundException("Post not found")
+
+        await session.delete(post)
+        await session.commit()
+        return post

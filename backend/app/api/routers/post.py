@@ -1,9 +1,9 @@
 from typing_extensions import Annotated
 from fastapi import APIRouter, Depends, Form, Query, Request, Body
-from pydantic import Json
+from pydantic import Json, UUID4
 from app.core.exceptions.base import BadRequestException
 from app.core.fastapi.dependency.permission import AllowAll, IsAuthenticated, PermissionDependency
-from app.schemas.post import PostBase, PostCreateResponse
+from app.schemas.post import PostBase, PostCreateResponse, PostGetResponse
 from app.schemas.user import CheckUserInfoResponse, LoginRequest, LoginResponse, UserCreate
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -32,22 +32,34 @@ async def create_post(
 
     return {"post_id" : post.id}
 
-# @auth_router.post(
-#     "/register",
-#     response_model=LoginResponse,
-#     summary="Register New User",
-#     description="Create user and return tokens",
-# )
-# async def create_user(
-#     req: UserCreate,
-# ):
-#     auth_svc = AuthService()
-#     user = await auth_svc.create_user(
-#         email=req.email,
-#         username=req.username,
-#         password=req.password,
-#     )
 
-#     res= await auth_svc.login(email=req.email, password=req.password)
+@post_router.get(
+    "/{post_id}",
+    response_model=PostGetResponse,
+    summary="Get Post",
+    description="Get post"
+)
+async def view_post(
+    post_id: UUID4
+):
+    post_svc = PostService()
+    post = await post_svc.get_post(
+        post_id=post_id
+    )
+    return post
 
-#     return res
+
+@post_router.delete(
+    "/{post_id}",
+    summary="Delete Post",
+    description="Delete post", 
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))]
+)
+async def delete_post(
+    post_id: UUID4
+):
+    post_svc = PostService()
+    post = await post_svc.delete_post_by_id(
+        post_id=post_id
+    )
+    return {"message": f"Post {post_id} deleted successfully"}
