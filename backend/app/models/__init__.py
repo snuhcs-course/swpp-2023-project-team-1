@@ -9,6 +9,9 @@ __all__ = [
     "Base",
     "User",
     "GUID",
-    "TimestampMixin"
-    "Code"
+    "TimestampMixin",
+    "Code",
+    "Post",
+    "Comment",
+    "PostLike"
 ]
