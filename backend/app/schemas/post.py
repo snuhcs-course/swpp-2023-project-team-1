@@ -20,4 +20,8 @@ class PostGetResponse(PostBase):
     class Config:
         arbitrary_types_allowed = True
 
+class CommentBase(BaseModel):
+    content: str = Field(..., description="Comment Content")
 
+class CommentCreateResponse(BaseModel):
+    comment_id: UUID4 = Field(..., description="Comment Id")
