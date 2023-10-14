@@ -1,4 +1,5 @@
 from fastapi import BackgroundTasks
+from fastapi.responses import JSONResponse
 from pydantic import UUID4
 from sqlalchemy import or_, select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,8 +9,13 @@ from app.schemas.user import LoginResponse
 from app.session import Transactional
 from app.utils.password_helper import PasswordHelper
 from app.utils.token_helper import TokenHelper
+from app.utils.code_helper import CodeHelper
 from app.services.user_service import get_my_info_by_id
-
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
+from app.core.config import settings
+from app.schemas.auth import EmailSchema
+from app.models.code import Code
+from app.services.code_service import CodeService
 class AuthService:
 
     @Transactional()
@@ -76,6 +82,7 @@ class AuthService:
         await session.commit()
         return user
 
+
 async def check_user_email(email: str, session: AsyncSession):
     print("email", email)
     result = await session.execute(select(User.id).where(User.email == email))
@@ -88,3 +95,39 @@ async def check_username(username: str, session: AsyncSession,) -> bool:
     result = await session.execute(select(User.id).where(User.username == username))
     id: UUID4 | None = result.scalars().first()
     return id is not None
+
+
+conf = ConnectionConfig(
+    MAIL_USERNAME = settings.MAIL_USERNAME,
+    MAIL_PASSWORD = settings.MAIL_PASSWORD,
+    MAIL_FROM = settings.MAIL_FROM,
+    MAIL_PORT = settings.MAIL_PORT,
+    MAIL_SERVER = settings.MAIL_SERVER,
+    MAIL_FROM_NAME=settings.MAIL_FROM_NAME,
+    MAIL_STARTTLS = True,
+    MAIL_SSL_TLS = False,
+    USE_CREDENTIALS = True,
+    VALIDATE_CERTS = True
+)
+
+async def send_email_in_background(
+    background_tasks: BackgroundTasks,
+    email: EmailSchema,
+)-> JSONResponse:
+    
+    verfication_code = CodeHelper.generate_code()
+    print("verification_code", verfication_code)
+
+    code = await CodeService().creat_verification_code(email= email.dict().get("email")[0], code=verfication_code)
+
+    message = MessageSchema(
+        subject="Fastapi mail module",
+        recipients=email.dict().get("email"),
+        body=f"Your verification code is {verfication_code}",
+        subtype=MessageType.plain)
+
+    fm = FastMail(conf)
+
+    background_tasks.add_task(fm.send_message,message)
+
+    return JSONResponse(status_code=200, content={"message": "email has been sent"})
