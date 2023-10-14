@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field
+from typing import List
+from pydantic import BaseModel, EmailStr, Field
 
 
 class RefreshTokenRequest(BaseModel):
@@ -13,3 +14,7 @@ class VerifyTokenRequest(BaseModel):
 class RefreshTokenResponse(BaseModel):
     access_token: str = Field(..., description="Access Token")
     refresh_token: str = Field(..., description="Refresh token")
+
+
+class EmailSchema(BaseModel):
+    email: List[EmailStr] = Field(..., description="Email")
