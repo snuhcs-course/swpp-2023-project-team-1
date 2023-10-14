@@ -62,6 +62,25 @@ async def delete_post(
     )
     return {"message": f"Post {post_id} deleted successfully"}
 
+
+@post_router.post(
+    "/{post_id}/like",
+    summary="Toggle Post Like",
+    description="Toggle post like",
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))]
+)
+async def toggle_post_like(
+    post_id: UUID4,
+    req: Request
+):
+    post_svc = PostService()
+    post_like = await post_svc.toggle_post_like(
+        post_id=post_id,
+        user_id=req.user.id
+    )
+
+    return {"message": f"User {post_like.user_id} toggled like Post {post_like.post_id} successfully"}
+
 @post_router.post(
     "/{post_id}/comment",
     response_model=CommentCreateResponse,

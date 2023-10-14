@@ -6,6 +6,7 @@ from app.models.post import Post
 from app.schemas.post import PostBase, PostGetResponse
 from app.core.exceptions.post import PostNotFoundException, CommentNotFoundException
 from app.models.comment import Comment
+from app.models.post_like import PostLike
 
 
 class PostService:
@@ -50,6 +51,23 @@ class PostService:
         await session.delete(post)
         await session.commit()
         return post
+    
+    @Transactional()
+    async def toggle_post_like(self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs) -> PostLike:
+        result = await session.execute(select(PostLike).where(and_(PostLike.post_id == post_id, PostLike.user_id == user_id)))
+
+        post_like: PostLike | None = result.scalars().first()
+
+        if post_like is None:
+            post_like = PostLike(post_id=post_id, user_id=user_id, is_liked=True)
+            session.add(post_like)
+            await session.commit()
+            return post_like
+
+        else:
+            post_like.is_liked = not(post_like.is_liked)
+            await session.commit()
+            return post_like
 
     @Transactional()
     async def create_comment(self, post_id:UUID4, user_id: UUID4, content: str, session: AsyncSession, **kwargs) -> Comment:
