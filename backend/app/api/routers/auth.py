@@ -1,14 +1,16 @@
-from fastapi import APIRouter, Depends, Form, Query, Request, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, Form, Query, Request, Response
 from pydantic import Json
 from app.core.exceptions.base import BadRequestException
 from app.core.fastapi.dependency.permission import IsAuthenticated, PermissionDependency
 from app.schemas.user import CheckUserInfoResponse, LoginRequest, LoginResponse, UserCreate
-from app.services.auth_service import AuthService, check_user_email, check_username
+from app.services.auth_service import AuthService, check_user_email, check_username, send_email_in_background
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.schemas.auth import RefreshTokenRequest, VerifyTokenRequest
+from app.schemas.auth import EmailSchema, RefreshTokenRequest, VerifyTokenRequest
 from app.services.jwt_service import JwtService
 from app.schemas.jwt import JwtToken
+from app.schemas.code import CodeBase
+from app.services.code_service import CodeService
 
 
 auth_router = APIRouter()
@@ -102,3 +104,30 @@ async def delete_user(
 ):  
     await AuthService().delete_user_by_id(req.user.id)
     return {"message": f"User {req.user.id} deleted successfully"}
+
+@auth_router.post(
+    "/email",
+    summary="Send email",
+    description="Send email",
+)
+async def send_email(
+    background_tasks: BackgroundTasks,
+    email: EmailSchema,
+):
+    await send_email_in_background(
+        email=email,
+        background_tasks=background_tasks
+    )
+    return {"message": f"Email sent to {email}"}
+
+@auth_router.post(
+    "/verify/code",
+    summary="Verify code",
+    description="Verify code",
+)
+async def verify_code(
+    req: CodeBase,
+):
+    await CodeService().verify_code(email=req.email, code=req.code)
+
+    return {"message": "Code verified successfully"}
