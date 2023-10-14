@@ -10,7 +10,7 @@ class Post(Base):
     user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id"), nullable=False, unique=True, default=uuid.uuid4)
     
     content: Mapped[str] = mapped_column(String(500), nullable=True)
-    profile_image_url: Mapped[str] = mapped_column(String(100), nullable=True)
+    post_image_url: Mapped[str] = mapped_column(String(100), nullable=True)
 
 
     class Config:
