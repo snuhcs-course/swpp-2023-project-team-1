@@ -11,12 +11,6 @@ async def get():
     return HTMLResponse(html)
 
 api_router.include_router(
-    auth_router,
-    prefix="/auth",
-    tags=["auth"],
-)
-
-api_router.include_router(
     user_router,
     prefix="/user",
     tags=["user"],

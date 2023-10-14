@@ -4,10 +4,16 @@ from sqlalchemy import CHAR, TypeDecorator
 from sqlalchemy.dialects.postgresql import UUID
 
 
-class GUID(TypeDecorator):
+class GUID(TypeDecorator):  # pragma: no cover
+    """
+    Platform-independent GUID type.
+
+    Uses PostgreSQL's UUID type, otherwise uses
+    CHAR(36), storing as regular strings.
+    """
 
     class UUIDChar(CHAR):
-        python_type = UUID4 
+        python_type = UUID4  # type: ignore
 
     impl = UUIDChar
     cache_ok = True
