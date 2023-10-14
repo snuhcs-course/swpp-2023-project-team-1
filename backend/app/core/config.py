@@ -55,13 +55,6 @@ class Settings(BaseSettings):
     AWS_ACCESS_KEY_ID: str
     AWS_SECRET_ACCESS_KEY: str
 
-    MAIL_USERNAME: str
-    MAIL_PASSWORD: str
-    MAIL_FROM: str
-    MAIL_PORT: str
-    MAIL_SERVER: str
-    MAIL_FROM_NAME: str
-
     # VALIDATORS
     @field_validator("BACKEND_CORS_ORIGINS")
     @classmethod
