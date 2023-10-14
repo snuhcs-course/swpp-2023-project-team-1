@@ -1,7 +1,6 @@
 import uuid
 from pydantic import UUID4
 from app.models import Base
-from app.models.post import Post
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.guid import GUID
@@ -13,7 +12,7 @@ class Comment(Base):
 
     content: Mapped[str] = mapped_column(String(300), nullable=True)
 
-    post = relationship(Post, back_populates="comments")
+    post = relationship("Post", back_populates="comments")
 
     class Config:
         orm_mode = True

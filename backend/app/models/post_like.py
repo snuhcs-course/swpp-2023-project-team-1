@@ -1,7 +1,6 @@
 import uuid
 from pydantic import UUID4
 from app.models import Base
-from app.models.post import Post
 from sqlalchemy import String, ForeignKey, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.guid import GUID
@@ -13,7 +12,7 @@ class PostLike(Base):
 
     is_liked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
-    post = relationship(Post, back_populates="likes")
+    post = relationship("Post", back_populates="likes")
 
     class Config:
         orm_mode = True

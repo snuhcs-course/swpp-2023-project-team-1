@@ -2,6 +2,7 @@ from fastapi.responses import HTMLResponse
 from fastapi import APIRouter
 from app.api.routers.user import user_router
 from app.api.routers.auth import auth_router
+from app.api.routers.post import post_router
 
 api_router = APIRouter(prefix="/api")
 
@@ -20,6 +21,13 @@ api_router.include_router(
     prefix="/user",
     tags=["user"],
 )
+
+api_router.include_router(
+    post_router,
+    prefix="/post",
+    tags=["post"],
+)
+
 
 html = """
 <!DOCTYPE html>
