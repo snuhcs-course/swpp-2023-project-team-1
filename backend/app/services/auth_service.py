@@ -116,7 +116,6 @@ async def send_email_in_background(
 )-> JSONResponse:
     
     verfication_code = CodeHelper.generate_code()
-    print("verification_code", verfication_code)
 
     code = await CodeService().creat_verification_code(email= email.dict().get("email")[0], code=verfication_code)
 
