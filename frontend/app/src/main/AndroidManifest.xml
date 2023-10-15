@@ -15,15 +15,11 @@
         android:theme="@style/Theme.Spire"
         android:usesCleartextTraffic="true"
         tools:targetApi="31" >
+
         <activity
             android:name="com.project.spire.SignUpActivity"
             android:exported="true"
             android:label="@string/title_activity_sign_up">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
 
@@ -38,15 +34,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="com.project.spire.MainActivity"
-            android:exported="true"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:exported="true">
         </activity>
     </application>
 

@@ -33,6 +33,7 @@
         <item name="boxCornerRadiusBottomStart">6sp</item>
         <item name="boxCornerRadiusTopEnd">6sp</item>
         <item name="boxCornerRadiusTopStart">6sp</item>
+
     </style>
 
 
