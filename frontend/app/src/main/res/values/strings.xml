@@ -23,5 +23,6 @@
     <string name="already_signed_up">Already signed up?</string>
     <string name="signup">Sign up</string>
     <string name="login">Login</string>
+    <string name="or">or</string>
 
 </resources>
