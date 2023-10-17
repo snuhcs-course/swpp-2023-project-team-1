@@ -1,4 +1,5 @@
 # Models for sqlalchemy
+
 from .base import Base
 from .user import User
 from .guid import GUID
