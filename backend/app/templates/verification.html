@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% block content %}
+
+<h3>이메일 주소 확인</h3>
+<p>
+  Thank you for starting the process of creating a new Spire account. We want to
+  verify that the user is who they say they are. Please verify your email
+  address by entering the following verification code: If you are not creating
+  an account, you can ignore this message.
+</p>
+
+<p><strong>Verification Code<strong></p>
+
+<h2>{{ code }}</h2>
+
+{% endblock %}
