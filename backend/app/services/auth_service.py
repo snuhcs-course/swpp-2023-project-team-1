@@ -1,5 +1,6 @@
 from fastapi import BackgroundTasks
 from fastapi.responses import JSONResponse
+from jinja2 import Environment, PackageLoader, select_autoescape
 from pydantic import UUID4
 from sqlalchemy import or_, select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -97,6 +98,12 @@ async def check_username(username: str, session: AsyncSession,) -> bool:
     return id is not None
 
 
+env = Environment(
+    loader=PackageLoader('app', 'templates'),
+    autoescape=select_autoescape(['html', 'xml'])
+)
+
+
 conf = ConnectionConfig(
     MAIL_USERNAME = settings.MAIL_USERNAME,
     MAIL_PASSWORD = settings.MAIL_PASSWORD,
@@ -119,11 +126,19 @@ async def send_email_in_background(
 
     code = await CodeService().creat_verification_code(email= email.dict().get("email")[0], code=verfication_code)
 
+    # Generate the HTML template base on the template name
+    template = env.get_template('verification.html')
+
+    html = template.render(
+        subject="Verification Code",
+        code=verfication_code,
+    )
+    
     message = MessageSchema(
-        subject="Fastapi mail module",
+        subject="Spire Email Verification",
         recipients=email.dict().get("email"),
-        body=f"Your verification code is {verfication_code}",
-        subtype=MessageType.plain)
+        body=html,
+        subtype="html")
 
     fm = FastMail(conf)
 
