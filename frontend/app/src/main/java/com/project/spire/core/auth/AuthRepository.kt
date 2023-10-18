@@ -1,6 +1,6 @@
 package com.project.spire.core.auth
 
-import com.project.spire.network.auth.LoginRequest
+import com.project.spire.network.auth.request.LoginRequest
 import android.content.Context
 import android.util.Log
 import androidx.datastore.core.DataStore
@@ -9,9 +9,9 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.project.spire.network.RetrofitClient.Companion.authAPI
-import com.project.spire.network.auth.LoginError
-import com.project.spire.network.auth.LoginResponse
-import com.project.spire.network.auth.LoginSuccess
+import com.project.spire.network.auth.response.LoginError
+import com.project.spire.network.auth.response.LoginResponse
+import com.project.spire.network.auth.response.LoginSuccess
 
 val Context.authDataStore: DataStore<Preferences> by preferencesDataStore(name = "AUTH_DATASTORE")
 
@@ -25,28 +25,24 @@ class AuthRepository {
 
     /**
      * Login API
-     * Returns LoginResult when API is requested */
+     * Returns LoginSuccess or LoginError */
     suspend fun login(email: String, password: String): LoginResponse {
         val loginRequest = LoginRequest(email, password)
         val response = authAPI.login(loginRequest)
-        if (response.isSuccessful) {
-            return if (response.code() == 200) {
-                Log.d("AuthDataSource", "Login response: ${response.body()}")
-                LoginSuccess(
-                    response.body()?.accessToken,
-                    response.body()?.refreshToken,
-                    response.body()?.userId,
-                    response.body()?.username
-                )
-            } else {
-                // Failed to login (400)
-                Log.d("AuthDataSource", "Login error: ${response.message()}")
-                LoginError(response.message())
-            }
+        return if (response.isSuccessful) {
+            val successBody = response.body() as LoginSuccess
+            Log.d("AuthDataSource", "Login response: ${successBody.username}")
+            successBody
         } else {
-            // Failed to request API
-            Log.d("AuthDataSource", "Login error: ${response.message()}")
-            return LoginError(response.message())
+            return if (response.code() == 401 || response.code() == 404) {
+                // Failed to login (400)
+                Log.e("AuthDataSource", "Login error ${response.code()}: ${response.message()}")
+                LoginError(message = response.message())
+            } else {
+                // Failed to request API
+                Log.e("AuthDataSource", "Login error ${response.code()}: ${response.message()}")
+                LoginError(message = response.message())
+            }
         }
     }
 }

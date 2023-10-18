@@ -14,9 +14,9 @@ import com.project.spire.core.auth.AuthPreferenceKeys
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
 import com.project.spire.network.ErrorUtils
-import com.project.spire.network.auth.LoginError
-import com.project.spire.network.auth.LoginResponse
-import com.project.spire.network.auth.LoginSuccess
+import com.project.spire.network.auth.response.LoginError
+import com.project.spire.network.auth.response.LoginResponse
+import com.project.spire.network.auth.response.LoginSuccess
 import com.project.spire.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -84,6 +84,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // TODO: separate login logic from UI
+    // Should be in ViewModel
     private suspend fun login(emailInput: TextInputLayout, passwordInput: TextInputLayout) {
         val email = emailInput.editText?.text.toString()
         val password = passwordInput.editText?.text.toString()
@@ -126,7 +128,6 @@ class LoginActivity : AppCompatActivity() {
                     else -> { Log.e("LoginActivity", "Error while logging in. Could not request API.\nMessage: $message") }
                 }
             }
-
         }
     }
 }

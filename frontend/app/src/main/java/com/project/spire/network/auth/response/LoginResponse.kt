@@ -1,4 +1,4 @@
-package com.project.spire.network.auth
+package com.project.spire.network.auth.response
 
 import com.google.gson.annotations.SerializedName
 
