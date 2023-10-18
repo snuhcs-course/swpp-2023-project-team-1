@@ -26,11 +26,12 @@ import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private val authRepository = AuthRepository()
+    private lateinit var authRepository: AuthRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
+        authRepository = AuthRepository(this.authDataStore)
         setContentView(binding.root)
 
         // Hide the action bar
@@ -107,12 +108,6 @@ class LoginActivity : AppCompatActivity() {
 
             // Login success: redirect to main activity
             if (loginResult is LoginSuccess) {
-                // Save tokens to datastore
-                this.authDataStore.edit {
-                    it[AuthPreferenceKeys.ACCESS_TOKEN] = (loginResult as LoginSuccess).accessToken!!
-                    it[AuthPreferenceKeys.REFRESH_TOKEN] = (loginResult as LoginSuccess).refreshToken!!
-                    it[AuthPreferenceKeys.IS_LOGGED_IN] = true
-                }
                 binding.LoadingIndicator.hide()
                 val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
