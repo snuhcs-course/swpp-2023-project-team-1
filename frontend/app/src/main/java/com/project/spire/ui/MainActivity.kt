@@ -1,4 +1,4 @@
-package com.project.spire
+package com.project.spire.ui
 
 import android.os.Bundle
 import android.util.Log
