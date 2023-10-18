@@ -35,7 +35,9 @@ class FeedFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView = binding.RecyclerViewFeed
+        binding.appBar.setOutlineProvider(null);
+
+        recyclerView = binding.recyclerViewFeed
 
         val linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.reverseLayout = true
@@ -64,9 +66,9 @@ class FeedFragment : Fragment() {
         // postList!!.add(post)
 
 
-        //Below should be deleted
+        //TODO Below should be throw away
 
-        for(i in 1..5){
+        for(i in 1..10){
             val user_id=345
             val username = "ezhun"
             val profileImage = "https://i.pravatar.cc/1000"

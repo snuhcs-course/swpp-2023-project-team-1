@@ -8,7 +8,7 @@
     tools:context="com.project.spire.LoginActivity">
 
     <ImageView
-        android:id="@+id/Logo"
+        android:id="@+id/logo"
         android:layout_width="@dimen/auth_logo_width"
         android:layout_height="@dimen/auth_logo_height"
         android:layout_marginTop="@dimen/login_logo_margin_top"
@@ -19,15 +19,15 @@
         app:layout_constraintVertical_chainStyle="packed" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/EmailInput"
-        style="@style/FilledEditText"
+        android:id="@+id/email_input"
+        style="@style/filled_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="4dp"
         android:layout_marginTop="20dp"
         android:hint="@string/email_hint"
         app:endIconMode="clear_text"
-        app:layout_constraintTop_toBottomOf="@id/Logo">
+        app:layout_constraintTop_toBottomOf="@id/logo">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -37,8 +37,8 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/PasswordInput"
-        style="@style/FilledEditText"
+        android:id="@+id/password_input"
+        style="@style/filled_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="4dp"
@@ -46,7 +46,7 @@
         android:hint="@string/password_hint"
         android:inputType="textPassword"
         app:endIconMode="password_toggle"
-        app:layout_constraintTop_toBottomOf="@id/EmailInput">
+        app:layout_constraintTop_toBottomOf="@id/email_input">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -57,38 +57,38 @@
 
 
     <TextView
-        android:id="@+id/ForgotTextBtn"
-        style="@style/SmallTextBtn"
+        android:id="@+id/forgot_text_btn"
+        style="@style/small_text_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="4dp"
         android:paddingVertical="10dp"
         android:text="@string/forgot_password"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/PasswordInput" />
+        app:layout_constraintTop_toBottomOf="@id/password_input" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/LoginBtn"
+        android:id="@+id/login_btn"
         style="@style/Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="4dp"
         android:text="@string/login_btn"
-        app:layout_constraintTop_toBottomOf="@id/ForgotTextBtn" />
+        app:layout_constraintTop_toBottomOf="@id/forgot_text_btn" />
 
     <TextView
-        android:id="@+id/OrText"
-        style="@style/NormalText"
+        android:id="@+id/or_text"
+        style="@style/normal_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="@string/or"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/LoginBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/login_btn" />
 
     <com.google.android.gms.common.SignInButton
-        android:id="@+id/SignInWithGoogle"
+        android:id="@+id/sign_in_with_google"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -97,26 +97,26 @@
         app:boxCornerRadiusTopEnd="6sp"
         app:boxCornerRadiusTopStart="6sp"
         app:buttonSize="wide"
-        app:layout_constraintTop_toBottomOf="@id/OrText" />
+        app:layout_constraintTop_toBottomOf="@id/or_text" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/LoadingIndicator"
+        android:id="@+id/loading_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:indeterminate="true"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/SignupText"
+        app:layout_constraintBottom_toTopOf="@+id/sign_up_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/SignInWithGoogle">
+        app:layout_constraintTop_toBottomOf="@id/sign_in_with_google">
 
     </com.google.android.material.progressindicator.CircularProgressIndicator>
 
 
     <TextView
-        android:id="@+id/SignupText"
-        style="@style/NormalText"
+        android:id="@+id/sign_up_text"
+        style="@style/normal_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
@@ -124,18 +124,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/GoToSignupTextBtn" />
+        app:layout_constraintRight_toLeftOf="@+id/go_to_sign_up_text_btn" />
 
     <TextView
-        android:id="@+id/GoToSignupTextBtn"
-        style="@style/TextBtn"
+        android:id="@+id/go_to_sign_up_text_btn"
+        style="@style/text_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:paddingVertical="10dp"
         android:text="@string/signup"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/SignupText"
+        app:layout_constraintLeft_toRightOf="@+id/sign_up_text"
         app:layout_constraintRight_toRightOf="parent" />
 
 

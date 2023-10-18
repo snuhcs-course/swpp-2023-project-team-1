@@ -4,18 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.project.spire.ui.feed.FeedFragment">
+    tools:context="com.project.spire.ui.feed.FeedFragment"
+    >
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/AppBar"
+        android:id="@+id/app_bar"
         >
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/FeedToolBar"
+            android:id="@+id/feed_tool_bar"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/feed_toolbar_height"
             android:background="@android:color/white"
             >
 
@@ -24,8 +25,8 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
+                    android:layout_width="@dimen/feed_logo_width"
+                    android:layout_height="@dimen/feed_logo_height"
                     android:src="@drawable/logo"
                     android:layout_alignParentLeft="true"
                     />
@@ -39,10 +40,10 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/RecyclerViewFeed"
+        android:id="@+id/recycler_view_feed"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/AppBar"
+        android:layout_below="@+id/app_bar"
         >
     </androidx.recyclerview.widget.RecyclerView>
 

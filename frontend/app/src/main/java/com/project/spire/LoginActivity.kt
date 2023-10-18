@@ -27,16 +27,16 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
-        val goToSignupTextBtn: TextView = binding.GoToSignupTextBtn
+        val goToSignupTextBtn: TextView = binding.goToSignUpTextBtn
 
         goToSignupTextBtn.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
         }
 
-        val loginBtn: Button = binding.LoginBtn
+        val loginBtn: Button = binding.loginBtn
 
-        val emailInput = binding.EmailInput
-        val passwordInput = binding.PasswordInput
+        val emailInput = binding.emailInput
+        val passwordInput = binding.passwordInput
 
 
 
@@ -92,20 +92,20 @@ class LoginActivity : AppCompatActivity() {
             }
 
             if (IsValid) {
-                binding.LoadingIndicator.show()
+                binding.loadingIndicator.show()
 
                 //TimeUnit.MILLISECONDS.sleep(2000)
 
                 var succeed = true
                 if (succeed) {
-                    binding.LoadingIndicator.hide()
+                    binding.loadingIndicator.hide()
                     val intent = Intent(this, MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                     finish()
                 } else {
                     Toast.makeText(this, "Failed to create user", Toast.LENGTH_SHORT).show()
-                    binding.LoadingIndicator.hide()
+                    binding.loadingIndicator.hide()
                 }
 
 
