@@ -6,12 +6,8 @@
     <color name="blue_700">#11009E</color>
 
     <color name="black">#FF000000</color>
-
-    <color name="grey_200">#EEEEEE</color>
     <color name="grey_300">#BDBDBD</color>
-    <color name="grey_600">#686868</color>
-    <color name="grey_700">#747474</color>
-
+    <color name="grey_200">#EEEEEE</color>
     <color name="boxBackgroundColor">#F2F2F2</color>
     <color name="white">#FFFFFFFF</color>
 

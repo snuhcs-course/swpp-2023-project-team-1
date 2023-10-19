@@ -25,16 +25,16 @@ class SignUpActivity : AppCompatActivity() {
             supportActionBar!!.hide()
         }
 
-        val goToLoginTextBtn: TextView = binding.goToLoginTextBtn
+        val goToLoginTextBtn: TextView = binding.GoToLoginTextBtn
 
         goToLoginTextBtn.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
         }
-        val signUpBtn: Button = binding.signUpBtn
+        val signUpBtn: Button = binding.SignUpBtn
 
-        val emailInput = binding.emailInput
-        val passwordInput = binding.passwordInput
-        val usernameInput = binding.usernameInput
+        val emailInput = binding.EmailInput
+        val passwordInput = binding.PasswordInput
+        val usernameInput = binding.UsernameInput
 
 
 
@@ -85,28 +85,28 @@ class SignUpActivity : AppCompatActivity() {
             usernameInput.clearFocus()
 
 
-            var isValid = true
+            var IsValid = true
 
             //TODO: Add Validate email, password, and username Logic
 
             if (email.isEmpty()) {
-                isValid = false
+                IsValid = false
 
                 emailInput.error = "Email is required"
 
             }
             if (password.isEmpty()) {
-                isValid = false
+                IsValid = false
                 passwordInput.error = "Password is required"
 
             }
             if (username.isEmpty()) {
-                isValid = false
+                IsValid = false
                 usernameInput.error = "Username is required"
             }
 
-            if (isValid) {
-                binding.loadingIndicator.show()
+            if (IsValid) {
+                binding.LoadingIndicator.show()
 
                 //TimeUnit.MILLISECONDS.sleep(2000)
 
@@ -114,14 +114,14 @@ class SignUpActivity : AppCompatActivity() {
                 var succeed = true
                 if (succeed) {
 
-                    binding.loadingIndicator.hide()
+                    binding.LoadingIndicator.hide()
                     val intent = Intent(this, MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                     finish()
                 } else {
-                    Toast.makeText(this, "Failed to create user", Toast.LENGTH_SHORT).show()
-                    binding.loadingIndicator.hide()
+                    Toast.makeText(this, "Failed to create auth", Toast.LENGTH_SHORT).show()
+                    binding.LoadingIndicator.hide()
                 }
 
 

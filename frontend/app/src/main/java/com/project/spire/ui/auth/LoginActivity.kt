@@ -37,14 +37,14 @@ class LoginActivity : AppCompatActivity() {
         }
 
         // Redirection to signup page
-        val goToSignupTextBtn: TextView = binding.goToSignUpTextBtn
+        val goToSignupTextBtn: TextView = binding.GoToSignupTextBtn
         goToSignupTextBtn.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
         }
 
-        val loginBtn: Button = binding.loginBtn
-        val emailInput = binding.emailInput
-        val passwordInput = binding.passwordInput
+        val loginBtn: Button = binding.LoginBtn
+        val emailInput = binding.EmailInput
+        val passwordInput = binding.PasswordInput
 
         emailInput.editText?.setOnFocusChangeListener { _, hasFocus ->
             setHelperText(emailInput, hasFocus, resources.getString(R.string.email_helper_text))
