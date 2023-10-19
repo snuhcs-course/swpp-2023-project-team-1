@@ -1,46 +1,44 @@
-package com.project.spire
+package com.project.spire.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
-import android.view.View.OnFocusChangeListener
+
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.spire.R
-import com.example.spire.databinding.ActivityLoginBinding
+
+import com.example.spire.databinding.ActivitySignUpBinding
+import com.project.spire.ui.MainActivity
 
 
-class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
-
+class SignUpActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySignUpBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         if (supportActionBar != null) {
             supportActionBar!!.hide()
         }
 
+        val goToLoginTextBtn: TextView = binding.goToLoginTextBtn
 
-        val goToSignupTextBtn: TextView = binding.goToSignUpTextBtn
-
-        goToSignupTextBtn.setOnClickListener {
-            startActivity(Intent(this, SignUpActivity::class.java))
+        goToLoginTextBtn.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
         }
-
-        val loginBtn: Button = binding.loginBtn
+        val signUpBtn: Button = binding.signUpBtn
 
         val emailInput = binding.emailInput
         val passwordInput = binding.passwordInput
+        val usernameInput = binding.usernameInput
 
 
 
-        emailInput.editText?.setOnFocusChangeListener(OnFocusChangeListener { v, hasFocus ->
+        emailInput.editText?.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 emailInput.helperText = resources.getString(R.string.email_helper_text)
                 emailInput.error = null
@@ -48,47 +46,63 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 emailInput.helperText = ""
             }
-        })
+        }
 
-        passwordInput.editText?.setOnFocusChangeListener(OnFocusChangeListener { v, hasFocus ->
+
+        passwordInput.editText?.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 passwordInput.helperText = resources.getString(R.string.password_helper_text)
                 passwordInput.error = null
                 passwordInput.isErrorEnabled = false
-
             } else {
                 passwordInput.helperText = ""
             }
-        })
+        }
 
 
 
+        usernameInput.editText?.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                usernameInput.helperText = resources.getString(R.string.username_helper_text)
+                usernameInput.error = null
+                usernameInput.isErrorEnabled = false
+            } else {
+                usernameInput.helperText = ""
+            }
+        }
 
 
-        loginBtn.setOnClickListener {
 
-
+        signUpBtn.setOnClickListener {
             val email = emailInput.editText?.text.toString()
             val password = passwordInput.editText?.text.toString()
+            val username = usernameInput.editText?.text.toString()
+
 
 
             emailInput.clearFocus()
             passwordInput.clearFocus()
+            usernameInput.clearFocus()
+
+
             var IsValid = true
 
-            //TODO: Add login logic here
+            //TODO: Add Validate email, password, and username Logic
 
             if (email.isEmpty()) {
                 IsValid = false
-                emailInput.error = "Email is required"
 
+                emailInput.error = "Email is required"
 
             }
             if (password.isEmpty()) {
                 IsValid = false
                 passwordInput.error = "Password is required"
 
-
+            }
+            if (username.isEmpty()) {
+                IsValid = false
+                usernameInput.error = "Username is required"
             }
 
             if (IsValid) {
@@ -96,16 +110,18 @@ class LoginActivity : AppCompatActivity() {
 
                 //TimeUnit.MILLISECONDS.sleep(2000)
 
+
                 var succeed = true
                 if (succeed) {
+
                     binding.loadingIndicator.hide()
                     val intent = Intent(this, MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                     finish()
                 } else {
-                    Toast.makeText(this, "Failed to create user", Toast.LENGTH_SHORT).show()
-                    binding.loadingIndicator.hide()
+                    Toast.makeText(this, "Failed to create auth", Toast.LENGTH_SHORT).show()
+                    binding.LoadingIndicator.hide()
                 }
 
 
@@ -116,21 +132,5 @@ class LoginActivity : AppCompatActivity() {
 
 
     }
-
-    override fun onStart() {
-        super.onStart()
-
-        val logined = false
-        if (logined) {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-
-        }
-
-
-    }
-
 
 }

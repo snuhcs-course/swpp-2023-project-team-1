@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/auth_padding"
-    tools:context="com.project.spire.SignUpActivity">
+    tools:context="com.project.spire.ui.auth.SignUpActivity">
 
     <ImageView
         android:id="@+id/logo"
