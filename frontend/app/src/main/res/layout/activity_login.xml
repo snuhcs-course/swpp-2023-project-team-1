@@ -4,15 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.project.spire.LoginActivity"
-    android:padding="30dp"
-    >
+    android:padding="@dimen/auth_padding"
+    tools:context="com.project.spire.LoginActivity">
 
     <ImageView
-        android:id="@+id/Logo"
-        android:layout_width="138dp"
-        android:layout_height="98dp"
-        android:layout_marginTop="80dp"
+        android:id="@+id/logo"
+        android:layout_width="@dimen/auth_logo_width"
+        android:layout_height="@dimen/auth_logo_height"
+        android:layout_marginTop="@dimen/login_logo_margin_top"
         android:src="@drawable/logo"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -20,120 +19,124 @@
         app:layout_constraintVertical_chainStyle="packed" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/EmailInput"
-        style="@style/FilledEditText"
+        android:id="@+id/email_input"
+        style="@style/filled_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/Logo"
-        android:hint="Email"
-        android:layout_marginTop="20dp"
-        app:endIconMode="clear_text"
         android:layout_marginHorizontal="4dp"
-        >
+        android:layout_marginTop="20dp"
+        android:hint="@string/email_hint"
+        app:endIconMode="clear_text"
+        app:layout_constraintTop_toBottomOf="@id/logo">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:inputType="textEmailAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            android:inputType="textEmailAddress" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/PasswordInput"
-        style="@style/FilledEditText"
+        android:id="@+id/password_input"
+        style="@style/filled_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/EmailInput"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:layout_marginTop="10dp"
-        app:endIconMode="password_toggle"
         android:layout_marginHorizontal="4dp"
-        >
+        android:layout_marginTop="10dp"
+        android:hint="@string/password_hint"
+        android:inputType="textPassword"
+        app:endIconMode="password_toggle"
+        app:layout_constraintTop_toBottomOf="@id/email_input">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            android:inputType="textPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
 
     <TextView
-        android:id="@+id/ForgotTextBtn"
-        style="@style/SmallTextBtn"
+        android:id="@+id/forgot_text_btn"
+        style="@style/small_text_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Forgot Password?"
         android:layout_marginHorizontal="4dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/PasswordInput"
         android:paddingVertical="10dp"
-        />
+        android:text="@string/forgot_password"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/password_input" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/SignUpBtn"
+        android:id="@+id/login_btn"
         style="@style/Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Log In"
-        app:layout_constraintTop_toBottomOf="@id/ForgotTextBtn"
         android:layout_marginHorizontal="4dp"
-        />
+        android:text="@string/login_btn"
+        app:layout_constraintTop_toBottomOf="@id/forgot_text_btn" />
 
     <TextView
-        android:id="@+id/OrText"
+        android:id="@+id/or_text"
+        style="@style/normal_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="or"
-        style="@style/NormalText"
+        android:layout_marginTop="10dp"
+        android:text="@string/or"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SignUpBtn"
-        android:layout_marginTop="10dp"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/login_btn" />
 
     <com.google.android.gms.common.SignInButton
-        android:id="@+id/SignInWithGoogle"
+        android:id="@+id/sign_in_with_google"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:buttonSize="wide"
-        app:layout_constraintTop_toBottomOf="@id/OrText"
         android:layout_marginTop="10dp"
         app:boxCornerRadiusBottomEnd="6sp"
         app:boxCornerRadiusBottomStart="6sp"
         app:boxCornerRadiusTopEnd="6sp"
         app:boxCornerRadiusTopStart="6sp"
-        />
+        app:buttonSize="wide"
+        app:layout_constraintTop_toBottomOf="@id/or_text" />
 
-    <TextView
-        android:id="@+id/SignupText"
-        style="@style/NormalText"
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/loading_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Don't have an account? "
+        android:layout_marginTop="10dp"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/sign_up_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sign_in_with_google">
+
+    </com.google.android.material.progressindicator.CircularProgressIndicator>
+
+
+    <TextView
+        android:id="@+id/sign_up_text"
+        style="@style/normal_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
+        android:text="@string/dont_have_account"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintRight_toLeftOf="@+id/GoToSignupTextBtn"
-        android:paddingVertical="10dp"
-        />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/go_to_sign_up_text_btn" />
 
     <TextView
-        android:id="@+id/GoToSignupTextBtn"
-        style="@style/TextBtn"
+        android:id="@+id/go_to_sign_up_text_btn"
+        style="@style/text_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign up"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/SignupText"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginHorizontal="10dp"
         android:paddingVertical="10dp"
-        />
-
-
+        android:text="@string/signup"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/sign_up_text"
+        app:layout_constraintRight_toRightOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
