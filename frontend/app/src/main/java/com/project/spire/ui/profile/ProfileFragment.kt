@@ -10,16 +10,10 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-//import com.example.spire.databinding.FragmentHomeBinding
 import com.example.spire.databinding.FragmentProfileBinding
-import com.project.spire.core.auth.AuthPreferenceKeys
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
-import com.project.spire.ui.MainActivity
 import com.project.spire.ui.auth.LoginActivity
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 
 class ProfileFragment : Fragment() {
 
