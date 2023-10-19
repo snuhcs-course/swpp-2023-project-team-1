@@ -14,4 +14,13 @@
     <dimen name="nav_bar_height">75dp</dimen>
     <dimen name="nav_bar_icon_size">24dp</dimen>
     <dimen name="nav_bar_create_post_btn_size">60dp</dimen>
+    <dimen name="feed_logo_width">80dp</dimen>
+    <dimen name="feed_logo_height">40dp</dimen>
+    <dimen name="feed_toolbar_height">80dp</dimen>
+    <dimen name="post_padding">15dp</dimen>
+    <dimen name="post_profile_image_width">40dp</dimen>
+    <dimen name="post_profile_image_height">40dp</dimen>
+    <dimen name="post_footer_icon_width">40dp</dimen>
+    <dimen name="post_footer_icon_height">40dp</dimen>
+    <dimen name="post_footer_text_width">35dp</dimen>
 </resources>

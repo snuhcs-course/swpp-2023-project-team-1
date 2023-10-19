@@ -1,15 +1,15 @@
 package com.project.spire.models
 
 open class User (
-    id: String,
-    userName: String,
-    profileImage: String,
+    val id: Int,
+    var userName: String,
+    var profileImage: String
 ) {
     // TODO
 }
 
 class UserDetail (
-    id: String,
+    id: Int,
     userName: String,
     profileImage: String,
     email: String,
