@@ -31,6 +31,23 @@ flake8 = "^6.1.0"
 pylint = "^3.0.1"
 pre-commit = "^3.4.0"
 
+[tool.black]
+line-length = 120
+target-version = ['py38']
+exclude = '''
+/(
+  \.git
+  | \.venv
+)/
+'''
+
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 120
+disable = 'C,R,I,import-error'
+
+[tool.pytest.ini_options]
+python_files = ["test_*.py"]
+testpaths = ["tests"]
 
 [build-system]
 requires = ["poetry-core"]
