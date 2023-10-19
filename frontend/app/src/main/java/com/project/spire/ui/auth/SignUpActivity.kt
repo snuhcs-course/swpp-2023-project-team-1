@@ -121,7 +121,7 @@ class SignUpActivity : AppCompatActivity() {
                     finish()
                 } else {
                     Toast.makeText(this, "Failed to create auth", Toast.LENGTH_SHORT).show()
-                    binding.LoadingIndicator.hide()
+                    binding.loadingIndicator.hide()
                 }
 
 
