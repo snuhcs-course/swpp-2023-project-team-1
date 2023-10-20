@@ -9,95 +9,57 @@ import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
-import android.widget.ImageView
+import androidx.core.content.ContextCompat
+import com.example.spire.R
 
 import java.io.Serializable
 
-data class PaintOptions(var color: Int = Color.BLUE, var strokeWidth: Float = 20f, var alpha: Int = 50, var xfermode: PorterDuffXfermode? = null) :
+
+
+data class PaintOptions(var color: Int, var strokeWidth: Float, var xfermode: PorterDuffXfermode?) :
     Serializable
 
 class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : View(context, attrs) {
+
+    private val COLOR_BLUE = ContextCompat.getColor(context, R.color.blue_500)
+    private val COLOR_GRAY = ContextCompat.getColor(context, R.color.grey_300)
+    private val STROKE_PEN = 20f
+    private val STROKE_ERASER = 50f
+    private val MODE_CLEAR = PorterDuffXfermode(PorterDuff.Mode.CLEAR) // clears when overlapped
+    // drawing canvas
+
     private var paths = LinkedHashMap<Path, PaintOptions>()
-    private var paintOptions = PaintOptions()
+    private var paintOptions = PaintOptions(COLOR_BLUE, STROKE_PEN, null)
     private var currentX = 0f
     private var currentY = 0f
     private var startX = 0f
     private var startY = 0f
-    // pinch zoom
-    private var mScaleFactor = 1f
-    private lateinit var mImageView: ImageView
-    var isErasing = false
 
-    private var previousScaleFactor = 1f
-    private var scaleCenterX = 0f
-    private var scaleCenterY = 0f
-    private var canvasTranslationX = 0f
-    private var canvasTranslationY = 0f
-
-    // drawing canvas
+    var isEraseMode = false
+    var isPenMode = true
     private var mbitmap: Bitmap? = null
     private var mCanvas: Canvas? = null
     private var mPath: Path = Path()
     private var mPaint: Paint = Paint()
-    private var mX: Float = 0.toFloat()
-    private var mY: Float = 0.toFloat()
-/*
-    private var scaleListener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
-            mScaleFactor *= detector.scaleFactor
-            // Set min and max zoom levels.
-            //mScaleFactor = mScaleFactor.coerceAtLeast(0.2f).coerceAtMost(3.0f)
-            val deltaScale = mScaleFactor / previousScaleFactor
-            canvasTranslationX += (1 - deltaScale) * scaleCenterX
-            canvasTranslationY += (1 - deltaScale) * scaleCenterY
 
-            // Update pinch center
-            scaleCenterX = detector.focusX
-            scaleCenterY = detector.focusY
-
-            previousScaleFactor = mScaleFactor
-            invalidate()
-            return true
-        }
-    }
-    private val mScaleDetector = ScaleGestureDetector(context, scaleListener)
-*/
     init {
         mPaint.isAntiAlias = true
-        //mPaint.color = Color.rgb(0, 0, 0)
         mPaint.style = Paint.Style.STROKE
         mPaint.strokeJoin = Paint.Join.ROUND
-        mPaint.strokeWidth = 20f
     }
 
     override fun onDraw(canvas: Canvas) {
-        Log.d("ERASE: ", isErasing.toString())
         super.onDraw(canvas)
-        // Apply translation based on pinch zoom
-        /*
-        canvas.translate(canvasTranslationX, canvasTranslationY)
 
-        // Apply scaling to the canvas
-        canvas.scale(mScaleFactor, mScaleFactor, scaleCenterX, scaleCenterY)
-        mImageView.translationX = canvasTranslationX
-        mImageView.translationY = canvasTranslationY
-        mImageView.scaleX = mScaleFactor
-        mImageView.scaleY = mScaleFactor
-*/
         for ((path, options) in paths) {
             mPaint.color = options.color
             mPaint.xfermode = options.xfermode
             mPaint.strokeWidth = options.strokeWidth
             if (options.xfermode != null) {
-                //mPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-                //paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OUT)
-                //mPaint.color = Color.RED
                 setLayerType(LAYER_TYPE_HARDWARE, null)
-                //mPaint.strokeWidth = 50f
+                // xfermode doesn't works with hardware acceleration
             }
             canvas.drawPath(path, mPaint)
 
@@ -105,19 +67,12 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
         mPaint.color = paintOptions.color
         mPaint.xfermode = paintOptions.xfermode
         mPaint.strokeWidth = paintOptions.strokeWidth
-        if (isErasing) {
+        if (isEraseMode) {
             setLayerType(LAYER_TYPE_HARDWARE, null)
-            //
-            //paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OUT)
-            //mPaint.color = Color.RED
-            //mPaint.strokeWidth = 50f
         } else {
-            //mPaint.strokeWidth = 20f
             mPaint.color = paintOptions.color
         }
-
         canvas.drawPath(mPath, mPaint)
-
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw:Int, oldh: Int) {
@@ -129,34 +84,35 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
     fun clearCanvas() {
         mPath.reset()
         paths = LinkedHashMap()
-        penMode()
+        isEraseMode = false
+        isPenMode = false
         invalidate()
     }
 
-    fun bindImage(imageView: ImageView) {
-        mImageView = imageView
-    }
     fun eraseMode() {
-        isErasing = true
-        paintOptions.color = Color.RED
-        paintOptions.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-        paintOptions.strokeWidth = 50f
+        isEraseMode = true
+        isPenMode = false
+        paintOptions.color = COLOR_GRAY
+        paintOptions.strokeWidth = STROKE_ERASER
+        paintOptions.xfermode = MODE_CLEAR
+
     }
 
     fun penMode() {
-        isErasing = false
-        paintOptions.color = Color.BLUE
+        isEraseMode = false
+        isPenMode = true
+        paintOptions.color = COLOR_BLUE
+        paintOptions.strokeWidth = STROKE_PEN
         paintOptions.xfermode = null
-        paintOptions.strokeWidth = 20f
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        Log.d("spireGesture", "canvasView-level gesture detected")
+        if (!isPenMode and !isEraseMode) return true;
+        // don't need to track path is pen and eraser are both disabled
 
-       //mScaleDetector.onTouchEvent(event)
-        val x = event.x // about drawing
         val y = event.y
-        if (event.pointerCount == 1) {
+        val x = event.x
+        if (event.pointerCount == 1) { // don't track on multi-touch
             when(event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     startX = x
@@ -185,7 +141,7 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
 
                     paths[mPath] = paintOptions
                     mPath = Path()
-                    paintOptions = PaintOptions(paintOptions.color, paintOptions.strokeWidth, paintOptions.alpha, paintOptions.xfermode)
+                    paintOptions = PaintOptions(paintOptions.color, paintOptions.strokeWidth, paintOptions.xfermode)
                     invalidate()
                 }
             }

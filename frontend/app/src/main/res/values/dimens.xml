@@ -6,4 +6,9 @@
     <dimen name="nav_bar_height">75dp</dimen>
     <dimen name="nav_bar_icon_size">24dp</dimen>
     <dimen name="nav_bar_create_post_btn_size">60dp</dimen>
+
+    <dimen name="img_edit_btn_size">45dp</dimen>
+    <dimen name="prompt_suggestion_btn_height">25dp</dimen>
+    <dimen name="image_edit_toolbar_btn_size">60dp</dimen>
+    <dimen name="image_edit_toolbar_btn_padding">20dp</dimen>
 </resources>

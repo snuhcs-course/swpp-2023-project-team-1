@@ -14,32 +14,57 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import com.google.android.material.appbar.AppBarLayout
 
 class ImageEditActivity : AppCompatActivity() {
 
     private lateinit var mImageView: ImageView
     private lateinit var mCanvasView: SpireCanvasView
+    private lateinit var editBtn: ImageButton
     private lateinit var eraseBtn: ImageButton
     private lateinit var resetBtn: ImageButton
     private lateinit var promptSuggestBtn: Button
     private lateinit var promptInput: EditText
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.hide()
         setContentView(R.layout.activity_image_edit)
+
         mImageView = findViewById(R.id.editing_image)
         mCanvasView = findViewById(R.id.spire_canvas_view)
-        mCanvasView.bindImage(mImageView)
+
+        editBtn = findViewById(R.id.edit_button)
+        editBtn.setOnClickListener {
+            if (mCanvasView.isPenMode){
+                mCanvasView.isPenMode = false
+                editBtn.setImageResource(R.drawable.ic_img_edit)
+            }
+            else {
+                mCanvasView.penMode()
+                editBtn.setImageResource(R.drawable.ic_img_edit_selected)
+                eraseBtn.setImageResource(R.drawable.ic_img_erase)
+            }
+        }
+
         eraseBtn = findViewById(R.id.erase_button)
         eraseBtn.setOnClickListener {
-            if (mCanvasView.isErasing) mCanvasView.penMode()
-            else mCanvasView.eraseMode()
+            if (mCanvasView.isEraseMode){
+                mCanvasView.isEraseMode = false
+                eraseBtn.setImageResource(R.drawable.ic_img_erase)
+            }
+            else {
+                mCanvasView.eraseMode()
+                eraseBtn.setImageResource(R.drawable.ic_img_erase_selected)
+                editBtn.setImageResource(R.drawable.ic_img_edit)
+            }
         }
-        // TODO: change icon
+
         resetBtn = findViewById(R.id.reset_button)
         resetBtn.setOnClickListener {
             mCanvasView.clearCanvas()
+            editBtn.setImageResource(R.drawable.ic_img_edit)
+            eraseBtn.setImageResource(R.drawable.ic_img_erase)
         }
 
         promptSuggestBtn = findViewById(R.id.prompt_suggestion_button)
@@ -53,33 +78,4 @@ class ImageEditActivity : AppCompatActivity() {
         }
 
     }
-/*
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        Log.d("spireGesture", "activity-level touch detected")
-        mScaleDetector.onTouchEvent(event)
-        return true
-    }
-
-    inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
-            Log.d("spireGesture", "activity-level gesture detected")
-            mScaleFactor *= detector.scaleFactor
-
-            // Don't let the object get too small or too large.
-            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f))
-
-
-            //mImageView.scaleX = mScaleFactor
-            //mImageView.scaleY = mScaleFactor // TODO: apply to the viewgroup
-            //mImageView.invalidate()
-            //mCanvasView.scaleX = mScaleFactor
-            //mCanvasView.scaleY = mScaleFactor
-
-            //mFrameLayout.scaleX = mScaleFactor
-            //mFrameLayout.scaleY = mScaleFactor
-
-
-            return true
-        }
-    }*/
 }

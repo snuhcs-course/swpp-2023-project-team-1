@@ -2,8 +2,15 @@
     <string name="app_name">Spire</string>
     <string name="title_activity_sign_in">SignInActivity</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_image_edit">ImageEditActivity</string>
     <string name="title_feed">Feed</string>
     <string name="title_search">Search</string>
     <string name="title_notification">Notifications</string>
     <string name="title_profile">Profile</string>
+
+    <!-- image edit activities -->
+    <string name="title_toolbar">Edit Your Image</string>
+    <string name="prompt_suggestion_button">sunglasses</string>
+    <string name="prompt_hint">Write your prompt here</string>
+    <string name="next_button">Next</string>
 </resources>

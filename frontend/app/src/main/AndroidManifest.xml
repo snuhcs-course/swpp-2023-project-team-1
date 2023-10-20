@@ -15,7 +15,8 @@
         <activity
             android:name="com.project.spire.ui.create.image.ImageEditActivity"
             android:exported="true"
-            android:label="@string/title_activity_sign_up">
+            android:label="@string/title_activity_image_edit">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
