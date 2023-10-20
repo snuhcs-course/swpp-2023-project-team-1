@@ -3,12 +3,32 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <!-- Auth activities -->
+    <dimen name="auth_padding">30dp</dimen>
+    <dimen name="auth_logo_width">138dp</dimen>
+    <dimen name="auth_logo_height">98dp</dimen>
+    <dimen name="login_logo_margin_top">60dp</dimen>
+    <dimen name="signup_logo_margin_top">80dp</dimen>
+
+    <!-- Navigation bar -->
     <dimen name="nav_bar_height">75dp</dimen>
     <dimen name="nav_bar_icon_size">24dp</dimen>
     <dimen name="nav_bar_create_post_btn_size">60dp</dimen>
 
+    <!-- image edit -->
     <dimen name="img_edit_btn_size">45dp</dimen>
     <dimen name="prompt_suggestion_btn_height">25dp</dimen>
     <dimen name="image_edit_toolbar_btn_size">60dp</dimen>
     <dimen name="image_edit_toolbar_btn_padding">20dp</dimen>
+  
+    <!-- feed and post -->
+    <dimen name="feed_logo_width">80dp</dimen>
+    <dimen name="feed_logo_height">40dp</dimen>
+    <dimen name="feed_toolbar_height">80dp</dimen>
+    <dimen name="post_padding">15dp</dimen>
+    <dimen name="post_profile_image_width">40dp</dimen>
+    <dimen name="post_profile_image_height">40dp</dimen>
+    <dimen name="post_footer_icon_width">40dp</dimen>
+    <dimen name="post_footer_icon_height">40dp</dimen>
+    <dimen name="post_footer_text_width">35dp</dimen>
 </resources>
