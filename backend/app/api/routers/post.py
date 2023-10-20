@@ -54,11 +54,13 @@ async def get_post(
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))]
 )
 async def delete_post(
+    req: Request,
     post_id: UUID4
 ):
     post_svc = PostService()
     post = await post_svc.delete_post_by_id(
-        post_id=post_id
+        post_id=post_id,
+        request_user_id = req.user.id
     )
     return {"message": f"Post {post_id} deleted successfully"}
 
@@ -110,11 +112,13 @@ async def create_comment(
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))]
 )
 async def delete_comment(
+    req: Request,
     post_id: UUID4,
     comment_id: UUID4
 ):
     post_svc = PostService()
     comment = await post_svc.delete_comment_by_id(
-        comment_id=comment_id
+        comment_id=comment_id, 
+        request_user_id = req.user.id
     )
     return {"message": f"Comment {comment_id} deleted successfully"}
