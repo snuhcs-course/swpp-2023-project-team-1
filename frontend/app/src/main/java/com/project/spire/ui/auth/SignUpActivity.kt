@@ -47,6 +47,7 @@ class SignUpActivity : AppCompatActivity() {
         val passwordInput = binding.passwordInput
         val usernameInput = binding.usernameInput
         val passwordPatternButton = binding.passwordPattern
+        passwordPatternButton.isActivated = false
         val popupView = LayoutInflater.from(this).inflate(R.layout.password_pattern_popup, null)
         val popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true)
 
@@ -71,19 +72,24 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         passwordPatternButton.setOnTouchListener {v, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    // TODO
-                    popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
-                    v.performClick()
+            val password = passwordInput.editText?.text.toString()
+            val isInvalid = Validation.isValidPassword(password) == Validation.PASSWORD_EMPTY ||
+                    Validation.isValidPassword(password) == Validation.PASSWORD_INVALID
+            if (isInvalid && passwordPatternButton.isActivated) {
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        // TODO
+                        popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+                        v.performClick()
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        // TODO
+                        popupWindow.dismiss();
+                        v.performClick()
+                    }
+                    else -> false
                 }
-                MotionEvent.ACTION_UP -> {
-                    // TODO
-                    popupWindow.dismiss();
-                    v.performClick()
-                }
-                else -> false
-            }
+            } else { false }
         }
 
         usernameInput.editText?.setOnFocusChangeListener { v, hasFocus ->

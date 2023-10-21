@@ -34,5 +34,10 @@
     <string name="or">or</string>
     <string name="password_pattern_toggle">\?</string>
     <string name="password_popup_title">Your Password Must:</string>
+    <string name="password_rule_1">✦ Be at least 8 characters</string>
+    <string name="password_rule_2">✦ Contain at least 1 alphabet</string>
+    <string name="password_rule_3">✦ Contain at least 1 number</string>
+    <string name="password_rule_4">✦ Contain at least 1 special character</string>
+
 
 </resources>
