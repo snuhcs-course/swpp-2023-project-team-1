@@ -11,9 +11,13 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.project.spire.network.RetrofitClient.Companion.authAPI
 import com.project.spire.network.auth.request.RefreshRequest
+import com.project.spire.network.auth.request.RegisterRequest
 import com.project.spire.network.auth.response.LoginError
 import com.project.spire.network.auth.response.LoginResponse
 import com.project.spire.network.auth.response.LoginSuccess
+import com.project.spire.network.auth.response.RegisterError
+import com.project.spire.network.auth.response.RegisterResponse
+import com.project.spire.network.auth.response.RegisterSuccess
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
@@ -101,6 +105,37 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
         } else {
             Log.e("AuthRepository", "Refresh error ${response.code()}: ${response.message()}")
             false
+        }
+    }
+
+    /**
+     * Register API
+     * Returns RegisterSuccess or RegisterError */
+    suspend fun register(email: String, username: String, password: String): RegisterResponse {
+        val request = RegisterRequest(email, username, password)
+        val response = authAPI.register(request)
+
+        return if (response.isSuccessful) {
+            val successBody = response.body() as RegisterSuccess
+            Log.d("AuthRepository", "Register response: ${successBody.username}")
+
+            // Save tokens to datastore
+            authDataStore.edit {
+                it[AuthPreferenceKeys.ACCESS_TOKEN] = successBody.accessToken!!
+                it[AuthPreferenceKeys.REFRESH_TOKEN] = successBody.refreshToken!!
+                it[AuthPreferenceKeys.IS_LOGGED_IN] = true
+            }
+            successBody
+        } else {
+            return if (response.code() == 422) {
+                // Failed to register (400)
+                Log.e("AuthRepository", "Register error ${response.code()}: ${response.message()}")
+                RegisterError(message = response.message())
+            } else {
+                // Failed to request API
+                Log.e("AuthRepository", "Register error ${response.code()}: ${response.message()}")
+                RegisterError(message = response.message())
+            }
         }
     }
 

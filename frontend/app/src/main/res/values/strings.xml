@@ -32,4 +32,7 @@
     <string name="signup">Sign up</string>
     <string name="login">Login</string>
     <string name="or">or</string>
+    <string name="password_pattern_toggle">\?</string>
+    <string name="password_popup_title">Your Password Must:</string>
+
 </resources>
