@@ -10,9 +10,11 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.project.spire.network.RetrofitClient.Companion.authAPI
+import com.project.spire.network.auth.request.RefreshRequest
 import com.project.spire.network.auth.response.LoginError
 import com.project.spire.network.auth.response.LoginResponse
 import com.project.spire.network.auth.response.LoginSuccess
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 val Context.authDataStore: DataStore<Preferences> by preferencesDataStore(name = "AUTH_DATASTORE")
@@ -72,6 +74,31 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
             true
         } else {
             Log.e("AuthRepository", "Logout error ${response.code()}: ${response.message()}")
+            false
+        }
+    }
+
+    /**
+     * Refresh API
+     * Saves new token and returns true if refresh is successful */
+    suspend fun refresh(): Boolean {
+        // TODO
+        val accessToken = accessTokenFlow.first()
+        val refreshToken = refreshTokenFlow.first()
+        val request = RefreshRequest(accessToken, refreshToken)
+        val response = authAPI.refresh(request)
+        return if (response.isSuccessful) {
+            val successBody = response.body()!!
+            Log.d("AuthRepository", "Refresh success")
+
+            // Save new token to datastore
+            authDataStore.edit {
+                it[AuthPreferenceKeys.ACCESS_TOKEN] = successBody.accessToken
+                it[AuthPreferenceKeys.REFRESH_TOKEN] = successBody.refreshToken
+            }
+            true
+        } else {
+            Log.e("AuthRepository", "Refresh error ${response.code()}: ${response.message()}")
             false
         }
     }

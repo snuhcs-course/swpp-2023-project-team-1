@@ -19,11 +19,6 @@
             android:exported="true"
             android:label="@string/title_activity_image_edit">
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.project.spire.ui.auth.SignUpActivity"
