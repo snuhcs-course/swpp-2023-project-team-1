@@ -10,8 +10,10 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.project.spire.network.RetrofitClient.Companion.authAPI
+import com.project.spire.network.auth.request.EmailRequest
 import com.project.spire.network.auth.request.RefreshRequest
 import com.project.spire.network.auth.request.RegisterRequest
+import com.project.spire.network.auth.request.VerifyCodeRequest
 import com.project.spire.network.auth.response.LoginError
 import com.project.spire.network.auth.response.LoginResponse
 import com.project.spire.network.auth.response.LoginSuccess
@@ -136,6 +138,38 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
                 Log.e("AuthRepository", "Register error ${response.code()}: ${response.message()}")
                 RegisterError(message = response.message())
             }
+        }
+    }
+
+    /**
+     * Email Verification API
+     * Sends 6 digit verification code to email */
+    suspend fun email(email: String): Boolean {
+        val request = EmailRequest(List(1) { email })
+        val response = authAPI.email(request)
+
+        return if (response.isSuccessful) {
+            Log.d("AuthRepository", "Email response: ${response.code()}")
+            true
+        } else {
+            Log.e("AuthRepository", "Email error ${response.code()}: ${response.message()}")
+            false
+        }
+    }
+
+    /**
+     * Verify Code API
+     * Returns true if verification is successful */
+    suspend fun verifyCode(email: String, code: String): Boolean {
+        val request = VerifyCodeRequest(email, code)
+        val response = authAPI.verifyCode(request)
+
+        return if (response.isSuccessful) {
+            Log.d("AuthRepository", "Verify code response: ${response.code()}")
+            true
+        } else {
+            Log.e("AuthRepository", "Verify code error ${response.code()}: ${response.message()}")
+            false
         }
     }
 
