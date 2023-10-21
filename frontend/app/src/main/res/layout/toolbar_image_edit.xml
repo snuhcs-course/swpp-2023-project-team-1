@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/image_edit_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/image_edit_toolbar_btn_size"
+    app:contentInsetStart="0dp"
+
+    android:background="@android:color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="@dimen/image_edit_toolbar_btn_size"
+            android:layout_height="@dimen/image_edit_toolbar_btn_size"
+            android:background="@null"
+            android:padding="@dimen/image_edit_toolbar_btn_padding"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_img_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/toolbar_text"
+            style="@style/ToolbarText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_toolbar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/back_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/exit_button"
+            android:layout_width="@dimen/image_edit_toolbar_btn_size"
+            android:layout_height="@dimen/image_edit_toolbar_btn_size"
+            android:background="@null"
+            android:padding="@dimen/image_edit_toolbar_btn_padding"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_img_exit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.appcompat.widget.Toolbar>
+
+
+
+
+
+

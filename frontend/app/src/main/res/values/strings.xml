@@ -2,10 +2,18 @@
     <string name="app_name">Spire</string>
     <string name="title_activity_sign_in">LoginActivity</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_image_edit">ImageEditActivity</string>
     <string name="title_feed">Feed</string>
     <string name="title_search">Search</string>
     <string name="title_notification">Notifications</string>
     <string name="title_profile">Profile</string>
+
+    <!-- image edit activities -->
+    <string name="title_toolbar">Edit Your Image</string>
+    <string name="prompt_suggestion_button">sunglasses</string>
+    <string name="prompt_hint">Write your prompt here</string>
+    <string name="next_button">Next</string>
+
     <string name="title_create_post">Create Post</string>
     <string name="title_edit_profile">Edit Profile</string>
 
@@ -24,5 +32,4 @@
     <string name="signup">Sign up</string>
     <string name="login">Login</string>
     <string name="or">or</string>
-
 </resources>
