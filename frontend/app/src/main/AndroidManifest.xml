@@ -16,7 +16,9 @@
         android:theme="@style/Theme.Spire"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
+        <activity
+            android:name="com.project.spire.ui.auth.VerifyEmailActivity"
+            android:exported="false" />
         <activity
             android:name="com.project.spire.ui.auth.AutoLoginActivity"
             android:exported="true"
@@ -27,30 +29,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.project.spire.ui.create.image.ImageEditActivity"
             android:exported="true"
-            android:label="@string/title_activity_image_edit">
-        </activity>
-
+            android:label="@string/title_activity_image_edit"></activity>
         <activity
             android:name="com.project.spire.ui.auth.SignUpActivity"
             android:exported="true"
-            android:label="@string/title_activity_sign_up">
-        </activity>
-
+            android:label="@string/title_activity_sign_up"></activity>
         <activity
             android:name="com.project.spire.ui.auth.LoginActivity"
             android:exported="true"
-            android:label="@string/title_activity_sign_in">
-        </activity>
-
+            android:label="@string/title_activity_sign_in"></activity>
         <activity
             android:name="com.project.spire.ui.MainActivity"
-            android:exported="true">
-        </activity>
-
+            android:exported="true"></activity>
     </application>
 
 </manifest>

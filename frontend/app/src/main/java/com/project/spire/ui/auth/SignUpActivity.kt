@@ -1,7 +1,6 @@
 package com.project.spire.ui.auth
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
@@ -9,15 +8,14 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.widget.doOnTextChanged
 import com.example.spire.R
 import com.example.spire.databinding.ActivitySignUpBinding
+import com.google.android.material.textfield.TextInputLayout
 import com.project.spire.core.auth.Validation
 import com.project.spire.ui.MainActivity
 
@@ -41,27 +39,24 @@ class SignUpActivity : AppCompatActivity() {
         goToLoginTextBtn.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
         }
-        val signUpBtn: Button = binding.signUpBtn
 
+        val signUpBtn: Button = binding.signUpBtn
         val emailInput = binding.emailInput
         val passwordInput = binding.passwordInput
         val usernameInput = binding.usernameInput
         val passwordPatternButton = binding.passwordPattern
-        passwordPatternButton.isActivated = false
         val popupView = LayoutInflater.from(this).inflate(R.layout.password_pattern_popup, null)
         val popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true)
+        passwordPatternButton.isActivated = false
 
-        emailInput.editText?.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus) {
-                emailInput.helperText = resources.getString(R.string.email_helper_text)
-                emailInput.error = null
-                emailInput.isErrorEnabled = false
-            } else {
-                emailInput.helperText = ""
-            }
+        emailInput.editText?.setOnFocusChangeListener { _, hasFocus ->
+            setHelperText(emailInput, hasFocus, resources.getString(R.string.email_helper_text))
+        }
+        usernameInput.editText?.setOnFocusChangeListener { _, hasFocus ->
+            setHelperText(usernameInput, hasFocus, resources.getString(R.string.username_helper_text))
         }
 
-        passwordInput.editText?.doOnTextChanged { text, start, before, count ->
+        passwordInput.editText?.doOnTextChanged { text, _, _, _ ->
             passwordPatternButton.isActivated = true
             if (Validation.isValidPassword(text.toString()) == Validation.PASSWORD_EMPTY ||
                 Validation.isValidPassword(text.toString()) == Validation.PASSWORD_INVALID) {
@@ -78,28 +73,16 @@ class SignUpActivity : AppCompatActivity() {
             if (isInvalid && passwordPatternButton.isActivated) {
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        // TODO
-                        popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+                        popupWindow.showAsDropDown(v, 0, 0, Gravity.END);
                         v.performClick()
                     }
                     MotionEvent.ACTION_UP -> {
-                        // TODO
                         popupWindow.dismiss();
                         v.performClick()
                     }
                     else -> false
                 }
             } else { false }
-        }
-
-        usernameInput.editText?.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus) {
-                usernameInput.helperText = resources.getString(R.string.username_helper_text)
-                usernameInput.error = null
-                usernameInput.isErrorEnabled = false
-            } else {
-                usernameInput.helperText = ""
-            }
         }
 
         signUpBtn.setOnClickListener {
@@ -151,6 +134,16 @@ class SignUpActivity : AppCompatActivity() {
                     binding.loadingIndicator.hide()
                 }
             }
+        }
+    }
+
+    private fun setHelperText(view: TextInputLayout, hasFocus: Boolean, text: String) {
+        if (hasFocus) {
+            view.helperText = text
+            view.error = null
+            view.isErrorEnabled = false
+        } else {
+            view.helperText = ""
         }
     }
 }
