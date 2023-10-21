@@ -21,8 +21,6 @@ class FeedFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,8 +55,6 @@ class FeedFragment : Fragment() {
         _binding = null
     }
 
-
-
     private fun fetchPosts() {
         //TODO implement this
         // fetch posts from backend
@@ -81,18 +77,9 @@ class FeedFragment : Fragment() {
             val createdAt="1 hours ago"
             var updatedAt="1 hours ago"
 
-
-
             val post = Post(user_id,user,content,imageUrl,likedUsers,comments,createdAt,updatedAt)
-
-
 
             postList!!.add(post)
         }
-
-
-
-
     }
-
 }

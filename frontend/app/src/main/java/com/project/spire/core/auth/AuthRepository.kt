@@ -82,11 +82,12 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
      * Refresh API
      * Saves new token and returns true if refresh is successful */
     suspend fun refresh(): Boolean {
-        // TODO
         val accessToken = accessTokenFlow.first()
         val refreshToken = refreshTokenFlow.first()
         val request = RefreshRequest(accessToken, refreshToken)
         val response = authAPI.refresh(request)
+        Log.d("AuthRepository", "Refresh request: $accessToken")
+        Log.d("AuthRepository", "Refresh request: $refreshToken")
         return if (response.isSuccessful) {
             val successBody = response.body()!!
             Log.d("AuthRepository", "Refresh success")
