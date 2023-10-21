@@ -12,6 +12,8 @@ class VerifyEmailViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
+    private val EMAIL_TIMER = 30
+
     private val _emailExists = MutableLiveData<Boolean>().apply { value = false }
     val emailExists = _emailExists
 
@@ -21,10 +23,7 @@ class VerifyEmailViewModel(
     private val _verifyEmailResult = MutableLiveData<Boolean>().apply { value = false }
     val verifyEmailResult = _verifyEmailResult
 
-    private val _sendAgainAvailable = MutableLiveData<Boolean>().apply { value = true }
-    val sendAgainAvailable = _sendAgainAvailable
-
-    private val _remainingSeconds = MutableLiveData<Int>().apply { value = 30 }
+    private val _remainingSeconds = MutableLiveData<Int>().apply { value = EMAIL_TIMER }
     val remainingSeconds = _remainingSeconds
 
     private val _errorMessage = MutableLiveData<String>().apply { value = "" }
@@ -57,12 +56,10 @@ class VerifyEmailViewModel(
 
     fun startTimer() {
         viewModelScope.launch {
-            _sendAgainAvailable.postValue(false)
-            for (i in 30 downTo 0) {
+            for (i in EMAIL_TIMER downTo 0) {
                 _remainingSeconds.postValue(i)
                 kotlinx.coroutines.delay(1000)
             }
-            _sendAgainAvailable.postValue(true)
         }
     }
 

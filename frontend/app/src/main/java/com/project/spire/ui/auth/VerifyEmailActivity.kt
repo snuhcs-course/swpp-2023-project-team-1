@@ -37,8 +37,14 @@ class VerifyEmailActivity : AppCompatActivity() {
         val emailInput = binding.emailInput
         val sendMailButton = binding.sendMailButton
         val verificationLayout = binding.verificationCodeLayout
+        val sendAgainButton = binding.verificationSendAgain
+        val sendAgainTimer = binding.verificationSendAgainTimer
 
         sendMailButton.setOnClickListener {
+            viewModel.sendEmail(emailInput.editText?.text.toString())
+        }
+
+        sendAgainButton.setOnClickListener {
             viewModel.sendEmail(emailInput.editText?.text.toString())
         }
 
@@ -58,5 +64,19 @@ class VerifyEmailActivity : AppCompatActivity() {
         viewModel.errorMessage.observe(this) {
             emailInput.error = it
         }
+
+        viewModel.remainingSeconds.observe(this) {
+            if (it > 0) {
+                sendAgainTimer.text = "in $it seconds"
+            } else {
+                sendAgainTimer.text = ""
+                sendAgainButton.isEnabled = true
+                sendAgainButton.setTextColor(resources.getColor(R.color.blue_700))
+            }
+        }
+
+        // TODO: set auto focus mover for code input
+
+        // TODO: set auto request for code input
     }
 }
