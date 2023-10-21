@@ -11,6 +11,10 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+/**
+ * This Activity is invisible
+ * For automated login
+ * Must be the initial launch Activity */
 class AutoLoginActivity : AppCompatActivity() {
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -19,22 +23,22 @@ class AutoLoginActivity : AppCompatActivity() {
 
         val authDataStore = DataStoreProvider.authDataStore
         val authRepository = AuthRepository(authDataStore)
-        val context = this
 
         // Auto login
         GlobalScope.launch {
             val success = authRepository.refresh()
             if (success) {
-                // Go to main activity
-                val intent = Intent(context, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
+                goto<MainActivity>()
             } else {
-                // Go to login activity
-                val intent = Intent(context, LoginActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
+                goto<LoginActivity>()
             }
         }
+    }
+
+    private inline fun <reified T: AppCompatActivity> goto() {
+        val intent = Intent(this, T::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        finish()
     }
 }
