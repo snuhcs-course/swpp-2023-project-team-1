@@ -1,27 +1,33 @@
 package com.project.spire.ui.auth
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.example.spire.R
-import com.example.spire.databinding.ActivitySignUpBinding
 import com.example.spire.databinding.ActivityVerifyEmailBinding
+import com.google.android.material.textfield.TextInputLayout
 import com.project.spire.core.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
 
 class VerifyEmailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityVerifyEmailBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityVerifyEmailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val authDataStore = DataStoreProvider.authDataStore
         val authRepository = AuthRepository(authDataStore)
-        val viewModel = ViewModelProvider(this, VerifyEmailViewModelFactory(authRepository))[VerifyEmailViewModel::class.java]
+        val viewModel = ViewModelProvider(
+            this,
+            VerifyEmailViewModelFactory(authRepository)
+        )[VerifyEmailViewModel::class.java]
 
         // Hide the action bar
         if (supportActionBar != null) {
@@ -39,6 +45,8 @@ class VerifyEmailActivity : AppCompatActivity() {
         val verificationLayout = binding.verificationCodeLayout
         val sendAgainButton = binding.verificationSendAgain
         val sendAgainTimer = binding.verificationSendAgainTimer
+        val verifyError = binding.verifyErrorText
+        val codeFilled = MutableList(6) { -1 }
 
         sendMailButton.setOnClickListener {
             viewModel.sendEmail(emailInput.editText?.text.toString())
@@ -75,8 +83,62 @@ class VerifyEmailActivity : AppCompatActivity() {
             }
         }
 
-        // TODO: set auto focus mover for code input
+        viewModel.verifyEmailResult.observe(this) {
+            if (it) {
+                startActivity(Intent(this, SignUpActivity::class.java))
+                finish()
+            }
+        }
 
-        // TODO: set auto request for code input
+        viewModel.verifyErrorMessage.observe(this) {
+            verifyError.text = it
+        }
+
+        for (i in 1..6) {
+            val codeInput = findViewById<TextInputLayout>(
+                resources.getIdentifier(
+                    "verification_code_$i",
+                    "id",
+                    packageName
+                )
+            )
+            codeInput.editText?.doOnTextChanged { text, _, _, _ ->
+                handleFocus(i, text.toString())
+                if (text.toString().isNotEmpty()) {
+                    codeFilled[i - 1] = text.toString().toInt()
+                } else {
+                    codeFilled[i - 1] = -1
+                }
+                Log.d("VerifyEmailActivity", "codeFilled: $codeFilled")
+                if (codeFilled.all { it != -1 }) {
+                    viewModel.verifyCode(
+                        emailInput.editText?.text.toString(),
+                        codeInput.editText?.text.toString()
+                    )
+                }
+            }
+        }
+    }
+
+    private fun handleFocus(i: Int, text: String) {
+        if (text.length == 1 && i < 6) {
+            val codeInput = findViewById<TextInputLayout>(
+                resources.getIdentifier(
+                    "verification_code_${i + 1}",
+                    "id",
+                    packageName
+                )
+            )
+            codeInput.requestFocus()
+        } else if (text.isEmpty() && i > 1) {
+            val codeInput = findViewById<TextInputLayout>(
+                resources.getIdentifier(
+                    "verification_code_${i - 1}",
+                    "id",
+                    packageName
+                )
+            )
+            codeInput.requestFocus()
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.project.spire.ui.auth
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,16 +30,21 @@ class VerifyEmailViewModel(
     private val _errorMessage = MutableLiveData<String>().apply { value = "" }
     val errorMessage = _errorMessage
 
+    private val _verifyErrorMessage = MutableLiveData<String>().apply { value = "" }
+    val verifyErrorMessage = _verifyErrorMessage
+
     fun sendEmail(email: String) {
         when (Validation.isValidEmail(email)) {
             Validation.EMAIL_EMPTY -> {
                 _errorMessage.postValue("Email is required")
                 return
             }
+
             Validation.EMAIL_INVALID -> {
                 _errorMessage.postValue("Invalid email format")
                 return
             }
+
             Validation.EMAIL_VALID -> {
                 _errorMessage.postValue("")
                 viewModelScope.launch {
@@ -49,7 +55,25 @@ class VerifyEmailViewModel(
                         _emailSent.postValue(true)
                         startTimer()
                     }
+
+                    // FIXME: Remove this after testing
+                    _emailSent.postValue(true)
                 }
+            }
+        }
+    }
+
+    fun verifyCode(email: String, code: String) {
+        viewModelScope.launch {
+            val success = authRepository.verifyCode(email, code)
+            Log.d("VerifyEmailViewModel", "Verify request with code $code")
+            if (success) {
+                _verifyEmailResult.postValue(true)
+            } else {
+                _verifyErrorMessage.postValue("Check your code again")
+
+                // FIXME: Remove this after testing
+                _verifyEmailResult.postValue(true)
             }
         }
     }
@@ -69,7 +93,8 @@ class VerifyEmailViewModel(
     }
 }
 
-class VerifyEmailViewModelFactory(private val repository: AuthRepository) : androidx.lifecycle.ViewModelProvider.Factory {
+class VerifyEmailViewModelFactory(private val repository: AuthRepository) :
+    androidx.lifecycle.ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(VerifyEmailViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
