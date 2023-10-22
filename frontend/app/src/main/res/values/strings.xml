@@ -20,11 +20,16 @@
     <!-- Auth activities -->
     <string name="email_helper_text">Must be a valid email address</string>
     <string name="password_helper_text">Must be at least 8 characters</string>
-    <string name="username_helper_text">Must be at least 8 characters</string>
-    <string name="email_hint">Email</string>
+    <string name="username_helper_text">Must be at least 6 characters</string>
+    <string name="email_hint">Sign up with Email</string>
+    <string name="login_email_hint">Sign in with Email</string>
     <string name="password_hint">Password</string>
     <string name="username_hint">Username</string>
     <string name="signup_btn">Sign Up</string>
+    <string name="verify_email">Send Verification Mail</string>
+    <string name="verification_guide_title">We have sent verification code!</string>
+    <string name="verification_guide_content">Please check your email and enter the code below.</string>
+    <string name="verification_send_again">Send again</string>
     <string name="login_btn">Log In</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="dont_have_account">Don\'t have an account?</string>
@@ -32,4 +37,12 @@
     <string name="signup">Sign up</string>
     <string name="login">Login</string>
     <string name="or">or</string>
+    <string name="password_pattern_toggle">\?</string>
+    <string name="password_popup_title">Your Password Must:</string>
+    <string name="password_rule_1"> ✦ Be at least 8 characters</string>
+    <string name="password_rule_2"> ✦ Contain at least 1 alphabet</string>
+    <string name="password_rule_3"> ✦ Contain at least 1 number</string>
+    <string name="password_rule_4"> ✦ Contain at least 1 special character</string>
+
+
 </resources>

@@ -2,11 +2,8 @@ package com.project.spire.network.auth.request
 
 import com.google.gson.annotations.SerializedName
 
-data class LoginRequest (
+data class EmailRequest (
 
     @SerializedName("email")
-    val email: String,
-
-    @SerializedName("password")
-    val password: String
+    val email: List<String>,
 )

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Button">
         <item name="android:background">@drawable/btn_bg</item>
         <item name="android:textColor">@color/white</item>
@@ -61,7 +62,7 @@
         <item name="android:paddingTop">1dp</item>
         <item name="android:paddingBottom">1dp</item>
     </style>
-    
+
     <style name="PromptSuggestBtn">
         <item name="android:background">@drawable/btn_prompt_suggestion_bg</item>
         <item name="android:textColor">@color/black</item>
@@ -85,7 +86,7 @@
     <style name="create_post_fab" parent="Widget.MaterialComponents.FloatingActionButton">
         <item name="android:foreground">@drawable/ic_nav_create_post</item>
     </style>
-    
+
     <style name="filled_edit_text" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">@color/boxBackgroundColor</item>
         <item name="boxStrokeWidth">0dp</item>
@@ -106,5 +107,11 @@
         <item name="boxCornerRadiusTopStart">6sp</item>
     </style>
 
+    <style name="TransparentTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
 
 </resources>

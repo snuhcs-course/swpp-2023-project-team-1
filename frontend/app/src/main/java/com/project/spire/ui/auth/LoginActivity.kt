@@ -39,7 +39,7 @@ class LoginActivity : AppCompatActivity() {
         // Redirection to signup page
         val goToSignupTextBtn: TextView = binding.goToSignUpTextBtn
         goToSignupTextBtn.setOnClickListener {
-            startActivity(Intent(this, SignUpActivity::class.java))
+            startActivity(Intent(this, VerifyEmailActivity::class.java))
         }
 
         val loginBtn: Button = binding.loginBtn
