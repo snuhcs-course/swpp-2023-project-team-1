@@ -24,8 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="4dp"
+        android:enabled="false"
         android:layout_marginTop="20dp"
-        android:hint="@string/email_hint"
         app:endIconMode="clear_text"
         app:layout_constraintTop_toBottomOf="@id/logo">
 
@@ -108,28 +108,5 @@
 
     </com.google.android.material.progressindicator.CircularProgressIndicator>
 
-    <TextView
-        android:id="@+id/login_text"
-        style="@style/normal_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:text="@string/already_signed_up"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/go_to_login_text_btn" />
-
-    <TextView
-        android:id="@+id/go_to_login_text_btn"
-        style="@style/text_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:paddingVertical="10dp"
-        android:text="@string/login"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/login_text"
-        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

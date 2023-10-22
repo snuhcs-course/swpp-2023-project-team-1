@@ -3,6 +3,7 @@ package com.project.spire.ui.auth
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -13,9 +14,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.ViewModelProvider
 import com.example.spire.R
 import com.example.spire.databinding.ActivitySignUpBinding
 import com.google.android.material.textfield.TextInputLayout
+import com.project.spire.core.DataStoreProvider
+import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.Validation
 import com.project.spire.ui.MainActivity
 
@@ -23,21 +27,24 @@ import com.project.spire.ui.MainActivity
 class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignUpBinding
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val authDataStore = DataStoreProvider.authDataStore
+        val authRepository = AuthRepository(authDataStore)
+        val viewModel = ViewModelProvider(this, SignUpViewModelFactory(authRepository))[SignUpViewModel::class.java]
+
+        intent.extras?.let {
+            val email = it.getString("email")
+            binding.emailInput.editText?.setText(email)
+            viewModel.updateEmail(email!!)
+        }
 
         if (supportActionBar != null) {
             supportActionBar!!.hide()
-        }
-
-        val goToLoginTextBtn: TextView = binding.goToLoginTextBtn
-
-        goToLoginTextBtn.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
         }
 
         val signUpBtn: Button = binding.signUpBtn
@@ -64,6 +71,11 @@ class SignUpActivity : AppCompatActivity() {
             } else {
                 passwordPatternButton.setImageResource(R.drawable.vector_check_circle_outline)
             }
+            checkInputValidity(text.toString(), usernameInput.editText?.text.toString())
+        }
+
+        usernameInput.editText?.doOnTextChanged { text, _, _, _ ->
+            checkInputValidity(passwordInput.editText?.text.toString(), text.toString())
         }
 
         passwordPatternButton.setOnTouchListener {v, event ->
@@ -86,54 +98,39 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         signUpBtn.setOnClickListener {
-            val email = emailInput.editText?.text.toString()
-            val password = passwordInput.editText?.text.toString()
-            val username = usernameInput.editText?.text.toString()
-
-            emailInput.clearFocus()
             passwordInput.clearFocus()
             usernameInput.clearFocus()
+            binding.loadingIndicator.show()
+            val password = passwordInput.editText?.text.toString()
+            val username = usernameInput.editText?.text.toString()
+            viewModel.register(password, username)
+        }
 
-
-            var IsValid = true
-
-            //TODO: Add Validate email, password, and username Logic
-
-            if (email.isEmpty()) {
-                IsValid = false
-
-                emailInput.error = "Email is required"
-
+        viewModel.registerResult.observe(this) {
+            binding.loadingIndicator.hide()
+            if (it) {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
             }
-            if (password.isEmpty()) {
-                IsValid = false
-                passwordInput.error = "Password is required"
+        }
 
-            }
-            if (username.isEmpty()) {
-                IsValid = false
-                usernameInput.error = "Username is required"
-            }
+        viewModel.errorMessage.observe(this) {
+            binding.loadingIndicator.hide()
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        }
+    }
 
-            if (IsValid) {
-                binding.loadingIndicator.show()
-
-                //TimeUnit.MILLISECONDS.sleep(2000)
-
-
-                var succeed = true
-                if (succeed) {
-
-                    binding.loadingIndicator.hide()
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                    finish()
-                } else {
-                    Toast.makeText(this, "Failed to create auth", Toast.LENGTH_SHORT).show()
-                    binding.loadingIndicator.hide()
-                }
-            }
+    private fun checkInputValidity(password: String, username: String) {
+        val passwordValid = Validation.isValidPassword(password) == Validation.PASSWORD_VALID
+        val usernameValid = Validation.isValidUsername(username) == Validation.USERNAME_VALID
+        if (passwordValid && usernameValid) {
+            binding.signUpBtn.background = resources.getDrawable(R.drawable.btn_bg, null)
+            binding.signUpBtn.isEnabled = true
+        } else {
+            binding.signUpBtn.background = resources.getDrawable(R.drawable.btn_bg_disabled, null)
+            binding.signUpBtn.isEnabled = false
         }
     }
 

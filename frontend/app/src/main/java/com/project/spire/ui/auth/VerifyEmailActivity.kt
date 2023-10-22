@@ -85,7 +85,9 @@ class VerifyEmailActivity : AppCompatActivity() {
 
         viewModel.verifyEmailResult.observe(this) {
             if (it) {
-                startActivity(Intent(this, SignUpActivity::class.java))
+                val intent = Intent(this, SignUpActivity::class.java)
+                intent.putExtra("email", emailInput.editText?.text.toString())
+                startActivity(intent)
                 finish()
             }
         }

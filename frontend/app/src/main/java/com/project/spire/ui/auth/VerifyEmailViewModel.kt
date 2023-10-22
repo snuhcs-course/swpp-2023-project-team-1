@@ -56,8 +56,9 @@ class VerifyEmailViewModel(
                         startTimer()
                     }
 
-                    // FIXME: Remove this after testing
+                    // FIXME: Remove these two lines after testing
                     _emailSent.postValue(true)
+                    startTimer()
                 }
             }
         }
