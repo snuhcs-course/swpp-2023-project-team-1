@@ -22,6 +22,7 @@
     <string name="password_helper_text">Must be at least 8 characters</string>
     <string name="username_helper_text">Must be at least 6 characters</string>
     <string name="email_hint">Sign up with Email</string>
+    <string name="login_email_hint">Sign in with Email</string>
     <string name="password_hint">Password</string>
     <string name="username_hint">Username</string>
     <string name="signup_btn">Sign Up</string>
