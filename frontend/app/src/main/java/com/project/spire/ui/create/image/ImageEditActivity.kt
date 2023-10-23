@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import com.example.spire.databinding.ActivityImageEditBinding
 import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 
 class ImageEditActivity : AppCompatActivity() {
 
@@ -23,6 +24,7 @@ class ImageEditActivity : AppCompatActivity() {
     private lateinit var resetBtn: ImageButton
     private lateinit var promptSuggestBtn: Button
     private lateinit var promptInput: EditText
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,36 +43,38 @@ class ImageEditActivity : AppCompatActivity() {
         }
 
         mCanvasView = binding.spireCanvasView
+        mCanvasView.initViewModel(viewModel)
 
         editBtn = binding.editButton
-        editBtn.setOnClickListener {
-            if (mCanvasView.isPenMode){
-                mCanvasView.isPenMode = false
-                editBtn.setImageResource(R.drawable.ic_img_edit)
+        editBtn.setOnClickListener { viewModel.changePenMode() }
+        val penModeObserver = Observer<Boolean> { isPenMode ->
+            if (isPenMode) {
+                editBtn.setImageResource(R.drawable.ic_img_edit_selected)
             }
             else {
-                mCanvasView.penMode()
-                editBtn.setImageResource(R.drawable.ic_img_edit_selected)
-                eraseBtn.setImageResource(R.drawable.ic_img_erase)
+                editBtn.setImageResource(R.drawable.ic_img_edit)
             }
         }
+        viewModel.isPenMode.observe(this, penModeObserver)
 
         eraseBtn = binding.eraseButton
-        eraseBtn.setOnClickListener {
-            if (mCanvasView.isEraseMode){
-                mCanvasView.isEraseMode = false
-                eraseBtn.setImageResource(R.drawable.ic_img_erase)
+        eraseBtn.setOnClickListener { viewModel.changeEraseMode() }
+        val eraseModeObserver = Observer<Boolean> { isEraseMode ->
+            if (isEraseMode) {
+                eraseBtn.setImageResource(R.drawable.ic_img_erase_selected)
             }
             else {
-                mCanvasView.eraseMode()
-                eraseBtn.setImageResource(R.drawable.ic_img_erase_selected)
-                editBtn.setImageResource(R.drawable.ic_img_edit)
+                eraseBtn.setImageResource(R.drawable.ic_img_erase)
             }
         }
+        viewModel.isEraseMode.observe(this, eraseModeObserver)
+
+        val isDrawingObserver = Observer<Boolean> { mCanvasView.invalidate() }
+        viewModel.isDrawing.observe(this, isDrawingObserver)
 
         resetBtn = binding.resetButton
         resetBtn.setOnClickListener {
-            mCanvasView.clearCanvas()
+            viewModel.clearCanvas()
             editBtn.setImageResource(R.drawable.ic_img_edit)
             eraseBtn.setImageResource(R.drawable.ic_img_erase)
         }
