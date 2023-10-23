@@ -2,21 +2,19 @@ package com.project.spire.ui.create.image
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.spire.R
-import android.content.Intent
-import android.util.Log
-import android.view.MotionEvent
-import android.view.ScaleGestureDetector
+import android.net.Uri
 import android.widget.Button
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.ImageButton
-import com.google.android.material.appbar.AppBarLayout
+import com.example.spire.databinding.ActivityImageEditBinding
+import androidx.activity.viewModels
 
 class ImageEditActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityImageEditBinding
+    private val viewModel: ImageCreateViewModel by viewModels()
 
     private lateinit var mImageView: ImageView
     private lateinit var mCanvasView: SpireCanvasView
@@ -29,12 +27,22 @@ class ImageEditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        setContentView(R.layout.activity_image_edit)
 
-        mImageView = findViewById(R.id.editing_image)
-        mCanvasView = findViewById(R.id.spire_canvas_view)
+        binding = ActivityImageEditBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        editBtn = findViewById(R.id.edit_button)
+        val uri = Uri.parse(intent.getStringExtra("imageUri"))
+        viewModel.setOriginImageUri(uri)
+        mImageView = binding.editingImage
+        viewModel.originImageUri.observe(this) {
+            if (it != null) {
+                mImageView.setImageURI(it)
+            }
+        }
+
+        mCanvasView = binding.spireCanvasView
+
+        editBtn = binding.editButton
         editBtn.setOnClickListener {
             if (mCanvasView.isPenMode){
                 mCanvasView.isPenMode = false
@@ -47,7 +55,7 @@ class ImageEditActivity : AppCompatActivity() {
             }
         }
 
-        eraseBtn = findViewById(R.id.erase_button)
+        eraseBtn = binding.eraseButton
         eraseBtn.setOnClickListener {
             if (mCanvasView.isEraseMode){
                 mCanvasView.isEraseMode = false
@@ -60,15 +68,15 @@ class ImageEditActivity : AppCompatActivity() {
             }
         }
 
-        resetBtn = findViewById(R.id.reset_button)
+        resetBtn = binding.resetButton
         resetBtn.setOnClickListener {
             mCanvasView.clearCanvas()
             editBtn.setImageResource(R.drawable.ic_img_edit)
             eraseBtn.setImageResource(R.drawable.ic_img_erase)
         }
 
-        promptSuggestBtn = findViewById(R.id.prompt_suggestion_button)
-        promptInput = findViewById(R.id.prompt_input)
+        promptSuggestBtn = binding.promptSuggestionButton
+        promptInput = binding.promptInput
         promptSuggestBtn.setOnClickListener {
             val currentText = promptInput.text.toString()
             if (currentText == "") promptInput.setText(promptSuggestBtn.text)
