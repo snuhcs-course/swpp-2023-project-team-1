@@ -20,6 +20,7 @@ python-multipart = "^0.0.6"
 bcrypt = "^4.0.1"
 fastapi-mail = {extras = ["httpx"], version = "^1.4.1"}
 jinja2 = "^3.1.2"
+boto3 = "^1.28.70"
 
 [tool.poetry.group.local.dependencies]
 mypy = "^1.5.1"
