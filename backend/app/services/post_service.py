@@ -4,7 +4,7 @@ from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.post import Post
 from app.schemas.post import PostBase, PostGetResponse
-from app.core.exceptions.post import PostNotFoundException, CommentNotFoundException
+from app.core.exceptions.post import PostNotFoundException, CommentNotFoundException, UserNotOwnerException
 from app.models.comment import Comment
 from app.models.post_like import PostLike
 
@@ -40,13 +40,16 @@ class PostService:
         return response
 
     @Transactional()
-    async def delete_post_by_id(self, post_id: UUID4, session: AsyncSession) -> Post:
+    async def delete_post_by_id(self, post_id: UUID4, request_user_id: UUID4, session: AsyncSession) -> Post:
         result = await session.execute(select(Post).where(and_(Post.id == post_id)))
 
         post: Post | None = result.scalars().first()
 
         if not post:
             raise PostNotFoundException("Post not found")
+        
+        if post.user_id != request_user_id:
+            raise UserNotOwnerException("user is not the owver")
 
         await session.delete(post)
         await session.commit()
@@ -79,13 +82,16 @@ class PostService:
 
 
     @Transactional()
-    async def delete_comment_by_id(self, comment_id: UUID4, session: AsyncSession) -> Comment:
+    async def delete_comment_by_id(self, comment_id: UUID4, request_user_id: UUID4, session: AsyncSession) -> Comment:
         result = await session.execute(select(Comment).where(and_(Comment.id == comment_id)))
 
         comment: Comment | None = result.scalars().first()
 
         if not comment:
             raise CommentNotFoundException("Comment not found")
+        
+        if comment.user_id != request_user_id:
+            raise UserNotOwnerException("user is not the owver")
 
         await session.delete(comment)
         await session.commit()
