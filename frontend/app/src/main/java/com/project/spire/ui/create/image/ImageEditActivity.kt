@@ -2,27 +2,24 @@ package com.project.spire.ui.create.image
 
 import android.content.ContentValues
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.widget.ImageView
-import com.example.spire.R
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
+import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.Toast
-import com.example.spire.databinding.ActivityImageEditBinding
+import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import java.io.File
+import com.example.spire.R
+import com.example.spire.databinding.ActivityImageEditBinding
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.UUID
 
 class ImageEditActivity : AppCompatActivity() {
 
@@ -38,6 +35,7 @@ class ImageEditActivity : AppCompatActivity() {
     private lateinit var promptInput: EditText
 
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -46,11 +44,25 @@ class ImageEditActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val uri = Uri.parse(intent.getStringExtra("imageUri"))
-        viewModel.setOriginImageUri(uri)
+        val cropImageView = binding.cropImageView
+        val cropDoneButton = binding.cropDoneButton
+        cropImageView.setImageUriAsync(uri)
+        cropImageView.setAspectRatio(1, 1)
         mImageView = binding.editingImage
-        viewModel.originImageUri.observe(this) {
+
+        cropDoneButton.setOnClickListener {
+            val bitmap = cropImageView.getCroppedImage(mImageView.width, mImageView.height)!!
+            Log.d("ImageEditActivity", "Bitmap size: ${bitmap.height}")
+            viewModel.setOriginImageBitmap(bitmap)
+            cropImageView.visibility = ImageView.GONE
+            cropDoneButton.visibility = Button.GONE
+        }
+
+        viewModel.originImageBitmap.observe(this) {
             if (it != null) {
-                mImageView.setImageURI(it)
+                Log.d("ImageEditActivity", "Image updated")
+                mImageView.setImageBitmap(it)
+                mImageView.scaleType = ImageView.ScaleType.FIT_XY
             }
         }
 
@@ -62,8 +74,7 @@ class ImageEditActivity : AppCompatActivity() {
         val penModeObserver = Observer<Boolean> { isPenMode ->
             if (isPenMode) {
                 editBtn.setImageResource(R.drawable.ic_img_edit_selected)
-            }
-            else {
+            } else {
                 editBtn.setImageResource(R.drawable.ic_img_edit)
             }
         }
@@ -74,8 +85,7 @@ class ImageEditActivity : AppCompatActivity() {
         val eraseModeObserver = Observer<Boolean> { isEraseMode ->
             if (isEraseMode) {
                 eraseBtn.setImageResource(R.drawable.ic_img_erase_selected)
-            }
-            else {
+            } else {
                 eraseBtn.setImageResource(R.drawable.ic_img_erase)
             }
         }
@@ -103,7 +113,7 @@ class ImageEditActivity : AppCompatActivity() {
 
         var saveButton = binding.saveButton
         saveButton.setOnClickListener {
-             //saveImageOnAboveAndroidQ(mCanvasView.getBitmap())
+            //saveImageOnAboveAndroidQ(mCanvasView.getBitmap())
             //saveImageOnAboveAndroidQ(mCanvasView.getBitmap(mImageView.width, mImageView.height))
             saveImageOnAboveAndroidQ(mCanvasView.getBitmap()) // TODO: 긴쪽 * 긴쪽의 정사각형으로 나오는듯?
         }
@@ -132,14 +142,15 @@ class ImageEditActivity : AppCompatActivity() {
         // val contentResolver = context.getContentResolver()
 
         // 이미지를 저장할 uri를 미리 설정해놓는다.
-        val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        val uri =
+            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 
         try {
-            if(uri != null) {
+            if (uri != null) {
                 val image = contentResolver.openFileDescriptor(uri, "w", null)
                 // write 모드로 file을 open한다.
 
-                if(image != null) {
+                if (image != null) {
                     val fos = FileOutputStream(image.fileDescriptor)
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
                     //비트맵을 FileOutputStream를 통해 compress한다.
@@ -150,7 +161,7 @@ class ImageEditActivity : AppCompatActivity() {
                     contentResolver.update(uri, contentValues, null, null)
                 }
             }
-        } catch(e: FileNotFoundException) {
+        } catch (e: FileNotFoundException) {
             e.printStackTrace()
         } catch (e: IOException) {
             e.printStackTrace()

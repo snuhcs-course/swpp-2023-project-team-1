@@ -18,12 +18,12 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 class ImageCreateViewModel: ViewModel() {
-    private val _originImageUri = MutableLiveData<Uri>()
-    val originImageUri: LiveData<Uri>
-        get() = _originImageUri
+    private val _originImageBitmap = MutableLiveData<Bitmap>()
+    val originImageBitmap: LiveData<Bitmap>
+        get() = _originImageBitmap
 
-    fun setOriginImageUri(uri: Uri) {
-        _originImageUri.value = uri
+    fun setOriginImageBitmap(bitmap: Bitmap) {
+        _originImageBitmap.value = bitmap
     }
 
     private val STROKE_PEN = 50f
