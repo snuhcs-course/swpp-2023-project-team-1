@@ -1,7 +1,9 @@
 package com.project.spire.ui.create.image
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -16,7 +18,6 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
 
     fun initViewModel(viewModel: ImageCreateViewModel) {
         this.viewModel = viewModel
-        // TODO: viewmodel을 이런 식으로 불러와도 되나..
     }
 
     private var mPaint: Paint = Paint()
@@ -34,6 +35,7 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
         for ((path, options) in viewModel.paths) {
             mPaint.xfermode = options.xfermode
             mPaint.strokeWidth = options.strokeWidth
+            mPaint.alpha = options.alpha
             if (options.xfermode != null) {
                 setLayerType(LAYER_TYPE_HARDWARE, null)
                 // xfermode doesn't works with hardware acceleration
@@ -42,6 +44,7 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
         }
         mPaint.xfermode = viewModel.paintOptions.xfermode
         mPaint.strokeWidth = viewModel.paintOptions.strokeWidth
+        mPaint.alpha = viewModel.paintOptions.alpha
         if (viewModel.isEraseMode.value!!) {
             setLayerType(LAYER_TYPE_HARDWARE, null)
         }
@@ -59,4 +62,25 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
         viewModel.processCanvasMotionEvent(event)
         return true
     }
+
+    fun getBitmap(): Bitmap { // used when save
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        canvas.drawColor(Color.TRANSPARENT)
+        this.draw(canvas)
+        return bitmap
+    }
+
+    fun getBitmap(width: Int, height: Int): Bitmap { // used when save
+        // TODO: ImageView와 좌표 차이?
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        canvas.drawColor(Color.TRANSPARENT)
+        this.draw(canvas)
+        return bitmap
+    }
+
+
+
+
 }

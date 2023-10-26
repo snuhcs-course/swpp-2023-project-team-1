@@ -1,13 +1,21 @@
 package com.project.spire.ui.create.image
 
+import android.content.ContentValues
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.net.Uri
+import android.provider.MediaStore
 import android.view.MotionEvent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 
 class ImageCreateViewModel: ViewModel() {
     private val _originImageUri = MutableLiveData<Uri>()
@@ -18,14 +26,15 @@ class ImageCreateViewModel: ViewModel() {
         _originImageUri.value = uri
     }
 
-    private val STROKE_PEN = 20f
-    private val STROKE_ERASER = 50f
+    private val STROKE_PEN = 50f
+    private val STROKE_ERASER = 70f
     private val MODE_CLEAR = PorterDuffXfermode(PorterDuff.Mode.CLEAR) // clears when overlapped
+    private val ALPHA = 150
 
     private var _paths = LinkedHashMap<Path, PaintOptions>()
     val paths: LinkedHashMap<Path, PaintOptions>
         get() = _paths
-    private var _paintOptions = PaintOptions(STROKE_PEN, null)
+    private var _paintOptions = PaintOptions(STROKE_PEN, null, ALPHA)
     val paintOptions: PaintOptions
         get() = _paintOptions
 
@@ -81,6 +90,7 @@ class ImageCreateViewModel: ViewModel() {
             _isPenMode.postValue(true)
             _paintOptions.strokeWidth = STROKE_PEN
             _paintOptions.xfermode = null
+            _paintOptions.alpha = ALPHA
         }
         else {
             _isPenMode.postValue(false)
@@ -126,7 +136,7 @@ class ImageCreateViewModel: ViewModel() {
                     }
                     _paths[_mPath] = _paintOptions
                     _mPath = Path()
-                    _paintOptions = PaintOptions(_paintOptions.strokeWidth, _paintOptions.xfermode)
+                    _paintOptions = PaintOptions(_paintOptions.strokeWidth, _paintOptions.xfermode, _paintOptions.alpha)
                     _isDrawing.postValue(true)
                     _isDrawing.postValue(false)
                 }
@@ -134,4 +144,8 @@ class ImageCreateViewModel: ViewModel() {
         }
         return true
     }
+
+
+
+
 }

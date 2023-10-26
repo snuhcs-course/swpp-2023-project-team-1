@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.project.spire.ui.create.image.ImageEditActivity">
         <include
-                layout="@layout/toolbar_image_edit"
-                 android:id="@+id/image_edit_app_bar_layout" />
+            layout="@layout/toolbar_image_edit"
+            android:id="@+id/image_edit_app_bar_layout" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/image_view_constraint_layout"
@@ -20,6 +20,7 @@
                     android:id="@+id/editing_image"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintDimensionRatio="1:1"
                     app:srcCompat="@drawable/img_dummy" />
@@ -106,21 +107,24 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/ImgEditText"
+            style="@style/ImgEditTextBox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/prompt_suggestion_constraint_layout"
+            app:layout_constraintBottom_toTopOf="@id/next_button"
             android:hint="@string/prompt_hint"
-            android:layout_marginTop="5dp"
+
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="15dp"
             app:endIconMode="clear_text"
             android:layout_marginHorizontal="15dp"
             >
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/prompt_input"
                     android:inputType="text"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    style="@style/ImgEditText"
                     />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -134,6 +138,17 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="20dp"/>
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/next_button"
+            app:layout_constraintLeft_toLeftOf="@id/next_button"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/next_button"
+            android:visibility="invisible"
+            android:text="SAVE" />
 
 
 
