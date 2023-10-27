@@ -231,13 +231,13 @@ Enabling Kubernetes with Docker Desktop makes life much easy. Refer to https://i
 Please refer to https://gpu.snucse.org/kubectl.html `서버 접근 방법` and follow the instructions.
 
 ### Quickstart (Run GPU server)
-Download `sd-deployment.yaml` in /inference_server/template to current directory. And run following command will create a deployment.
+Download `sd-deployment.yaml` in `/inference_server/template` to current directory. And run following command will create a deployment.
 
 ```bash
 kubectl apply -f sd-deployment.yaml
 ```
 
-A Deployment create and manages pods, and a pod execute a container in Kubernetes.
+A deployment create and manages pods, and a pod execute a container in Kubernetes.
 
 ```bash
 kubectl expose deployment sd-deployment  --name=sd-service
