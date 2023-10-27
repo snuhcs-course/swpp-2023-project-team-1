@@ -11,6 +11,7 @@ from app.core import conn
 from app.core.fastapi.middleware.auth import AuthBackend, AuthenticationMiddleware
 from app.core.exceptions.base import CustomException
 
+
 def init_router(app_: FastAPI) -> None:
     app_.include_router(api_router)
 
@@ -25,12 +26,17 @@ def init_listeners(app_: FastAPI) -> None:
 
     # TODO: Remove this(only for debug)
     @app_.exception_handler(RequestValidationError)
-    async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    async def validation_exception_handler(
+        request: Request, exc: RequestValidationError
+    ):
         exc_str = f"{exc}".replace("\n", " ").replace("   ", " ")
         print(f"{request}: {exc_str}")
         content = {"status_code": 10422, "message": exc_str, "detail": exc.errors()}
 
-        return JSONResponse(content=jsonable_encoder(content), status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        return JSONResponse(
+            content=jsonable_encoder(content),
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
 
     @app_.exception_handler(ResponseValidationError)
     async def response_val_error(request, exc):
@@ -38,7 +44,11 @@ def init_listeners(app_: FastAPI) -> None:
         print(f"{request}: {exc_str}")
         content = {"status_code": 10422, "message": exc_str, "detail": exc.errors()}
 
-        return JSONResponse(content=jsonable_encoder(content), status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        return JSONResponse(
+            content=jsonable_encoder(content),
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+
 
 def on_auth_error(request: Request, exc: Exception):
     status_code, error_code, message = 401, None, str(exc)
@@ -51,6 +61,7 @@ def on_auth_error(request: Request, exc: Exception):
         status_code=status_code,
         content={"error_code": error_code, "message": message},
     )
+
 
 def make_middleware() -> list[Middleware]:
     middleware = [
@@ -69,6 +80,7 @@ def make_middleware() -> list[Middleware]:
     ]
     return middleware
 
+
 def get_application() -> FastAPI:
     app = FastAPI(
         title=settings.PROJECT_NAME,
@@ -81,5 +93,6 @@ def get_application() -> FastAPI:
     init_router(app_=app)
     init_listeners(app_=app)
     return app
+
 
 spire_app = get_application()

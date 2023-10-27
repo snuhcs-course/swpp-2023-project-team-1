@@ -1,5 +1,6 @@
 import random
 
+
 class CodeHelper:
     @staticmethod
     def generate_code():

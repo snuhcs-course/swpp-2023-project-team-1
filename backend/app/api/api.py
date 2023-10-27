@@ -7,9 +7,11 @@ from app.api.routers.image import image_router
 
 api_router = APIRouter(prefix="/api")
 
+
 @api_router.get("/")
 async def get():
     return HTMLResponse(html)
+
 
 api_router.include_router(
     auth_router,
@@ -46,4 +48,3 @@ html = """
     </body>
 </html>
 """
-

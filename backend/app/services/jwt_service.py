@@ -24,6 +24,10 @@ class JwtService:
             raise DecodeTokenException("Invalid refresh token")
 
         return JwtToken(
-            access_token=TokenHelper.encode(payload={"user_id": dec_access_token.get("user_id")}),
-            refresh_token=TokenHelper.encode(payload={"sub": "refresh"}, expire_period=60 * 60 * 24 * 30),
+            access_token=TokenHelper.encode(
+                payload={"user_id": dec_access_token.get("user_id")}
+            ),
+            refresh_token=TokenHelper.encode(
+                payload={"sub": "refresh"}, expire_period=60 * 60 * 24 * 30
+            ),
         )

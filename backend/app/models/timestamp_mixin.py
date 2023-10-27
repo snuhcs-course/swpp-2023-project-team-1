@@ -8,7 +8,9 @@ from app.utils.common import utcnow
 class TimestampMixin:
     @declared_attr
     def created_at(cls) -> Mapped[datetime]:
-        return mapped_column(DateTime(timezone=True), server_default=utcnow(), nullable=False)
+        return mapped_column(
+            DateTime(timezone=True), server_default=utcnow(), nullable=False
+        )
 
     @declared_attr
     def updated_at(cls) -> Mapped[datetime]:
