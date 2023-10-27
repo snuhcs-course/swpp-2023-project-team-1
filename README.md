@@ -227,6 +227,7 @@ alembic downgrade -1
 ## 1. Initial Setup
 ### Accessing GPU server
 Enabling Kubernetes with Docker Desktop makes life much easy. Refer to https://isn-t.tistory.com/45
+
 Please refer to https://gpu.snucse.org/kubectl.html `서버 접근 방법` and follow the instructions.
 
 ### Quickstart (Run GPU server)
@@ -280,3 +281,5 @@ kubectl delete services --all
 kubectl delete deployments --all
 kubectl delete pods --all
 ```
+## 2. How to load your model on GPU server
+### TODO
