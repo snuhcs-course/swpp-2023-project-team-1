@@ -222,3 +222,51 @@ alembic upgrade head
 alembic downgrade -1
 ```
 * * *
+
+# Backend
+## 1. Initial Setup
+### Accessing GPU server
+Enabling Kubernetes with Docker Desktop makes life much easy. Refer to https://isn-t.tistory.com/45
+Please refer to https://gpu.snucse.org/kubectl.html `서버 접근 방법` and follow the instructions.
+
+### Quickstart (Run GPU server)
+Download `sd-deployment.yaml` in /inference_server/template to current directory. And run following command will create a deployment.
+
+```bash
+kubectl apply -f sd-deployment.yaml
+```
+
+A Deployment create and manages pods, and a pod execute a container in Kubernetes.
+
+```bash
+kubectl expose deployment deep-floyd-if-deployment  --name=deep-floyd-if-service
+```
+
+This will create a service which allow user to communicate with a deployment.
+
+You can run inference once at least one of pod created by a deployment is ready. Run follow command to check this.
+
+```bash
+kubectl get pods
+kubectl get deployments
+```
+
+<img width="562" alt="스크린샷 2023-10-27 오후 8 43 39" src="https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/a667b322-2873-4e8a-9829-a42d8adef02e">
+
+<img width="565" alt="스크린샷 2023-10-27 오후 8 44 02" src="https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/37a51ae6-148b-4167-88d3-d3b5f0a2f34b">
+
+Currently this takes several minutes, since pods keep restarting before it is ready and it takes time to load model. 
+
+Enter this will allow you to send request and get response with GPU server.
+
+```bash
+kubectl port-forward service/sd-service 8000:8000
+```
+
+Don't forget to delete all services, deployments and pods once you are done.
+
+```bash
+kubectl delete services --all
+kubectl delete deployments --all
+kubectl delete pods --all
+```
