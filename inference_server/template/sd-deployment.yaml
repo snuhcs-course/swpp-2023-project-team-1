@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sd-deployment
+  labels:
+    app: sd
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sd
+  template:
+    metadata:
+      labels:
+        app: sd
+
+    spec:
+      volumes:
+        - name: deep-floyd-if-pv
+          persistentVolumeClaim:
+            claimName: deep-floyd-if-pvc
+      containers:
+        - name: sd-container
+          image: "registry.ferrari.snucse.org:30443/deep/tritonserver:sdxl6"
+          args: ["tritonserver","--model-repository","/opt/tritonserver/models"]
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: "/opt/tritonserver/pretrained_model"
+              name: deep-floyd-if-pv
+
+          resources:
+            limits:
+              cpu: 25
+              memory: "110Gi"
+              nvidia.com/gpu: 1
+
+          ports:
+            - containerPort: 8000
+              name: http
+            - containerPort: 8001
+              name: grpc
+            - containerPort: 8002
+              name: metrics
+          livenessProbe:
+            httpGet:
+              path: /v2/health/live
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            httpGet:
+              path: /v2/health/ready
+              port: http
+      
+      imagePullSecrets:
+      - name: regcred
+
