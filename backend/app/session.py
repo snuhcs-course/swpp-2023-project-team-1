@@ -21,7 +21,6 @@ transactional_session_factory = async_sessionmaker(
 
 
 async def get_db_transactional_session() -> AsyncGenerator[AsyncSession, None]:
-
     async with transactional_session_factory() as session:
         try:  # noqa: WPS501
             yield session

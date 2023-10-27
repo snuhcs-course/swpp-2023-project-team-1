@@ -1,7 +1,7 @@
 from passlib.context import CryptContext
 
-class PasswordHelper:
 
+class PasswordHelper:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     @classmethod

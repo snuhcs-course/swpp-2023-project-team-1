@@ -20,7 +20,6 @@ class UserService:
         return True
 
 
-
 async def get_my_info_by_id(user_id: UUID4, session: AsyncSession) -> User:
     result = await session.execute(select(User).where(User.id == user_id))
     user: User | None = result.scalars().first()

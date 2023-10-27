@@ -2,8 +2,18 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Form, Query, Request, R
 from pydantic import Json
 from app.core.exceptions.base import BadRequestException
 from app.core.fastapi.dependency.permission import IsAuthenticated, PermissionDependency
-from app.schemas.user import CheckUserInfoResponse, LoginRequest, LoginResponse, UserCreate
-from app.services.auth_service import AuthService, check_user_email, check_username, send_email_in_background
+from app.schemas.user import (
+    CheckUserInfoResponse,
+    LoginRequest,
+    LoginResponse,
+    UserCreate,
+)
+from app.services.auth_service import (
+    AuthService,
+    check_user_email,
+    check_username,
+    send_email_in_background,
+)
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.auth import EmailSchema, RefreshTokenRequest, VerifyTokenRequest
@@ -14,6 +24,7 @@ from app.services.code_service import CodeService
 
 
 auth_router = APIRouter()
+
 
 @auth_router.post(
     "/register",
@@ -31,9 +42,10 @@ async def create_user(
         password=req.password,
     )
 
-    res= await auth_svc.login(email=req.email, password=req.password)
+    res = await auth_svc.login(email=req.email, password=req.password)
 
     return res
+
 
 @auth_router.post(
     "/login",
@@ -45,6 +57,7 @@ async def login(req: LoginRequest):
     res = await AuthService().login(email=req.email, password=req.password)
     return res
 
+
 @auth_router.get(
     "/logout",
     summary="Logout",
@@ -54,6 +67,7 @@ async def login(req: LoginRequest):
 async def logout(req: Request):
     await AuthService().logout(req.user.id)
     return {"message": "Logout Success"}
+
 
 # check email or username exists
 @auth_router.get(
@@ -68,13 +82,17 @@ async def check_user_exists(
     username: str = Query(None, description="Username"),
 ):
     if not email and not username:
-        raise BadRequestException("You must provide email or username to check user exists")
+        raise BadRequestException(
+            "You must provide email or username to check user exists"
+        )
 
     out = {}
     if email:
         out["email_exists"] = await check_user_email(email=email, session=session)
     if username:
-        out["username_exists"] = await check_username(username=username, session=session)
+        out["username_exists"] = await check_username(
+            username=username, session=session
+        )
     return out
 
 
@@ -82,6 +100,7 @@ async def check_user_exists(
 async def verify_token(request: VerifyTokenRequest):
     await JwtService().verify_token(token=request.access_token)
     return Response(status_code=200)
+
 
 @auth_router.post(
     "/refresh",
@@ -93,6 +112,7 @@ async def refresh_token(request: RefreshTokenRequest):
     )
     return jwt_token
 
+
 @auth_router.delete(
     "/unregister",
     summary="Unregister user",
@@ -101,9 +121,10 @@ async def refresh_token(request: RefreshTokenRequest):
 )
 async def delete_user(
     req: Request,
-):  
+):
     await AuthService().delete_user_by_id(req.user.id)
     return {"message": f"User {req.user.id} deleted successfully"}
+
 
 @auth_router.post(
     "/email",
@@ -114,11 +135,9 @@ async def send_email(
     background_tasks: BackgroundTasks,
     email: EmailSchema,
 ):
-    await send_email_in_background(
-        email=email,
-        background_tasks=background_tasks
-    )
+    await send_email_in_background(email=email, background_tasks=background_tasks)
     return {"message": f"Email sent to {email}"}
+
 
 @auth_router.post(
     "/verify/code",

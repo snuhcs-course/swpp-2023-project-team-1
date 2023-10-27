@@ -5,9 +5,8 @@ from sqlalchemy.dialects.postgresql import UUID
 
 
 class GUID(TypeDecorator):
-
     class UUIDChar(CHAR):
-        python_type = UUID4 
+        python_type = UUID4
 
     impl = UUIDChar
     cache_ok = True
