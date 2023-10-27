@@ -15,6 +15,7 @@ import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.createBitmap
 import androidx.lifecycle.Observer
 import com.example.spire.R
 import com.example.spire.databinding.ActivityImageEditBinding
@@ -35,6 +36,8 @@ class ImageEditActivity : AppCompatActivity() {
     private lateinit var promptSuggestBtn: Button
     private lateinit var promptInput: EditText
     private lateinit var nextBtn: Button
+
+    private var mImageBitmap: Bitmap? = null
 
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -63,8 +66,9 @@ class ImageEditActivity : AppCompatActivity() {
         viewModel.originImageBitmap.observe(this) {
             if (it != null) {
                 Log.d("ImageEditActivity", "Image updated")
-                mImageView.setImageBitmap(it)
-                mImageView.scaleType = ImageView.ScaleType.FIT_XY
+                //mImageView.setImageBitmap(it)
+                mImageBitmap = Bitmap.createScaledBitmap(it, mImageView.width, mImageView.height,false)
+                mImageView.setImageBitmap(mImageBitmap)
             }
         }
 
@@ -117,45 +121,55 @@ class ImageEditActivity : AppCompatActivity() {
         nextBtn.setOnClickListener {
             val intent = Intent(this, WriteTextActivity::class.java)
             startActivity(intent)
-            // finish()
+
+            // saving image to local
+            // TODO: remove this and send bitmap to server
+            saveImageOnAboveAndroidQ(mCanvasView.getBitmap())
+            if (mImageBitmap != null) {
+                saveImageOnAboveAndroidQ(mImageBitmap!!)
+            }
         }
 
         // TODO: implement toolbar buttons
+    }
 
+    fun saveImageOnAboveAndroidQ(bitmap: Bitmap) {
+        val fileName = System.currentTimeMillis().toString() + ".png"
+        val contentValues = ContentValues()
+        contentValues.apply {
+            put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/ImageSave")
+            put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
 
-        fun saveImageOnAboveAndroidQ(bitmap: Bitmap) {
-            val fileName = System.currentTimeMillis().toString() + ".png"
-            val contentValues = ContentValues()
-            contentValues.apply {
-                put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/ImageSave")
-                put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
-                put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-                put(MediaStore.Images.Media.IS_PENDING, 1)
-            }
+        val uri =
+            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 
-            val uri =
-                contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        try {
+            if (uri != null) {
+                val image = contentResolver.openFileDescriptor(uri, "w", null)
+                if (image != null) {
+                    val fos = FileOutputStream(image.fileDescriptor)
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                    fos.close()
 
-            try {
-                if (uri != null) {
-                    val image = contentResolver.openFileDescriptor(uri, "w", null)
-                    if (image != null) {
-                        val fos = FileOutputStream(image.fileDescriptor)
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                        fos.close()
-
-                        contentValues.clear()
-                        contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-                        contentResolver.update(uri, contentValues, null, null)
-                    }
+                    contentValues.clear()
+                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                    contentResolver.update(uri, contentValues, null, null)
                 }
-            } catch (e: FileNotFoundException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
+
+
+
+
+
 }

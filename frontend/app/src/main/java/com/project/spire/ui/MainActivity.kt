@@ -1,7 +1,6 @@
 package com.project.spire.ui
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toolbar
@@ -13,13 +12,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
 import com.example.spire.R
 import com.example.spire.databinding.ActivityMainBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.project.spire.ui.create.image.CropImageActivity
 import com.project.spire.ui.create.image.ImageEditActivity
 
 class MainActivity : AppCompatActivity() {
