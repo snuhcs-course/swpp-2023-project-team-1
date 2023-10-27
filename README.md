@@ -223,7 +223,7 @@ alembic downgrade -1
 ```
 * * *
 
-# Backend
+# Inference server
 ## 1. Initial Setup
 ### Accessing GPU server
 Enabling Kubernetes with Docker Desktop makes life much easy. Refer to https://isn-t.tistory.com/45
@@ -240,7 +240,7 @@ kubectl apply -f sd-deployment.yaml
 A Deployment create and manages pods, and a pod execute a container in Kubernetes.
 
 ```bash
-kubectl expose deployment deep-floyd-if-deployment  --name=deep-floyd-if-service
+kubectl expose deployment sd-deployment  --name=sd-service
 ```
 
 This will create a service which allow user to communicate with a deployment.
