@@ -3,12 +3,15 @@ from fastapi import APIRouter
 from app.api.routers.user import user_router
 from app.api.routers.auth import auth_router
 from app.api.routers.post import post_router
+from app.api.routers.image import image_router
 
 api_router = APIRouter(prefix="/api")
+
 
 @api_router.get("/")
 async def get():
     return HTMLResponse(html)
+
 
 api_router.include_router(
     auth_router,
@@ -28,6 +31,12 @@ api_router.include_router(
     tags=["post"],
 )
 
+api_router.include_router(
+    image_router,
+    prefix="/image",
+    tags=["image"],
+)
+
 html = """
 <!DOCTYPE html>
 <html>
@@ -39,4 +48,3 @@ html = """
     </body>
 </html>
 """
-
