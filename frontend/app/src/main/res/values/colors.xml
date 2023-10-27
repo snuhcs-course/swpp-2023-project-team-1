@@ -6,6 +6,7 @@
     <color name="blue_700">#11009E</color>
 
     <color name="black">#FF000000</color>
+    <color name="transparent">#00000000</color>
 
     <color name="grey_200">#EEEEEE</color>
     <color name="grey_300">#BDBDBD</color>

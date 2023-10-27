@@ -9,13 +9,21 @@
     <string name="title_profile">Profile</string>
 
     <!-- image edit activities -->
-    <string name="title_toolbar">Edit Your Image</string>
+    <string name="title_toolbar_image_edit">Edit Your Image</string>
     <string name="prompt_suggestion_button">sunglasses</string>
     <string name="prompt_hint">Write your prompt here</string>
     <string name="next_button">Next</string>
 
     <string name="title_create_post">Create Post</string>
     <string name="title_edit_profile">Edit Profile</string>
+
+    <!-- write text activity -->
+    <string name="title_toolbar_write_text">Write Text</string>
+    <string name="post_text_hint">What do you want to say?</string>
+    <string name="done_button">Done</string>
+    <string name="loading_text">Recreating your image…</string>
+    <string name="loading_time_text">Might take up to 10 seconds</string>
+
 
     <!-- Auth activities -->
     <string name="email_helper_text">Must be a valid email address</string>

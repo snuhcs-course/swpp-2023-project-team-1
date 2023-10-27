@@ -17,6 +17,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name="com.project.spire.ui.create.image.WriteTextActivity"
+            android:exported="true" />
+        <activity
             android:name="com.project.spire.ui.create.image.CropImageActivity"
             android:exported="true" />
         <activity

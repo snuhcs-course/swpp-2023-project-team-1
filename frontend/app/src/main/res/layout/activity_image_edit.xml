@@ -129,9 +129,7 @@
             android:id="@+id/prompt_input"
             style="@style/ImgEditText"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="text"
-            android:textAlignment="viewStart" />
+            android:layout_height="match_parent" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -144,17 +142,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
-
-    <Button
-        android:id="@+id/save_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SAVE"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@id/next_button"
-        app:layout_constraintLeft_toLeftOf="@id/next_button"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/next_button" />
 
     <!-- Should be invisible after cropping -->
     <com.canhub.cropper.CropImageView
