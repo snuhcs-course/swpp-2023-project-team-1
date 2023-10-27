@@ -257,6 +257,16 @@ kubectl get deployments
 
 Currently this takes several minutes, since pods keep restarting before it is ready and it takes time to load model. 
 
+You can see what happening inside a pod via following command.
+
+```bash
+kubectl logs -f <name of a pod>
+```
+
+If everything is okay and ready, it should be something like this.
+
+<img width="1795" alt="스크린샷 2023-10-26 오후 12 00 33" src="https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/722dab90-4c49-48ae-aaa9-1597c613a43a">
+
 Enter this will allow you to send request and get response with GPU server.
 
 ```bash
