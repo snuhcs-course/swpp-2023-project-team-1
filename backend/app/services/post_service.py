@@ -1,9 +1,10 @@
+import asyncio
 from pydantic import UUID4
 from sqlalchemy import or_, select, and_
 from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.post import Post
-from app.schemas.post import PostBase, PostCreate
+from app.schemas.post import PostBase, PostCreate, PostUpdate
 from app.core.exceptions.post import PostNotFoundException, CommentNotFoundException, UserNotOwnerException
 from app.models.post import Comment, PostLike
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -13,7 +14,23 @@ from app.core.exceptions.base import (
     NotFoundException,
 )
 from sqlalchemy import and_, delete, select, func, case, update
+
+from app.repository import post
 class PostService:
+    @Transactional()
+    async def get_posts(self, user_id: UUID4 | None, limit: int, offset: int, session: AsyncSession):
+        try:
+            total, posts = await asyncio.gather(
+                post.count(),
+                post.get_list_with_like_cnt_comment_cnt(limit, offset, user_id),
+            )
+
+        except NoResultFound as e:
+            raise NotFoundException("Community not found") from e
+
+        next_cursor = offset + len(posts) if total and total > offset + len(posts) else None
+        return total, posts, next_cursor
+
     @Transactional()
     async def create_post(
         self,
@@ -26,43 +43,57 @@ class PostService:
         post_dict = post_data.create_dict(user_id)
 
         try:
-            post_obj: Post = Post(**post_dict)
-
-            session.add(post_obj)
-            await session.commit()
-            await session.refresh(post_obj)
-            return post_obj
+            return await post.create(post_dict)
         
         except IntegrityError as e:
             raise BadRequestException(str(e.orig)) from e
 
 
     @Transactional()
-    async def get_post_where_id(self, post_id: UUID4, session: AsyncSession, **kwargs) -> Post:
+    async def get_post_by_id(self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs) -> Post:
 
         try:
-            result = await session.execute(select(Post).where((Post.id == post_id)))
-            post = result.scalars().one()
-
-            return post
+            return await post.get_with_like_cnt_where_id(id=post_id, user_id=user_id)
         
         except NoResultFound as e:
             raise PostNotFoundException from e
-
     @Transactional()
-    async def delete_post_by_id(self, post_id: UUID4, request_user_id: UUID4, session: AsyncSession) -> Post:
+    async def update_post_by_id(
+        self,
+        id: UUID4,
+        user_id: UUID4,
+        post_data: PostUpdate,
+        session: AsyncSession,
+        **kwargs
+    ) -> Post:
+        try:
+            post_obj = await self.get_post_by_id(id, user_id)
+        except NoResultFound as e:
+            raise PostNotFoundException from e
+        
+        if post_obj.user_id != user_id:
+            raise ForbiddenException("You are not authorized to delete this post")
+        
+        post_dict = post_data.create_dict()
+
+        new_post_obj = await post.update_by_id(id, post_dict)
+        new_post_obj.like_cnt = post_obj.like_cnt
+
+        return new_post_obj
+
+        
+    @Transactional()
+    async def delete_post_by_id(self, post_id: UUID4, request_user_id: UUID4, session: AsyncSession):
 
         try:
-            post_obj = await self.get_post_where_id(post_id)
+            post_obj = await self.get_post_by_id(post_id, request_user_id)
         except NoResultFound as e:
             raise PostNotFoundException from e
         
         if post_obj.user_id != request_user_id:
                 raise ForbiddenException("You are not authorized to delete this post")
 
-        stmt = delete(Post).where(Post.id == post_id)
-        await session.execute(stmt)
-        return post_obj
+        await post.delete_where_id(post_id)
 
     @Transactional()
     async def toggle_post_like(

@@ -8,28 +8,49 @@ from app.core.fastapi.dependency.permission import (
     PermissionDependency,
 )
 from app.schemas.post import (
+    GetPostsResponse,
     PostBase,
     PostCreate,
     PostRead,
+    PostUpdate,
     PostResponse,
     CommentBase,
     CommentCreate,
     CommentResponse,
-)
-from app.schemas.user import (
-    CheckUserInfoResponse,
-    LoginRequest,
-    LoginResponse,
-    UserCreate,
 )
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.post_service import PostService
 from app.utils.json_decoder import normalize_post
 from app.services import post_service
+from app.utils.user import get_user_id_from_request
+from app.utils.pagination import limit_offset_query
 
 post_router = APIRouter()
 
+@post_router.get(
+    "/",
+    status_code=200,
+    response_model=GetPostsResponse,
+    summary="Get posts with pagination",
+    dependencies=[
+        Depends(PermissionDependency([AllowAll])),
+    ],
+)
+async def get_posts(
+    pagination: dict = Depends(limit_offset_query),
+    user_id: UUID4 | None = Depends(get_user_id_from_request),
+):
+    post_svc = PostService()
+    total, posts, next_cursor = await post_svc.get_posts(
+        user_id, **pagination
+    )
+    posts = normalize_post(posts)
+    return {
+        "total": total,
+        "items": posts,
+        "next_cursor": next_cursor,
+    }
 
 @post_router.post(
     "",
@@ -53,12 +74,32 @@ async def create_post(req: Request, post: PostCreate = Body(...)):
     response_model=PostResponse,
     summary="Get Post",
     description="Get post",
+    dependencies=[
+        Depends(PermissionDependency([AllowAll])),
+    ],
 )
-async def get_post(post_id: UUID4):
+async def get_post(post_id: UUID4, user_id: UUID4 | None = Depends(get_user_id_from_request)):
     post_svc = PostService()
-    post = await post_svc.get_post_where_id(post_id=post_id)
+    post = await post_svc.get_post_by_id(post_id=post_id, user_id=user_id)
     return normalize_post(post)
 
+@post_router.post(
+    "/{post_id}/update",
+    status_code=200,
+    response_model=PostResponse,
+    summary="Update post",
+    dependencies=[
+        Depends(PermissionDependency([IsAuthenticated])),
+    ],
+)
+async def update_post_by_id(
+    post_id: UUID4,
+    post_update: PostUpdate = Body(...),
+    user_id: UUID4 = Depends(get_user_id_from_request),
+):  
+    post_svc = PostService()
+    post = await post_svc.update_post_by_id(post_id, user_id, post_update)
+    return normalize_post(post)
 
 @post_router.delete(
     "/{post_id}",
@@ -67,13 +108,13 @@ async def get_post(post_id: UUID4):
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
 async def delete_post(
-    req: Request,
-    post_id: UUID4
+    post_id: UUID4,
+    user_id: UUID4 | None = Depends(get_user_id_from_request)
 ):
     post_svc = PostService()
     post = await post_svc.delete_post_by_id(
         post_id=post_id,
-        request_user_id = req.user.id
+        request_user_id = user_id
     )
     return {"message": f"Post {post_id} deleted successfully"}
 

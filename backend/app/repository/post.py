@@ -6,10 +6,13 @@ from sqlalchemy import and_, delete, select, func, case, update
 from sqlalchemy.orm import with_expression, selectinload, contains_eager
 from app.models.post import Comment, Post, PostLike
 
+@Transactional()
+async def count( session: AsyncSession):
+    res = await session.execute(select(func.count(Post.id)))
+    return res.scalar_one()
 
 @Transactional()
-async def get_list_with_like_cnt_comment_cnt_where_community_id(
-    community_id: int | None,
+async def get_list_with_like_cnt_comment_cnt(
     limit: int,
     offset: int,
     user_id: UUID4 | None,
@@ -80,7 +83,7 @@ async def create(post: dict, session: AsyncSession):
 
 
 @Transactional()
-async def update_where_id(id: int, post_data: dict, session: AsyncSession) -> Post:
+async def update_by_id(id: int, post_data: dict, session: AsyncSession) -> Post:
     stmt = update(Post).where(Post.id == id).values(**post_data)
     await session.execute(stmt)
     res = await get_with_like_cnt_where_id(id, session=session)
