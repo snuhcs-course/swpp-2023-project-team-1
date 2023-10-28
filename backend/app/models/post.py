@@ -11,8 +11,7 @@ from app.models.user import User
 class Post(Base, TimestampMixin):
     id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
     content: Mapped[str] = mapped_column(TEXT, nullable=False)
-    image_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("image.id", ondelete="CASCADE"), index=True, nullable=False)
-    image: Mapped["Image"] = relationship("Image", back_populates="post", uselist=False)
+    image_url: Mapped[str] = mapped_column(TEXT, nullable=False)
     user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id", ondelete="CASCADE"), index=True, nullable=False)
     user: Mapped[User] = relationship("User", back_populates="posts")
     post_likes: Mapped[list["PostLike"]] = relationship("PostLike", back_populates="post")
@@ -69,7 +68,4 @@ class Image(Base, TimestampMixin):
     modified_image: Mapped[str] = mapped_column(TEXT, nullable=False)
     prompt: Mapped[str] = mapped_column(TEXT, nullable=False)
     user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id", ondelete="CASCADE"), index=True, nullable=False)
-    post_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("post.id", ondelete="CASCADE"), index=True, nullable=False)
     user: Mapped[User] = relationship("User", back_populates="images")
-    post: Mapped[Post] = relationship("Post", back_populates="image", uselist=False)
-    __table_args__ = (UniqueConstraint("user_id", "post_id"),)
