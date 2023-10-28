@@ -1,12 +1,10 @@
 package com.project.spire.ui.create
 
-import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -18,10 +16,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.spire.R
 import com.example.spire.databinding.ActivityImageEditBinding
+import com.project.spire.utils.BitmapUtils
 import com.project.spire.utils.InferenceUtils
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
 
 class ImageEditActivity : AppCompatActivity() {
 
@@ -123,51 +119,19 @@ class ImageEditActivity : AppCompatActivity() {
         nextBtn.setOnClickListener {
             val intent = Intent(this, WriteTextActivity::class.java)
             startActivity(intent)
+            val maskBitmap = mCanvasView.getBitmap()
+            val maskBitmapToServer = BitmapUtils.changeMaskColor(maskBitmap)
 
             // FIXME: save image to local?
-            // saveImageOnAboveAndroidQ(mCanvasView.getBitmap())
-            // if (mImageBitmap != null) {
-            // saveImageOnAboveAndroidQ(mImageBitmap!!)
-            // }
+            /*
+            if (mImageBitmap != null) {
+                BitmapUtils.saveImageOnAboveAndroidQ(maskBitmap, this.contentResolver)
+                BitmapUtils.saveImageOnAboveAndroidQ(maskBitmapToServer, this.contentResolver)
+            } */
 
-            inferenceViewModel.infer(mImageBitmap!!, mCanvasView.getBitmap(), promptInput.text.toString())
+            inferenceViewModel.infer(mImageBitmap!!, maskBitmapToServer, promptInput.text.toString())
         }
 
         // TODO: implement toolbar buttons
-    }
-
-    fun saveImageOnAboveAndroidQ(bitmap: Bitmap) {
-        val fileName = System.currentTimeMillis().toString() + ".png"
-        val contentValues = ContentValues()
-        contentValues.apply {
-            put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/ImageSave")
-            put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
-            put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-            put(MediaStore.Images.Media.IS_PENDING, 1)
-        }
-
-        val uri =
-            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-
-        try {
-            if (uri != null) {
-                val image = contentResolver.openFileDescriptor(uri, "w", null)
-                if (image != null) {
-                    val fos = FileOutputStream(image.fileDescriptor)
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                    fos.close()
-
-                    contentValues.clear()
-                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-                    contentResolver.update(uri, contentValues, null, null)
-                }
-            }
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 }

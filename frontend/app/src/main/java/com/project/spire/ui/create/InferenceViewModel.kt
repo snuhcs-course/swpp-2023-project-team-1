@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.project.spire.core.inference.InferenceRepository
 import com.project.spire.network.inference.InferenceSuccess
-import com.project.spire.utils.Base64Utils
+import com.project.spire.utils.BitmapUtils
 import com.project.spire.utils.InferenceUtils
 import kotlinx.coroutines.launch
 
@@ -31,7 +31,7 @@ class InferenceViewModel (
                 val output = result.outputs[0]
                 Log.d("InferenceViewModel", "Inference success: ${output.name}")
                 val generatedBase64 = output.data[0]
-                val generatedBitmap = Base64Utils.Base64toBitmap(generatedBase64)
+                val generatedBitmap = BitmapUtils.Base64toBitmap(generatedBase64)
                 Log.d("InferenceViewModel", "Output bitmap size: ${generatedBitmap?.byteCount}")
                 _inferenceResult.postValue(generatedBitmap)
 

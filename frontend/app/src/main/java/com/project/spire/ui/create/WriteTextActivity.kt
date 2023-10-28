@@ -3,10 +3,8 @@ package com.project.spire.ui.create
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.lifecycle.ViewModelProvider
 import com.example.spire.R
 import com.example.spire.databinding.ActivityWriteTextBinding
-import com.project.spire.core.inference.InferenceRepository
 import com.project.spire.utils.InferenceUtils
 
 class WriteTextActivity : AppCompatActivity() {

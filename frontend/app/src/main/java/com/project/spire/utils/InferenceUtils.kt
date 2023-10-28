@@ -12,8 +12,8 @@ object InferenceUtils {
     fun getInferenceRequest(image: Bitmap, mask: Bitmap, prompt: String): InferenceRequest {
         val name = "deep_floyd_if"
         val input = listOf(
-            Input("INPUT_IMAGE", listOf(1), "BYTES", listOf(Base64Utils.BitmaptoBase64(image))),
-            Input("MASK", listOf(1), "BYTES", listOf(Base64Utils.BitmaptoBase64(mask))),
+            Input("INPUT_IMAGE", listOf(1), "BYTES", listOf(BitmapUtils.BitmaptoBase64(image))),
+            Input("MASK", listOf(1), "BYTES", listOf(BitmapUtils.BitmaptoBase64(mask))),
             Input("PROMPT", listOf(1), "BYTES", listOf(prompt)),
             Input("NEGATIVE_PROMPT", listOf(1), "BYTES", listOf("")),
             Input("SAMPLES", listOf(1), "INT32", listOf(1)),

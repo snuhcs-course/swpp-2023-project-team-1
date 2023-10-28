@@ -25,7 +25,7 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
     init {
         mPaint.isAntiAlias = true
         mPaint.style = Paint.Style.STROKE
-        mPaint.strokeJoin = Paint.Join.ROUND
+        mPaint.strokeJoin = Paint.Join.BEVEL
         mPaint.color = COLOR_BLUE
         mPaint.strokeCap = Paint.Cap.ROUND
     }
