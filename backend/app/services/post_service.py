@@ -13,9 +13,6 @@ from app.core.exceptions.base import (
     NotFoundException,
 )
 from sqlalchemy import and_, delete, select, func, case, update
-
-
-
 class PostService:
     @Transactional()
     async def create_post(
@@ -29,7 +26,7 @@ class PostService:
         post_dict = post_data.create_dict(user_id)
 
         try:
-            post_obj = Post(**post_dict)
+            post_obj: Post = Post(**post_dict)
 
             session.add(post_obj)
             await session.commit()

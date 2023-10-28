@@ -10,6 +10,7 @@ from app.core.fastapi.dependency.permission import (
 from app.schemas.post import (
     PostBase,
     PostCreate,
+    PostRead,
     PostResponse,
     CommentBase,
     CommentCreate,
@@ -25,7 +26,7 @@ from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.post_service import PostService
 from app.utils.json_decoder import normalize_post
-
+from app.services import post_service
 
 post_router = APIRouter()
 
@@ -37,15 +38,13 @@ post_router = APIRouter()
     description="Only authenticated user can create new post",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
-async def create_post(req: Request, post: PostCreate = Body(...), db: AsyncSession = Depends(get_db_transactional_session),
-):
+async def create_post(req: Request, post: PostCreate = Body(...)):
     post_svc = PostService()
     new_post = await post_svc.create_post(
         user_id=req.user.id,
         post_data=post,
-        session=db,
     )
-
+    
     return normalize_post(new_post)
 
 
