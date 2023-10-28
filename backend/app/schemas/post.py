@@ -52,18 +52,18 @@ class PostResponse(PostRead):
 
 
 class CommentBase(BaseModel):
-    post_id: int
+    post_id: UUID4
     content: str
 
 class CommentCreate(CommentBase):
-    post_id: int = Field(...)
+    post_id: UUID4 = Field(...)
     content: str = Field(...)
 
 class CommentUpdate(BaseModel):
     content: str | None = Field(..., min_length=1)
 
 class CommentRead(CommentBase):
-    id: int
+    id: UUID4
     created_at: datetime
     updated_at: datetime
     user: AuthorRead | None = None

@@ -135,19 +135,22 @@ async def toggle_post_like(post_id: UUID4, req: Request):
     }
 
 @post_router.get(
-    "/comment",
+    "/{post_id}/comment",
     status_code=200,
     response_model=GetCommentsResponse,
     summary="Get comments with pagination",
+      dependencies=[
+        Depends(PermissionDependency([AllowAll])),
+    ],
 )
 async def get_comments(
-    post_id: Annotated[int, Query(..., description="post id")],
-    user_id: Annotated[UUID4 | None, Depends(get_user_id_from_request)],
+    post_id: UUID4,
+    user_id: UUID4 | None = Depends(get_user_id_from_request),
     pagination: dict = Depends(limit_offset_query),
 ):  
     post_svc = PostService()
     total, items, next_cursor = await post_svc.get_comments_by_post_id(
-        post_id=post_id, **pagination, user_id=user_id
+        post_id=post_id, user_id=user_id, **pagination
     )
     return {"total": total, "items": items, "next_cursor": next_cursor}
 
@@ -159,16 +162,14 @@ async def get_comments(
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
 async def create_comment(
-    post_id: UUID4, req: Request, comment: CommentBase = Body(...)
+    comment: CommentCreate = Body(...), user_id: UUID4 = Depends(get_user_id_from_request),
+
 ):
     post_svc = PostService()
-    comment_dict = await post_svc.create_comment(
-        post_id=post_id,
-        user_id=req.user.id,
-        content=comment.content,
+    return await post_svc.create_comment(
+        comment,
+        user_id
     )
-
-    return {"comment_id": comment_dict.id}
 
 
 @post_router.delete(

@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 @Transactional()
 async def get_list_with_like_cnt_by_post_id(
-    post_id: int, user_id: UUID4 | None, limit: int, offset: int, session: AsyncSession
+    post_id: UUID4, user_id: UUID4 | None, limit: int, offset: int, session: AsyncSession
 ):
     stmt = (
         select(Comment)
@@ -31,7 +31,7 @@ async def get_list_with_like_cnt_by_post_id(
                 ),
             )
         )
-        .options(selectinload(Comment.user).load_only(User.id, User.username, User.profile_pic))
+        .options(selectinload(Comment.user).load_only(User.id, User.username, User.profile_image_url))
         .group_by(Comment.id)
         .order_by(Comment.created_at.desc())
         .where(Comment.post_id == post_id)
@@ -68,7 +68,7 @@ async def create(comment_data: dict, session: AsyncSession):
     return await session.scalar(
         select(Comment)
         .join(Comment.user, isouter=True)
-        .options(contains_eager(Comment.user).load_only(User.id, User.username, User.profile_pic))
+        .options(contains_eager(Comment.user).load_only(User.id, User.username, User.profile_image_url))
         .where(Comment.id == comment.id)
     )
 
@@ -78,7 +78,7 @@ async def get_by_id(id: int, session: AsyncSession):
     res = await session.execute(
         select(Comment)
         .join(Comment.user, isouter=True)
-        .options(contains_eager(Comment.user).load_only(User.id, User.username, User.profile_pic))
+        .options(contains_eager(Comment.user).load_only(User.id, User.username, User.profile_image_url))
         .where(Comment.id == id)
     )
     return res.scalar_one()
@@ -89,7 +89,7 @@ async def get_with_like_cnt_by_id(id: int, user_id: UUID4 | None, session: Async
     stmt = (
         select(Comment)
         .join(Comment.user, isouter=True)
-        .options(contains_eager(Comment.user).load_only(User.id, User.username, User.profile_pic))
+        .options(contains_eager(Comment.user).load_only(User.id, User.username, User.profile_image_url))
         .join_from(
             Comment,
             CommentLike,
@@ -135,7 +135,7 @@ async def get_with_like_cnt_by_id(id: int, user_id: UUID4 | None, session: Async
 
 
 @Transactional()
-async def count_by_post_id(post_id: int, session: AsyncSession):
+async def count_by_post_id(post_id: UUID4, session: AsyncSession):
     stmt = select(func.count(Comment.id)).where(Comment.post_id == post_id)
     res = await session.execute(stmt)
     return res.scalar_one()

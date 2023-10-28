@@ -4,7 +4,7 @@ from sqlalchemy import or_, select, and_
 from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.post import Post
-from app.schemas.post import PostBase, PostCreate, PostUpdate
+from app.schemas.post import PostBase, PostCreate, PostUpdate, CommentCreate
 from app.core.exceptions.post import PostNotFoundException, CommentNotFoundException, UserNotOwnerException
 from app.models.post import Comment, PostLike
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -57,6 +57,7 @@ class PostService:
         
         except NoResultFound as e:
             raise PostNotFoundException from e
+        
     @Transactional()
     async def update_post_by_id(
         self,
@@ -119,7 +120,7 @@ class PostService:
             return post_like
 
     @Transactional()
-    async def get_comments_by_post_id(self, post_id: int, user_id: UUID4 | None, limit: int, offset: int):
+    async def get_comments_by_post_id(self, post_id: UUID4, user_id: UUID4 | None, limit: int, offset: int, session: AsyncSession):
         try:
             total, comments = await asyncio.gather(
                 comment.count_by_post_id(post_id),
@@ -135,17 +136,19 @@ class PostService:
     @Transactional()
     async def create_comment(
         self,
-        post_id: UUID4,
+        comment_data: CommentCreate,
         user_id: UUID4,
-        content: str,
         session: AsyncSession,
         **kwargs
     ) -> Comment:
-        comment = Comment(post_id=post_id, user_id=user_id, content=content)
+        comment_ = comment_data.dict()
+        comment_["user_id"] = user_id
 
-        session.add(comment)
-        await session.commit()
-        return comment
+        try:
+            cmt_obj = await comment.create(comment_)
+            return cmt_obj
+        except IntegrityError as e:
+            raise BadRequestException(str(e.orig)) from e
 
     @Transactional()
     async def delete_comment_by_id(self, comment_id: UUID4, request_user_id: UUID4, session: AsyncSession) -> Comment:
