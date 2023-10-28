@@ -18,13 +18,13 @@ class CodeService:
             if is_exist:
                 raise DuplicateEmailOrUsernameException
 
-            code = Code(email=email, code=code)
-            session.add(code)
+            new_code = Code(email=email, code=code)
+            session.add(new_code)
             await session.commit()
 
-            await session.refresh(code)
+            await session.refresh(new_code)
 
-            return code
+            return new_code
 
         except Exception as e:
             await session.rollback()
@@ -37,11 +37,11 @@ class CodeService:
             select(Code).where(and_(Code.email == email, Code.code == code))
         )
 
-        code: Code | None = result.scalars().first()
+        _code: Code | None = result.scalars().first()
 
-        if not code:
+        if not _code:
             raise CodeNotFoundException("Code not found")
 
         await session.commit()
 
-        return code
+        return _code
