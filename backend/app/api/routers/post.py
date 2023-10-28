@@ -9,10 +9,11 @@ from app.core.fastapi.dependency.permission import (
 )
 from app.schemas.post import (
     PostBase,
-    PostCreateResponse,
-    PostGetResponse,
+    PostCreate,
+    PostResponse,
     CommentBase,
-    CommentCreateResponse,
+    CommentCreate,
+    CommentResponse,
 )
 from app.schemas.user import (
     CheckUserInfoResponse,
@@ -23,6 +24,7 @@ from app.schemas.user import (
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.post_service import PostService
+from app.utils.json_decoder import normalize_post
 
 
 post_router = APIRouter()
@@ -30,30 +32,33 @@ post_router = APIRouter()
 
 @post_router.post(
     "",
-    response_model=PostCreateResponse,
+    response_model=PostResponse,
     summary="Create New Post",
-    description="Create new post",
+    description="Only authenticated user can create new post",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
-async def create_post(req: Request, post: PostBase = Body(...)):
+async def create_post(req: Request, post: PostCreate = Body(...), db: AsyncSession = Depends(get_db_transactional_session),
+):
     post_svc = PostService()
-    post = await post_svc.create_post(
-        user_id=req.user.id, content=post.content, post_image_url=post.post_image_url
+    new_post = await post_svc.create_post(
+        user_id=req.user.id,
+        post_data=post,
+        session=db,
     )
 
-    return {"post_id": post.id}
+    return normalize_post(new_post)
 
 
 @post_router.get(
     "/{post_id}",
-    response_model=PostGetResponse,
+    response_model=PostResponse,
     summary="Get Post",
     description="Get post",
 )
 async def get_post(post_id: UUID4):
     post_svc = PostService()
-    post = await post_svc.get_post(post_id=post_id)
-    return post
+    post = await post_svc.get_post_where_id(post_id=post_id)
+    return normalize_post(post)
 
 
 @post_router.delete(
@@ -90,23 +95,23 @@ async def toggle_post_like(post_id: UUID4, req: Request):
 
 
 @post_router.post(
-    "/{post_id}/comment",
-    response_model=CommentCreateResponse,
+    "/comment",
+    response_model=CommentResponse,
     summary="Create New Comment",
-    description="Create new comment",
+    description="Only authenticated user can create new comment",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
 async def create_comment(
     post_id: UUID4, req: Request, comment: CommentBase = Body(...)
 ):
     post_svc = PostService()
-    comment = await post_svc.create_comment(
+    comment_dict = await post_svc.create_comment(
         post_id=post_id,
         user_id=req.user.id,
         content=comment.content,
     )
 
-    return {"comment_id": comment.id}
+    return {"comment_id": comment_dict.id}
 
 
 @post_router.delete(

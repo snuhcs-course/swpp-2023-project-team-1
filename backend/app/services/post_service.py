@@ -3,9 +3,17 @@ from sqlalchemy import or_, select, and_
 from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.post import Post
-from app.schemas.post import PostBase, PostGetResponse
+from app.schemas.post import PostBase, PostCreate
 from app.core.exceptions.post import PostNotFoundException, CommentNotFoundException, UserNotOwnerException
 from app.models.post import Comment, PostLike
+from sqlalchemy.exc import IntegrityError, NoResultFound
+from app.core.exceptions.base import (
+    BadRequestException,
+    ForbiddenException,
+    NotFoundException,
+)
+from sqlalchemy import and_, delete, select, func, case, update
+
 
 
 class PostService:
@@ -13,53 +21,51 @@ class PostService:
     async def create_post(
         self,
         user_id: UUID4,
-        content: str,
-        post_image_url: str,
+        post_data: PostCreate,
         session: AsyncSession,
         **kwargs
     ) -> Post:
-        post = Post(user_id=user_id, content=content, post_image_url=post_image_url)
+        
+        post_dict = post_data.create_dict(user_id)
 
-        session.add(post)
-        await session.commit()
-        return post
+        try:
+            post_obj = Post(**post_dict)
+
+            session.add(post_obj)
+            await session.commit()
+            await session.refresh(post_obj)
+            return post_obj
+        
+        except IntegrityError as e:
+            raise BadRequestException(str(e.orig)) from e
+
 
     @Transactional()
-    async def get_post(self, post_id: UUID4, session: AsyncSession, **kwargs) -> Post:
-        result = await session.execute(select(Post).where(and_(Post.id == post_id)))
+    async def get_post_where_id(self, post_id: UUID4, session: AsyncSession, **kwargs) -> Post:
 
-        post: Post | None = result.scalars().first()
+        try:
+            result = await session.execute(select(Post).where((Post.id == post_id)))
+            post = result.scalars().one()
 
-        if not post:
-            raise PostNotFoundException("Post not found")
-
-        response = PostGetResponse(
-            user_id=post.user_id,
-            content=post.content,
-            post_image_url=post.post_image_url,
-            created_at=post.created_at,
-            updated_at=post.updated_at,
-            # comments = post.comments,
-            # likes = post.likes
-        )
-
-        return response
+            return post
+        
+        except NoResultFound as e:
+            raise PostNotFoundException from e
 
     @Transactional()
     async def delete_post_by_id(self, post_id: UUID4, request_user_id: UUID4, session: AsyncSession) -> Post:
-        result = await session.execute(select(Post).where(and_(Post.id == post_id)))
 
-        post: Post | None = result.scalars().first()
-
-        if not post:
-            raise PostNotFoundException("Post not found")
+        try:
+            post_obj = await self.get_post_where_id(post_id)
+        except NoResultFound as e:
+            raise PostNotFoundException from e
         
-        if post.user_id != request_user_id:
-            raise UserNotOwnerException("user is not the owver")
+        if post_obj.user_id != request_user_id:
+                raise ForbiddenException("You are not authorized to delete this post")
 
-        await session.delete(post)
-        await session.commit()
-        return post
+        stmt = delete(Post).where(Post.id == post_id)
+        await session.execute(stmt)
+        return post_obj
 
     @Transactional()
     async def toggle_post_like(

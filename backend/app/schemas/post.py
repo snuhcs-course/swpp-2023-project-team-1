@@ -1,7 +1,6 @@
 from typing import List, Annotated
 from datetime import datetime
 from pydantic import UUID4, BaseModel, ConfigDict, Field
-from app.models.post import Comment, PostLike
 from fastapi import Form
 
 class AuthorRead(BaseModel):
@@ -38,7 +37,6 @@ class PostUpdate(BaseModel):
     
 class PostRead(PostBase):
     id: UUID4
-    image_url: str
     created_at: datetime
     updated_at: datetime
     user: AuthorRead | None = None
