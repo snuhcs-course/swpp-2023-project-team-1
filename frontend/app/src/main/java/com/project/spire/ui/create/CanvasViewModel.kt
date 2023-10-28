@@ -1,23 +1,16 @@
-package com.project.spire.ui.create.image
+package com.project.spire.ui.create
 
-import android.content.ContentValues
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
-import android.net.Uri
-import android.provider.MediaStore
 import android.view.MotionEvent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
+import com.project.spire.utils.PaintOptions
 
-class ImageCreateViewModel: ViewModel() {
+class CanvasViewModel: ViewModel() {
 
     /*
     TODO
@@ -26,9 +19,7 @@ class ImageCreateViewModel: ViewModel() {
     Button Click 시 UtilBase64 활용하여 Image / Mask -> Base64 String으로 변환
     Inference Server에 전송
     ImageView를 만들어 Response 출력
-
      */
-
 
     private val _originImageBitmap = MutableLiveData<Bitmap>()
     val originImageBitmap: LiveData<Bitmap>

@@ -1,4 +1,4 @@
-package com.project.spire.ui.create.image
+package com.project.spire.utils
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -6,7 +6,10 @@ import android.util.Base64
 import java.io.ByteArrayOutputStream
 
 
-class UtilsBase64 {
+class Base64Utils {
+
+    /**
+     * Base64 String을 Bitmap으로 변환 */
     fun Base64toBitmap(encodedString: String?): Bitmap? {
         return try {
             val encodeByte: ByteArray = Base64.decode(encodedString, Base64.DEFAULT)
@@ -17,9 +20,8 @@ class UtilsBase64 {
         }
     }
 
-    /*
- Bitmap을 Base64 String형으로 변환
-*/
+    /**
+     * Bitmap을 Base64 String형으로 변환 */
     fun BitmaptoBase64(bitmap: Bitmap): String? {
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)

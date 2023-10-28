@@ -1,4 +1,4 @@
-package com.project.spire.ui.create.image
+package com.project.spire.ui.create
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

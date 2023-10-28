@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.project.spire.ui.create.image.ImageEditActivity">
+    tools:context="com.project.spire.ui.create.ImageEditActivity">
 
     <include
         android:id="@+id/image_edit_app_bar_layout"
@@ -28,7 +28,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/img_dummy" />
 
-        <com.project.spire.ui.create.image.SpireCanvasView
+        <com.project.spire.ui.create.SpireCanvasView
             android:id="@+id/spire_canvas_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"

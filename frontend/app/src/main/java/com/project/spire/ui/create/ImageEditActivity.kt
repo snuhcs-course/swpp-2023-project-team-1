@@ -1,4 +1,4 @@
-package com.project.spire.ui.create.image
+package com.project.spire.ui.create
 
 import android.content.ContentValues
 import android.content.Intent
@@ -15,7 +15,6 @@ import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.createBitmap
 import androidx.lifecycle.Observer
 import com.example.spire.R
 import com.example.spire.databinding.ActivityImageEditBinding
@@ -26,7 +25,7 @@ import java.io.IOException
 class ImageEditActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityImageEditBinding
-    private val viewModel: ImageCreateViewModel by viewModels()
+    private val viewModel: CanvasViewModel by viewModels()
 
     private lateinit var mImageView: ImageView
     private lateinit var mCanvasView: SpireCanvasView
@@ -167,9 +166,4 @@ class ImageEditActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
-
-
-
-
-
 }

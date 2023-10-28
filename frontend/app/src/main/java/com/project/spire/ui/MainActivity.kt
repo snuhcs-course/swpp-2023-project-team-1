@@ -15,7 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.spire.R
 import com.example.spire.databinding.ActivityMainBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.project.spire.ui.create.image.ImageEditActivity
+import com.project.spire.ui.create.ImageEditActivity
 
 class MainActivity : AppCompatActivity() {
 

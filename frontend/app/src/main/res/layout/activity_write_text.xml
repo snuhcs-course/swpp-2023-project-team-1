@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.project.spire.ui.create.image.WriteTextActivity">
+    tools:context="com.project.spire.ui.create.WriteTextActivity">
 
     <include
         android:id="@+id/write_text_app_bar_layout"

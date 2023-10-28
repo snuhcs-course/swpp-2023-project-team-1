@@ -1,4 +1,4 @@
-package com.project.spire.ui.create.image
+package com.project.spire.ui.create
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -14,9 +14,9 @@ import com.example.spire.R
 class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     private val COLOR_BLUE = ContextCompat.getColor(context, R.color.blue_500)
-    private lateinit var viewModel: ImageCreateViewModel
+    private lateinit var viewModel: CanvasViewModel
 
-    fun initViewModel(viewModel: ImageCreateViewModel) {
+    fun initViewModel(viewModel: CanvasViewModel) {
         this.viewModel = viewModel
     }
 
@@ -27,6 +27,7 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
         mPaint.style = Paint.Style.STROKE
         mPaint.strokeJoin = Paint.Join.ROUND
         mPaint.color = COLOR_BLUE
+        mPaint.strokeCap = Paint.Cap.ROUND
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -79,8 +80,4 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
         this.draw(canvas)
         return bitmap
     }
-
-
-
-
 }
