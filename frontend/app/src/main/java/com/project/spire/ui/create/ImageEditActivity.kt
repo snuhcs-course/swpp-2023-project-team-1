@@ -16,10 +16,8 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.spire.R
 import com.example.spire.databinding.ActivityImageEditBinding
-import com.project.spire.core.inference.InferenceRepository
 import com.project.spire.utils.InferenceUtils
 import java.io.FileNotFoundException
 import java.io.FileOutputStream

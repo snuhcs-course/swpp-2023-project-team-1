@@ -1,19 +1,11 @@
 package com.project.spire.core.inference
 
 import android.util.Log
-import androidx.datastore.preferences.core.edit
-import com.project.spire.core.auth.AuthPreferenceKeys
-import com.project.spire.network.RetrofitClient
-import com.project.spire.network.auth.request.LoginRequest
-import com.project.spire.network.auth.response.LoginError
-import com.project.spire.network.auth.response.LoginResponse
-import com.project.spire.network.auth.response.LoginSuccess
 import com.project.spire.network.inference.InferenceClient
 import com.project.spire.network.inference.InferenceError
 import com.project.spire.network.inference.InferenceRequest
 import com.project.spire.network.inference.InferenceResponse
 import com.project.spire.network.inference.InferenceSuccess
-import com.project.spire.network.inference.Input
 
 class InferenceRepository {
 

@@ -1,7 +1,6 @@
 package com.project.spire.utils
 
 import android.graphics.Bitmap
-import androidx.lifecycle.ViewModelProvider
 import com.project.spire.core.inference.InferenceRepository
 import com.project.spire.network.inference.InferenceRequest
 import com.project.spire.network.inference.Input

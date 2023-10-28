@@ -23,6 +23,8 @@ class WriteTextActivity : AppCompatActivity() {
 
         val inferenceViewModel = InferenceUtils.inferenceViewModel
 
+        val doneButton = binding.doneButton
+
         inferenceViewModel.inferenceResult.observe(this) {
             if (it != null) {
                 Log.d("WriteTextActivity", "Inference result received. Changing image.")
@@ -32,6 +34,10 @@ class WriteTextActivity : AppCompatActivity() {
                 binding.loadingText.visibility = android.view.View.GONE
                 binding.loadingTimeText.visibility = android.view.View.GONE
             }
+        }
+
+        doneButton.setOnClickListener {
+            // TODO: Send post upload request
         }
     }
 }

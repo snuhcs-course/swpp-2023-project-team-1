@@ -2,7 +2,6 @@ package com.project.spire.ui.create
 
 import android.graphics.Bitmap
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -41,6 +40,10 @@ class InferenceViewModel (
                 _inferenceResult.postValue(null)
             }
         }
+    }
+
+    fun postUpload() {
+        // TODO: Send post upload request
     }
 }
 

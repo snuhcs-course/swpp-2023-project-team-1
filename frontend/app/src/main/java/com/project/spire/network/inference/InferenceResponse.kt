@@ -1,8 +1,6 @@
 package com.project.spire.network.inference
 
 import com.google.gson.annotations.SerializedName
-import com.project.spire.network.auth.response.RegisterResponse
-import java.util.Base64
 
 interface InferenceResponse {
 }

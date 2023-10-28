@@ -1,10 +1,8 @@
 package com.project.spire.network.inference
 
-import com.project.spire.network.RetrofitClient
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 // TODO: temporary client for ML inference
 // Should be combined with RetrofitClient later
