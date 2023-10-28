@@ -67,6 +67,7 @@ class Image(Base, TimestampMixin):
     origin_image: Mapped[str] = mapped_column(TEXT, nullable=False)
     mask_image: Mapped[str] = mapped_column(TEXT, nullable=False)
     modified_image: Mapped[str] = mapped_column(TEXT, nullable=False)
+    prompt: Mapped[str] = mapped_column(TEXT, nullable=False)
     user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id", ondelete="CASCADE"), index=True, nullable=False)
     post_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("post.id", ondelete="CASCADE"), index=True, nullable=False)
     user: Mapped[User] = relationship("User", back_populates="images")
