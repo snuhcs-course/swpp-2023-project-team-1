@@ -18,6 +18,18 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 class ImageCreateViewModel: ViewModel() {
+
+    /*
+    TODO
+    구현한 것들 테스트 안해봄
+    WriteTextActivity -> Fragment로 변경, ImageEditActivity와 ViewModel을 공유하도록
+    Button Click 시 UtilBase64 활용하여 Image / Mask -> Base64 String으로 변환
+    Inference Server에 전송
+    ImageView를 만들어 Response 출력
+
+     */
+
+
     private val _originImageBitmap = MutableLiveData<Bitmap>()
     val originImageBitmap: LiveData<Bitmap>
         get() = _originImageBitmap
