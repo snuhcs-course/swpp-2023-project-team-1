@@ -1,8 +1,7 @@
 from typing import List
 from datetime import datetime
 from pydantic import UUID4, BaseModel, ConfigDict, Field
-from app.models.comment import Comment
-from app.models.post_like import PostLike
+from app.models.post import Comment, PostLike
 
 
 class PostBase(BaseModel):

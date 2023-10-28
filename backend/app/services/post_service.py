@@ -5,8 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.post import Post
 from app.schemas.post import PostBase, PostGetResponse
 from app.core.exceptions.post import PostNotFoundException, CommentNotFoundException, UserNotOwnerException
-from app.models.comment import Comment
-from app.models.post_like import PostLike
+from app.models.post import Comment, PostLike
 
 
 class PostService:
