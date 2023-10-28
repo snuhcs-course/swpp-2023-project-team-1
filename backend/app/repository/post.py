@@ -68,7 +68,7 @@ async def get_list_with_like_cnt_comment_cnt(
 
 
 @Transactional()
-async def get_where_id(id: int, session: AsyncSession):
+async def get_by_id(id: int, session: AsyncSession):
     res = await session.execute(select(Post).where(Post.id == id))
     return res.scalar_one()
 
@@ -86,19 +86,19 @@ async def create(post: dict, session: AsyncSession):
 async def update_by_id(id: int, post_data: dict, session: AsyncSession) -> Post:
     stmt = update(Post).where(Post.id == id).values(**post_data)
     await session.execute(stmt)
-    res = await get_with_like_cnt_where_id(id, session=session)
+    res = await get_with_like_cnt_by_id(id, session=session)
     return res
 
 
 @Transactional()
-async def delete_where_id(id: int, session: AsyncSession):
+async def delete_by_id(id: int, session: AsyncSession):
     stmt = delete(Post).where(Post.id == id)
     await session.execute(stmt)
     return
 
 
 @Transactional()
-async def get_with_like_cnt_where_id(id: int, session: AsyncSession, user_id: UUID4 | None = None):
+async def get_with_like_cnt_by_id(id: int, session: AsyncSession, user_id: UUID4 | None = None):
     stmt = (
         select(Post)
         .join(Post.user, isouter=True)
@@ -136,7 +136,7 @@ async def get_with_like_cnt_where_id(id: int, session: AsyncSession, user_id: UU
 
 
 @Transactional()
-async def get_like_where_post_id_and_user_id(p_id: int, u_id: int, session: AsyncSession) -> PostLike | None:
+async def get_like_by_post_id_and_user_id(p_id: int, u_id: int, session: AsyncSession) -> PostLike | None:
     stmt = select(PostLike).where(
         PostLike.post_id == p_id,
         PostLike.user_id == u_id,
@@ -147,7 +147,7 @@ async def get_like_where_post_id_and_user_id(p_id: int, u_id: int, session: Asyn
 
 @Transactional()
 async def create_or_update_like(post_id: int, user_id: int, like: int, session: AsyncSession):
-    post_like = await get_like_where_post_id_and_user_id(post_id, user_id, session=session)
+    post_like = await get_like_by_post_id_and_user_id(post_id, user_id, session=session)
 
     if post_like is None:
         # FIXME: mypy
@@ -165,7 +165,7 @@ async def create_or_update_like(post_id: int, user_id: int, like: int, session: 
 
 
 @Transactional()
-async def delete_like_where_post_id_and_user_id(post_id: int, user_id: int, session: AsyncSession):
+async def delete_like_by_post_id_and_user_id(post_id: int, user_id: int, session: AsyncSession):
     stmt = delete(PostLike).where(
         PostLike.post_id == post_id,
         PostLike.user_id == user_id,

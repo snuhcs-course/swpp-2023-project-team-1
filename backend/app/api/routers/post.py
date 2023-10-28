@@ -17,6 +17,7 @@ from app.schemas.post import (
     CommentBase,
     CommentCreate,
     CommentResponse,
+    GetCommentsResponse,
 )
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -133,6 +134,22 @@ async def toggle_post_like(post_id: UUID4, req: Request):
         "message": f"User {post_like.user_id} toggled like Post {post_like.post_id} successfully"
     }
 
+@post_router.get(
+    "/comment",
+    status_code=200,
+    response_model=GetCommentsResponse,
+    summary="Get comments with pagination",
+)
+async def get_comments(
+    post_id: Annotated[int, Query(..., description="post id")],
+    user_id: Annotated[UUID4 | None, Depends(get_user_id_from_request)],
+    pagination: dict = Depends(limit_offset_query),
+):  
+    post_svc = PostService()
+    total, items, next_cursor = await post_svc.get_comments_by_post_id(
+        post_id=post_id, **pagination, user_id=user_id
+    )
+    return {"total": total, "items": items, "next_cursor": next_cursor}
 
 @post_router.post(
     "/comment",

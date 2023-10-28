@@ -14,8 +14,8 @@ from app.core.exceptions.base import (
     NotFoundException,
 )
 from sqlalchemy import and_, delete, select, func, case, update
-
 from app.repository import post
+from app.repository import comment
 class PostService:
     @Transactional()
     async def get_posts(self, user_id: UUID4 | None, limit: int, offset: int, session: AsyncSession):
@@ -53,7 +53,7 @@ class PostService:
     async def get_post_by_id(self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs) -> Post:
 
         try:
-            return await post.get_with_like_cnt_where_id(id=post_id, user_id=user_id)
+            return await post.get_with_like_cnt_by_id(id=post_id, user_id=user_id)
         
         except NoResultFound as e:
             raise PostNotFoundException from e
@@ -93,7 +93,7 @@ class PostService:
         if post_obj.user_id != request_user_id:
                 raise ForbiddenException("You are not authorized to delete this post")
 
-        await post.delete_where_id(post_id)
+        await post.delete_by_id(post_id)
 
     @Transactional()
     async def toggle_post_like(
@@ -118,6 +118,20 @@ class PostService:
             await session.commit()
             return post_like
 
+    @Transactional()
+    async def get_comments_by_post_id(self, post_id: int, user_id: UUID4 | None, limit: int, offset: int):
+        try:
+            total, comments = await asyncio.gather(
+                comment.count_by_post_id(post_id),
+                comment.get_list_with_like_cnt_by_post_id(post_id, user_id, limit, offset),
+            )
+
+        except NoResultFound as e:
+            raise NotFoundException("Post not found") from e
+
+        next_cursor = offset + len(comments) if total and total > offset + len(comments) else None
+        return total, comments, next_cursor
+    
     @Transactional()
     async def create_comment(
         self,
