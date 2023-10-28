@@ -16,8 +16,11 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.spire.R
 import com.example.spire.databinding.ActivityImageEditBinding
+import com.project.spire.core.inference.InferenceRepository
+import com.project.spire.utils.InferenceUtils
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
@@ -25,7 +28,8 @@ import java.io.IOException
 class ImageEditActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityImageEditBinding
-    private val viewModel: CanvasViewModel by viewModels()
+    private lateinit var inferenceViewModel: InferenceViewModel
+    private val canvasViewModel: CanvasViewModel by viewModels()
 
     private lateinit var mImageView: ImageView
     private lateinit var mCanvasView: SpireCanvasView
@@ -46,6 +50,7 @@ class ImageEditActivity : AppCompatActivity() {
 
         binding = ActivityImageEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        inferenceViewModel = InferenceUtils.inferenceViewModel
 
         val uri = Uri.parse(intent.getStringExtra("imageUri"))
         val cropImageView = binding.cropImageView
@@ -57,12 +62,12 @@ class ImageEditActivity : AppCompatActivity() {
         cropDoneButton.setOnClickListener {
             val bitmap = cropImageView.getCroppedImage(mImageView.width, mImageView.height)!!
             Log.d("ImageEditActivity", "Bitmap size: ${bitmap.height}")
-            viewModel.setOriginImageBitmap(bitmap)
+            canvasViewModel.setOriginImageBitmap(bitmap)
             cropImageView.visibility = ImageView.GONE
             cropDoneButton.visibility = Button.GONE
         }
 
-        viewModel.originImageBitmap.observe(this) {
+        canvasViewModel.originImageBitmap.observe(this) {
             if (it != null) {
                 Log.d("ImageEditActivity", "Image updated")
                 //mImageView.setImageBitmap(it)
@@ -72,10 +77,10 @@ class ImageEditActivity : AppCompatActivity() {
         }
 
         mCanvasView = binding.spireCanvasView
-        mCanvasView.initViewModel(viewModel)
+        mCanvasView.initViewModel(canvasViewModel)
 
         editBtn = binding.editButton
-        editBtn.setOnClickListener { viewModel.changePenMode() }
+        editBtn.setOnClickListener { canvasViewModel.changePenMode() }
         val penModeObserver = Observer<Boolean> { isPenMode ->
             if (isPenMode) {
                 editBtn.setImageResource(R.drawable.ic_img_edit_selected)
@@ -83,10 +88,10 @@ class ImageEditActivity : AppCompatActivity() {
                 editBtn.setImageResource(R.drawable.ic_img_edit)
             }
         }
-        viewModel.isPenMode.observe(this, penModeObserver)
+        canvasViewModel.isPenMode.observe(this, penModeObserver)
 
         eraseBtn = binding.eraseButton
-        eraseBtn.setOnClickListener { viewModel.changeEraseMode() }
+        eraseBtn.setOnClickListener { canvasViewModel.changeEraseMode() }
         val eraseModeObserver = Observer<Boolean> { isEraseMode ->
             if (isEraseMode) {
                 eraseBtn.setImageResource(R.drawable.ic_img_erase_selected)
@@ -94,14 +99,14 @@ class ImageEditActivity : AppCompatActivity() {
                 eraseBtn.setImageResource(R.drawable.ic_img_erase)
             }
         }
-        viewModel.isEraseMode.observe(this, eraseModeObserver)
+        canvasViewModel.isEraseMode.observe(this, eraseModeObserver)
 
         val isDrawingObserver = Observer<Boolean> { mCanvasView.invalidate() }
-        viewModel.isDrawing.observe(this, isDrawingObserver)
+        canvasViewModel.isDrawing.observe(this, isDrawingObserver)
 
         resetBtn = binding.resetButton
         resetBtn.setOnClickListener {
-            viewModel.clearCanvas()
+            canvasViewModel.clearCanvas()
             editBtn.setImageResource(R.drawable.ic_img_edit)
             eraseBtn.setImageResource(R.drawable.ic_img_erase)
         }
@@ -121,12 +126,13 @@ class ImageEditActivity : AppCompatActivity() {
             val intent = Intent(this, WriteTextActivity::class.java)
             startActivity(intent)
 
-            // saving image to local
-            // TODO: remove this and send bitmap to server
-            saveImageOnAboveAndroidQ(mCanvasView.getBitmap())
-            if (mImageBitmap != null) {
-                saveImageOnAboveAndroidQ(mImageBitmap!!)
-            }
+            // FIXME: save image to local?
+            // saveImageOnAboveAndroidQ(mCanvasView.getBitmap())
+            // if (mImageBitmap != null) {
+            // saveImageOnAboveAndroidQ(mImageBitmap!!)
+            // }
+
+            inferenceViewModel.infer(mImageBitmap!!, mCanvasView.getBitmap(), promptInput.text.toString())
         }
 
         // TODO: implement toolbar buttons

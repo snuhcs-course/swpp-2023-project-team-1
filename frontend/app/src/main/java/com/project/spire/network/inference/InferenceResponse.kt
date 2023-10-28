@@ -38,6 +38,6 @@ data class Output (
     val shape: List<Int>,
 
     @SerializedName("data")
-    val data: List<Base64>
+    val data: List<String>
 )
 

@@ -12,7 +12,7 @@ import com.example.spire.databinding.ActivityLoginBinding
 import com.google.android.material.textfield.TextInputLayout
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
-import com.project.spire.network.ErrorUtils
+import com.project.spire.utils.ErrorUtils
 import com.project.spire.network.auth.response.LoginError
 import com.project.spire.network.auth.response.LoginResponse
 import com.project.spire.network.auth.response.LoginSuccess

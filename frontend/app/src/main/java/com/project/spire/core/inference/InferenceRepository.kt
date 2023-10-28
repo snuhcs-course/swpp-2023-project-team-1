@@ -20,9 +20,9 @@ class InferenceRepository {
     /**
      * Inference API
      * Returns InferenceSuccess or InferenceError */
-    suspend fun infer(name: String, input: List<Input>): InferenceResponse {
-        val inferRequest = InferenceRequest(name, input)
-        val response = InferenceClient.inferenceAPI.infer(inferRequest)
+    suspend fun infer(request: InferenceRequest): InferenceResponse {
+        Log.d("InferenceRepository", "Inference request received")
+        val response = InferenceClient.inferenceAPI.infer(request)
 
         return if (response.isSuccessful) {
             val successBody = response.body() as InferenceSuccess

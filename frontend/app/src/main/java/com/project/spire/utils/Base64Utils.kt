@@ -6,7 +6,7 @@ import android.util.Base64
 import java.io.ByteArrayOutputStream
 
 
-class Base64Utils {
+object Base64Utils {
 
     /**
      * Base64 String을 Bitmap으로 변환 */
@@ -22,7 +22,7 @@ class Base64Utils {
 
     /**
      * Bitmap을 Base64 String형으로 변환 */
-    fun BitmaptoBase64(bitmap: Bitmap): String? {
+    fun BitmaptoBase64(bitmap: Bitmap): String {
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
         val bytes = baos.toByteArray()

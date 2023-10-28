@@ -6,7 +6,7 @@ data class InferenceRequest (
     @SerializedName("name")
     val name: String,
 
-    @SerializedName("image")
+    @SerializedName("inputs")
     val input: List<Input>
 )
 
