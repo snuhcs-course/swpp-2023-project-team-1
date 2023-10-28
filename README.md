@@ -271,7 +271,7 @@ If everything is okay and ready, it should be something like this.
 Enter this will allow you to send request and get response with GPU server.
 
 ```bash
-kubectl port-forward service/sd-service 8000:8000
+kubectl port-forward service/sd-service 8080:8000
 ```
 
 Don't forget to delete all services, deployments and pods once you are done.
