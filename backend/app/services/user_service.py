@@ -14,7 +14,7 @@ class UserService:
         if not user:
             return False
 
-        if user.is_superuser is False:
+        if user.is_super_user is False:
             return False
 
         return True
