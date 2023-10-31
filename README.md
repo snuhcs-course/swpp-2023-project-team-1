@@ -231,7 +231,7 @@ Enabling Kubernetes with Docker Desktop makes life much easy. Refer to https://i
 Please refer to https://gpu.snucse.org/kubectl.html `서버 접근 방법` and follow the instructions.
 
 ### Quickstart (Run GPU server)
-Download `sd-deployment.yaml` in `/inference_server/template` to current directory. And run following command will create a deployment.
+Download `sd-deployment.yaml` in `/inference_server/template` to current directory. And also download `sd-service.yaml` in secret. And run following command will create a deployment.
 
 ```bash
 kubectl apply -f sd-deployment.yaml
@@ -240,12 +240,15 @@ kubectl apply -f sd-deployment.yaml
 A deployment create and manages pods, and a pod execute a container in Kubernetes.
 
 ```bash
-kubectl expose deployment sd-deployment  --name=sd-service
+kubectl apply -f sd-service.yaml
+```
+This will create a service, which expose a deployment and one can access it via following. Please refer to secret. And also note that it takes time to server to be ready.
+
+```bash
+http://<public-node-ip>:<node-port>
 ```
 
-This will create a service which allow user to communicate with a deployment.
-
-You can run inference once at least one of pod created by a deployment is ready. Run follow command to check this.
+You can run inference if at least one of pod created by a deployment is ready. Run follow command to check this.
 
 ```bash
 kubectl get pods
@@ -268,11 +271,6 @@ If everything is okay and ready, it should be something like this.
 
 <img width="1795" alt="스크린샷 2023-10-26 오후 12 00 33" src="https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/722dab90-4c49-48ae-aaa9-1597c613a43a">
 
-Enter this will allow you to send request and get response with GPU server.
-
-```bash
-kubectl port-forward service/sd-service 8080:8000
-```
 
 Don't forget to delete all services, deployments and pods once you are done.
 
