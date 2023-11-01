@@ -60,13 +60,30 @@ async def unfollow_user(
     description="Accept user follow request",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
-async def accept_user_follow(
+async def accept_follow_request(
     req: Request,
     user_id: UUID4,
 ):
     user_svc = UserService()
-    follow = await user_svc.unfollow_user(
+    follow = await user_svc.accept_follow_request(
         followed_user_id=req.user.id,
         following_user_id=user_id
     )
     return {"message": f"Accepted user {user_id} follow request"}
+
+@user_router.delete(
+    "/{user_id}/reject",
+    summary="Reject user follow request",
+    description="Reject user follow request",
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
+)
+async def reject_follow_request(
+    req: Request,
+    user_id: UUID4,
+):
+    user_svc = UserService()
+    follow = await user_svc.reject_follow_request(
+        followed_user_id=req.user.id,
+        following_user_id=user_id
+    )
+    return {"message": f"Rejected user {user_id} follow request"}
