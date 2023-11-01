@@ -59,3 +59,8 @@ class User(Base, TimestampMixin):
         cascade="save-update, merge, delete",
         passive_deletes=True,
     )
+
+class Follow(Base, TimestampMixin):
+    following_user_id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
+    followed_user_id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
+    
