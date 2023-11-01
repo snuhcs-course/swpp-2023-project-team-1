@@ -11,6 +11,8 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.provider.MediaStore
 import android.util.Base64
+import androidx.core.content.ContextCompat
+import com.example.spire.R
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -18,6 +20,7 @@ import java.io.IOException
 
 
 object BitmapUtils {
+
 
     /**
      * Base64 String을 Bitmap으로 변환 */
@@ -79,7 +82,7 @@ object BitmapUtils {
         }
     }
 
-    fun changeMaskColor(originBitmap: Bitmap): Bitmap {
+    fun maskTransparentToBlack(originBitmap: Bitmap): Bitmap {
         val width = originBitmap.width
         val height = originBitmap.height
         val newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
@@ -90,6 +93,27 @@ object BitmapUtils {
         val filter = PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
         paint.colorFilter = filter
         canvas.drawBitmap(originBitmap, 0f, 0f, paint)
+        return newBitmap
+    }
+
+    fun maskBlackToTransparent(originBitmap: Bitmap, color: Int? = null): Bitmap {
+        val width = originBitmap.width
+        val height = originBitmap.height
+        val newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(newBitmap)
+        canvas.drawColor(Color.TRANSPARENT)
+
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                if (originBitmap.getPixel(x, y) != Color.BLACK) {
+                    if (color == null) {
+                        newBitmap.setPixel(x, y, originBitmap.getPixel(x, y))
+                    } else {
+                        newBitmap.setPixel(x, y, color)
+                    }
+                }
+            }
+        }
         return newBitmap
     }
 }

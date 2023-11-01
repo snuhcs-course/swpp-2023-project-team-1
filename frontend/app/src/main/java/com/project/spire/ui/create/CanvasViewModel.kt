@@ -8,11 +8,12 @@ import android.view.MotionEvent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.project.spire.utils.BitmapUtils
 import com.project.spire.utils.PaintOptions
 
 class CanvasViewModel: ViewModel() {
 
-    private val _originImageBitmap = MutableLiveData<Bitmap>()
+    private var _originImageBitmap = MutableLiveData<Bitmap>()
     val originImageBitmap: LiveData<Bitmap>
         get() = _originImageBitmap
 
@@ -20,15 +21,22 @@ class CanvasViewModel: ViewModel() {
         _originImageBitmap.value = bitmap
     }
 
+    private var _backgroundMaskBitmap = MutableLiveData<Bitmap>()
+    val backgroundMaskBitmap: LiveData<Bitmap>
+        get() = _backgroundMaskBitmap
+
+    fun setBackgroundMaskBitmap(bitmap: Bitmap, color: Int? = null) {
+        _backgroundMaskBitmap.value = BitmapUtils.maskBlackToTransparent(bitmap, color)
+    }
+
     private val STROKE_PEN = 60f
     private val STROKE_ERASER = 80f
     private val MODE_CLEAR = PorterDuffXfermode(PorterDuff.Mode.CLEAR) // clears when overlapped
-    private val ALPHA = 150
 
     private var _paths = LinkedHashMap<Path, PaintOptions>()
     val paths: LinkedHashMap<Path, PaintOptions>
         get() = _paths
-    private var _paintOptions = PaintOptions(STROKE_PEN, null, ALPHA)
+    private var _paintOptions = PaintOptions(STROKE_PEN, null)
     val paintOptions: PaintOptions
         get() = _paintOptions
 
@@ -52,10 +60,8 @@ class CanvasViewModel: ViewModel() {
     val mPath: Path
         get() = _mPath
 
-    // mPath를 LiveData로 만들고 mPath를 observe하는 것이 맞겠으나, 이 경우 화면 표시에 delay가 발생하여
-    // 대신 boolean type의 isDrawing을 observe
-    // invalidate()를 호출하여 화면을 다시 그려야 하는 순간마다 isDrawing의 값을 잠시 바꾸는 것으로
-    // 화면을 실시간으로 다시 그리도록 구현
+    // mPath를 LiveData로 만들고 mPath를 observe하는 경우 화면 표시에 delay가 발생하여
+    // 대신 isDrawing을 observe
 
     fun clearCanvas() {
         _mPath.reset()
@@ -84,7 +90,6 @@ class CanvasViewModel: ViewModel() {
             _isPenMode.postValue(true)
             _paintOptions.strokeWidth = STROKE_PEN
             _paintOptions.xfermode = null
-            _paintOptions.alpha = ALPHA
         }
         else {
             _isPenMode.postValue(false)
@@ -130,7 +135,7 @@ class CanvasViewModel: ViewModel() {
                     }
                     _paths[_mPath] = _paintOptions
                     _mPath = Path()
-                    _paintOptions = PaintOptions(_paintOptions.strokeWidth, _paintOptions.xfermode, _paintOptions.alpha)
+                    _paintOptions = PaintOptions(_paintOptions.strokeWidth, _paintOptions.xfermode)
                     _isDrawing.postValue(true)
                     _isDrawing.postValue(false)
                 }

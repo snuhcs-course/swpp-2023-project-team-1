@@ -11,11 +11,12 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.example.spire.R
 
+
 class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
-    private val COLOR_BLUE = ContextCompat.getColor(context, R.color.blue_500)
-    private lateinit var viewModel: CanvasViewModel
+    val COLOR_BLUE = ContextCompat.getColor(context, R.color.blue_mask)
 
+    private lateinit var viewModel: CanvasViewModel
     fun initViewModel(viewModel: CanvasViewModel) {
         this.viewModel = viewModel
     }
@@ -32,11 +33,15 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        mPaint.xfermode = null
+        canvas.drawColor(Color.TRANSPARENT)
+        if (viewModel.backgroundMaskBitmap.value != null) {
+            canvas.drawBitmap(viewModel.backgroundMaskBitmap.value!!, x, y, null) // draw auto-mask from inference server
+        }
 
         for ((path, options) in viewModel.paths) {
             mPaint.xfermode = options.xfermode
             mPaint.strokeWidth = options.strokeWidth
-            mPaint.alpha = options.alpha
             if (options.xfermode != null) {
                 setLayerType(LAYER_TYPE_HARDWARE, null)
                 // xfermode doesn't works with hardware acceleration
@@ -45,36 +50,27 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
         }
         mPaint.xfermode = viewModel.paintOptions.xfermode
         mPaint.strokeWidth = viewModel.paintOptions.strokeWidth
-        mPaint.alpha = viewModel.paintOptions.alpha
         if (viewModel.isEraseMode.value!!) {
             setLayerType(LAYER_TYPE_HARDWARE, null)
         }
        canvas.drawPath(viewModel.mPath, mPaint)
     }
-/*
-    override fun onSizeChanged(w: Int, h: Int, oldw:Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        mbitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-        mCanvas = Canvas(mbitmap!!)
-    }
-*/
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         viewModel.processCanvasMotionEvent(event)
         return true
     }
 
-    fun getBitmap(): Bitmap { // used when save
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        canvas.drawColor(Color.TRANSPARENT)
-        this.draw(canvas)
-        return bitmap
-    }
+    fun getBitmap(width: Int = 0, height: Int = 0): Bitmap { // used when save
+        lateinit var bitmap: Bitmap
 
-    fun getBitmap(width: Int, height: Int): Bitmap { // used when save
-        // TODO: ImageView와 좌표 차이?
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        if ((width == 0) or (height == 0)) {
+            bitmap = Bitmap.createBitmap(this.width, this.height, Bitmap.Config.ARGB_8888)
+        }
+        else {
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        }
+
         val canvas = Canvas(bitmap)
         canvas.drawColor(Color.TRANSPARENT)
         this.draw(canvas)

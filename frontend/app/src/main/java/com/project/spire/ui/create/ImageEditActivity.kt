@@ -2,8 +2,8 @@ package com.project.spire.ui.create
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -61,7 +61,6 @@ class ImageEditActivity : AppCompatActivity() {
         canvasViewModel.originImageBitmap.observe(this) {
             if (it != null) {
                 Log.d("ImageEditActivity", "Image updated")
-                //mImageView.setImageBitmap(it)
                 mImageBitmap = Bitmap.createScaledBitmap(it, mImageView.width, mImageView.height,false)
                 mImageView.setImageBitmap(mImageBitmap)
             }
@@ -69,6 +68,8 @@ class ImageEditActivity : AppCompatActivity() {
 
         mCanvasView = binding.spireCanvasView
         mCanvasView.initViewModel(canvasViewModel)
+
+        canvasViewModel.setBackgroundMaskBitmap(BitmapFactory.decodeResource(resources, R.drawable.img_dummy_mask), mCanvasView.COLOR_BLUE)
 
         editBtn = binding.editButton
         editBtn.setOnClickListener { canvasViewModel.changePenMode() }
@@ -117,11 +118,11 @@ class ImageEditActivity : AppCompatActivity() {
             val intent = Intent(this, WriteTextActivity::class.java)
             startActivity(intent)
             val maskBitmap = mCanvasView.getBitmap()
-            val maskBitmapToServer = BitmapUtils.changeMaskColor(maskBitmap)
+            val maskBitmapToServer = BitmapUtils.maskTransparentToBlack(maskBitmap)
 
             // FIXME: save image to local?
-            /*
-            if (mImageBitmap != null) {
+
+            /* if (mImageBitmap != null) {
                 BitmapUtils.saveImageOnAboveAndroidQ(maskBitmap, this.contentResolver)
                 BitmapUtils.saveImageOnAboveAndroidQ(maskBitmapToServer, this.contentResolver)
             } */
