@@ -1,6 +1,6 @@
 from typing_extensions import Annotated
 from fastapi import APIRouter, Depends, Form, Query, Request
-from pydantic import Json
+from pydantic import Json, UUID4
 from app.core.exceptions.base import BadRequestException
 from app.core.fastapi.dependency.permission import (
     AllowAll,
@@ -30,7 +30,7 @@ async def follow_user(
     req: Request,
     user_id: UUID4,
 ):
-    user_svc = PostService()
+    user_svc = UserService()
     follow = await user_svc.follow_user(
         followed_user_id=user_id, 
         following_user_id = req.user.id
@@ -47,7 +47,7 @@ async def unfollow_user(
     req: Request,
     user_id: UUID4,
 ):
-    user_svc = PostService()
+    user_svc = UserService()
     follow = await user_svc.unfollow_user(
         followed_user_id=user_id, 
         following_user_id = req.user.id
@@ -64,7 +64,7 @@ async def accept_user_follow(
     req: Request,
     user_id: UUID4,
 ):
-    user_svc = PostService()
+    user_svc = UserService()
     follow = await user_svc.unfollow_user(
         followed_user_id=req.user.id,
         following_user_id=user_id
