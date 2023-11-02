@@ -1,10 +1,12 @@
 package com.project.spire.ui.create
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.example.spire.R
 import com.example.spire.databinding.ActivityWriteTextBinding
+import com.project.spire.ui.MainActivity
 import com.project.spire.utils.InferenceUtils
 
 class WriteTextActivity : AppCompatActivity() {
@@ -36,6 +38,17 @@ class WriteTextActivity : AppCompatActivity() {
 
         doneButton.setOnClickListener {
             // TODO: Send post upload request
+        }
+
+        val backBtn = binding.writeTextAppBarLayout.backButton
+        backBtn.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        val exitBtn = binding.writeTextAppBarLayout.exitButton
+        exitBtn.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            finish()
         }
     }
 }

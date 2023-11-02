@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.spire.R
 import com.example.spire.databinding.ActivityImageEditBinding
+import com.project.spire.ui.MainActivity
 import com.project.spire.utils.BitmapUtils
 import com.project.spire.utils.InferenceUtils
 
@@ -23,16 +24,6 @@ class ImageEditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityImageEditBinding
     private lateinit var inferenceViewModel: InferenceViewModel
     private val canvasViewModel: CanvasViewModel by viewModels()
-
-    private lateinit var mImageView: ImageView
-    private lateinit var mCanvasView: SpireCanvasView
-    private lateinit var editBtn: ImageButton
-    private lateinit var eraseBtn: ImageButton
-    private lateinit var resetBtn: ImageButton
-    private lateinit var promptSuggestBtn: Button
-    private lateinit var promptInput: EditText
-    private lateinit var nextBtn: Button
-
     private var mImageBitmap: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +39,7 @@ class ImageEditActivity : AppCompatActivity() {
         val cropDoneButton = binding.cropDoneButton
         cropImageView.setImageUriAsync(uri)
         cropImageView.setAspectRatio(1, 1)
-        mImageView = binding.editingImage
+        val mImageView = binding.editingImage
 
         cropDoneButton.setOnClickListener {
             val bitmap = cropImageView.getCroppedImage(mImageView.width, mImageView.height)!!
@@ -66,12 +57,12 @@ class ImageEditActivity : AppCompatActivity() {
             }
         }
 
-        mCanvasView = binding.spireCanvasView
+        val mCanvasView = binding.spireCanvasView
         mCanvasView.initViewModel(canvasViewModel)
 
         canvasViewModel.setBackgroundMaskBitmap(BitmapFactory.decodeResource(resources, R.drawable.img_dummy_mask), mCanvasView.COLOR_BLUE)
 
-        editBtn = binding.editButton
+        val editBtn = binding.editButton
         editBtn.setOnClickListener { canvasViewModel.changePenMode() }
         val penModeObserver = Observer<Boolean> { isPenMode ->
             if (isPenMode) {
@@ -82,7 +73,7 @@ class ImageEditActivity : AppCompatActivity() {
         }
         canvasViewModel.isPenMode.observe(this, penModeObserver)
 
-        eraseBtn = binding.eraseButton
+        val eraseBtn = binding.eraseButton
         eraseBtn.setOnClickListener { canvasViewModel.changeEraseMode() }
         val eraseModeObserver = Observer<Boolean> { isEraseMode ->
             if (isEraseMode) {
@@ -96,15 +87,15 @@ class ImageEditActivity : AppCompatActivity() {
         val isDrawingObserver = Observer<Boolean> { mCanvasView.invalidate() }
         canvasViewModel.isDrawing.observe(this, isDrawingObserver)
 
-        resetBtn = binding.resetButton
+        val resetBtn = binding.resetButton
         resetBtn.setOnClickListener {
             canvasViewModel.clearCanvas()
             editBtn.setImageResource(R.drawable.ic_img_edit)
             eraseBtn.setImageResource(R.drawable.ic_img_erase)
         }
 
-        promptSuggestBtn = binding.promptSuggestionButton
-        promptInput = binding.promptInput
+        val promptSuggestBtn = binding.promptSuggestionButton
+        val promptInput = binding.promptInput
         promptSuggestBtn.setOnClickListener {
             val currentText = promptInput.text.toString()
             if (currentText == "") promptInput.setText(promptSuggestBtn.text)
@@ -113,7 +104,7 @@ class ImageEditActivity : AppCompatActivity() {
             }
         }
 
-        nextBtn = binding.nextButton
+        val nextBtn = binding.nextButton
         nextBtn.setOnClickListener {
             val intent = Intent(this, WriteTextActivity::class.java)
             startActivity(intent)
@@ -129,6 +120,18 @@ class ImageEditActivity : AppCompatActivity() {
 
             inferenceViewModel.infer(mImageBitmap!!, maskBitmapToServer, promptInput.text.toString())
         }
+
+        val backBtn = binding.imageEditAppBarLayout.backButton
+        backBtn.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        val exitBtn = binding.imageEditAppBarLayout.exitButton
+        exitBtn.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            finish()
+        }
+
 
         // TODO: implement toolbar buttons
     }

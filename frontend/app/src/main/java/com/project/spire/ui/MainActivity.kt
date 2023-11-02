@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(this, ImageEditActivity::class.java)
                     intent.putExtra("imageUri", uri.toString())
                     startActivity(intent)
-                    //finish() // TODO: should not finish main?
+                    //finish()
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }
