@@ -39,4 +39,5 @@
     <dimen name="post_footer_icon_width">40dp</dimen>
     <dimen name="post_footer_icon_height">40dp</dimen>
     <dimen name="post_footer_text_width">35dp</dimen>
+    <dimen name="image_placeholder_height">350dp</dimen>
 </resources>

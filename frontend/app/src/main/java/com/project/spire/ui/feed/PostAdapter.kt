@@ -8,13 +8,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
-import coil.transform.RoundedCornersTransformation
 import com.example.spire.R
 import com.project.spire.models.Post
 
 class PostAdapter(
     private val postList: List<Post>
-): RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
+) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val layout = LayoutInflater
@@ -30,12 +29,8 @@ class PostAdapter(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = postList[position]
-        holder.postImage.load(post.imageUrl){
-            placeholder(R.drawable.logo_empty)
-        }
-        holder.profileImage.load(post.user.profileImage){
+        holder.profileImage.load(post.user.profileImage) {
             transformations(CircleCropTransformation())
-            placeholder(R.drawable.logo_black)
         }
         holder.username.text = post.user.userName
         holder.content.text = post.content
@@ -43,7 +38,6 @@ class PostAdapter(
         holder.likes.text = post.likedUsers.size.toString()
         holder.comments.text = post.comments.size.toString()
     }
-
 
     inner class PostViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         var profileImage: ImageView
