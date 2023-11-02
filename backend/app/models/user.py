@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 import uuid
 from pydantic import UUID4
-from sqlalchemy import String, Boolean
+from sqlalchemy import String, Boolean, Integer
 from sqlalchemy.sql import expression
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models import Base
@@ -63,4 +63,5 @@ class User(Base, TimestampMixin):
 class Follow(Base, TimestampMixin):
     following_user_id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
     followed_user_id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
+    accept_status: Mapped[int] = mapped_column(Integer, nullable=False)
     
