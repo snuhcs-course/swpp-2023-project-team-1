@@ -55,8 +55,7 @@ class CommentBase(BaseModel):
     post_id: UUID4
     content: str
 
-class CommentCreate(CommentBase):
-    post_id: UUID4 = Field(...)
+class CommentCreate(BaseModel):
     content: str = Field(...)
 
 class CommentUpdate(BaseModel):

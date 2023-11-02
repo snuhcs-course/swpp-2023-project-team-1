@@ -1,10 +1,10 @@
 import asyncio
 from pydantic import UUID4
-from sqlalchemy import or_, select, and_
+from sqlalchemy import select, and_
 from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.post import Post
-from app.schemas.post import PostBase, PostCreate, PostUpdate, CommentCreate
+from app.schemas.post import PostCreate, PostUpdate, CommentCreate, CommentUpdate
 from app.core.exceptions.post import PostNotFoundException, CommentNotFoundException, UserNotOwnerException
 from app.models.post import Comment, PostLike
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -136,12 +136,14 @@ class PostService:
     @Transactional()
     async def create_comment(
         self,
+        post_id: UUID4,
         comment_data: CommentCreate,
         user_id: UUID4,
         session: AsyncSession,
         **kwargs
     ) -> Comment:
         comment_ = comment_data.dict()
+        comment_["post_id"] = post_id
         comment_["user_id"] = user_id
 
         try:
@@ -149,6 +151,30 @@ class PostService:
             return cmt_obj
         except IntegrityError as e:
             raise BadRequestException(str(e.orig)) from e
+        
+    @Transactional()
+    async def update_comment_by_id(
+        self,
+        comment_id: UUID4,
+        user_id: UUID4,
+        comment_data: CommentUpdate,
+        session: AsyncSession,
+        **kwargs
+    ) -> Comment:
+        try:
+            comment_obj = await comment.get_by_id(comment_id)
+        except NoResultFound as e:
+            raise CommentNotFoundException from e
+        
+        if comment_obj.user_id != user_id:
+            raise ForbiddenException("You are not authorized to delete this comment")
+        
+        comment_dict = comment_data.dict()
+
+        new_comment_obj = await comment.update_by_id(comment_id, comment_dict)
+        new_comment_obj.like_cnt = comment_obj.like_cnt
+
+        return new_comment_obj
 
     @Transactional()
     async def delete_comment_by_id(self, comment_id: UUID4, request_user_id: UUID4, session: AsyncSession) -> Comment:
