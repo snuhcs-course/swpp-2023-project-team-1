@@ -31,6 +31,9 @@
     <dimen name="image_edit_toolbar_title_font">20sp</dimen>
   
     <!-- feed and post -->
+    <dimen name="bottom_sheet_height">200dp</dimen>
+    <dimen name="bottom_sheet_icon_size">26dp</dimen>
+    <dimen name="bottom_sheet_text_size">18sp</dimen>
     <dimen name="feed_logo_width">80dp</dimen>
     <dimen name="feed_logo_height">40dp</dimen>
     <dimen name="feed_toolbar_height">80dp</dimen>

@@ -10,6 +10,7 @@ import okhttp3.Interceptor
 import okhttp3.Response
 
 class TokenInterceptor : Interceptor {
+
     @OptIn(InternalCoroutinesApi::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val authRepository = AuthRepository(DataStoreProvider.authDataStore)
@@ -29,6 +30,7 @@ class TokenInterceptor : Interceptor {
                 }
             }
         }
+
         return response
     }
 }

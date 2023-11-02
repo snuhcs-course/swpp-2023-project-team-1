@@ -3,6 +3,7 @@ package com.project.spire.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.LinearLayout
 import android.widget.Toolbar
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,6 +15,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.spire.R
 import com.example.spire.databinding.ActivityMainBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.project.spire.ui.create.ImageEditActivity
 
@@ -51,7 +53,13 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        // select image via PhotoPicker
+        // select image
+        val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet_image_source, null)
+        val bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog.setContentView(bottomSheetView)
+        val bottomSheetCamera = bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_1)
+        val bottomSheetGallery = bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_2)
+        val bottomSheetNew = bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_3)
         val createPostBtn: FloatingActionButton = binding.fab
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -65,8 +73,21 @@ class MainActivity : AppCompatActivity() {
                     Log.d("PhotoPicker", "No media selected")
                 }
             }
+
         createPostBtn.setOnClickListener {
+            bottomSheetDialog.show()
+        }
+
+        bottomSheetCamera.setOnClickListener {
+            // TODO: Add camera functionality
+        }
+
+        bottomSheetGallery.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+
+        bottomSheetNew.setOnClickListener {
+            // TODO: Create new image from scratch
         }
     }
 }

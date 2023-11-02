@@ -9,11 +9,13 @@
     <string name="title_profile">Profile</string>
 
     <!-- image edit activities -->
+    <string name="bottom_sheet_camera">Take picture</string>
+    <string name="bottom_sheet_gallery">Choose from gallery</string>
+    <string name="bottom_sheet_new">Generate new image</string>
     <string name="title_toolbar_image_edit">Edit Your Image</string>
     <string name="prompt_suggestion_button">sunglasses</string>
     <string name="prompt_hint">Write your prompt here</string>
     <string name="next_button">Next</string>
-
     <string name="title_create_post">Create Post</string>
     <string name="title_edit_profile">Edit Profile</string>
 
