@@ -8,13 +8,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 // Should be combined with RetrofitClient later
 class InferenceClient {
     companion object {
-        private const val BASE_URL = "http://10.0.2.2:8080/v2/"
+        private const val REMOTE_URL = "http://147.46.15.75:32317/v2/"
+        private const val LOCAL_URL = "http://10.0.2.2:8080/v2/"
 
         private val okHttpClient = OkHttpClient.Builder()
             .build()
 
         private val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(REMOTE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
