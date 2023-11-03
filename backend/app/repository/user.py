@@ -15,7 +15,7 @@ async def get_follow_by_user_ids(following_user_id: int, followed_user_id: int, 
         Follow.followed_user_id == followed_user_id
     )
     res = await session.execute(stmt)
-    return res.scalar_one_or_none()
+    return res.scalar_one()
 
 
 @Transactional()
