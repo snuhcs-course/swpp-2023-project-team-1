@@ -66,7 +66,13 @@ async def count_by_user_name(search_string: str, session: AsyncSession):
 async def get_list_by_user_name(
     search_string: int, limit: int, offset: int, session: AsyncSession
 ):
+    order_case = case(
+        (User.username.ilike(f"{search_string}%"), 0),  # Exact match at the beginning has highest priority
+        else_=1  # All other cases
+    )
+
     stmt = select(User).where(User.username.ilike(f"%{search_string}%")).options(load_only(User.id, User.username, User.profile_image_url))
+    stmt = stmt.order_by(order_case, User.username)
     stmt = stmt.limit(limit).offset(offset)
     res = await session.execute(stmt)
     return res.scalars().all()
