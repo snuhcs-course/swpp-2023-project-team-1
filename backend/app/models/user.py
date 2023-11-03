@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 import uuid
 from pydantic import UUID4
-from sqlalchemy import String, Boolean, Integer
+from sqlalchemy import String, Boolean, Integer, ForeignKey
 from sqlalchemy.sql import expression
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models import Base
@@ -60,8 +60,58 @@ class User(Base, TimestampMixin):
         passive_deletes=True,
     )
 
+    followers: Mapped[list["Follow"]] = relationship(
+        "Follow",
+        foreign_keys="Follow.followed_user_id",
+        back_populates="following_user",
+        cascade="save-update, merge, delete",
+        passive_deletes=True,
+    )
+
+    following: Mapped[list["Follow"]] = relationship(
+        "Follow",
+        foreign_keys="Follow.following_user_id",
+        back_populates="followed_user",
+        cascade="save-update, merge, delete",
+        passive_deletes=True,
+    )
+
 class Follow(Base, TimestampMixin):
-    following_user_id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
-    followed_user_id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
+    id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
     accept_status: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    following_user_id: Mapped[UUID4] = mapped_column(
+        GUID,
+        ForeignKey("user.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
+
+    followed_user_id: Mapped[UUID4] = mapped_column(
+        GUID,
+        ForeignKey("user.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
+
+    following_user: Mapped[User] = relationship(
+        "User",
+        foreign_keys=[following_user_id],
+        back_populates="followers",
+        cascade="save-update, merge, delete",
+        passive_deletes=True,
+    )
+
+    followed_user: Mapped[User] = relationship(
+        "User",
+        foreign_keys=[followed_user_id],
+        back_populates="following",
+        cascade="save-update, merge, delete",
+        passive_deletes=True,
+    )
+
+    
+    
+
+
     
