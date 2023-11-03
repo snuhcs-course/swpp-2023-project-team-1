@@ -22,3 +22,23 @@ class FollowNotFoundException(CustomException):
     code = 404
     error_code = "FOLLOW__NOT_FOUND"
     message = "follow not found"
+
+class FollowMyselfException(CustomException):
+    code = 404
+    error_code = "FOLLOW__MYSELF"
+    message = "follow myself"
+
+class FollowAlreadyExistsException(CustomException):
+    code = 404
+    error_code = "FOLLOW__ALREADY_EXISTS"
+    message = "follow already exists"
+
+class FollowAlreadyAcceptedException(CustomException):
+    code = 404
+    error_code = "FOLLOW__ALREADY_ACCEPTED"
+    message = "follow already accepted"
+
+class FollowWrongStatusException(CustomException):
+    code = 404
+    error_code = "FOLLOW__WRONG_STATUS"
+    message = "follow wrong status"

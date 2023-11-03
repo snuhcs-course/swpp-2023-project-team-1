@@ -50,7 +50,8 @@ async def cancel_follow_request(
     user_svc = UserService()
     follow = await user_svc.delete_follow(
         followed_user_id=user_id, 
-        following_user_id=req.user.id
+        following_user_id=req.user.id, 
+        accept_status=0
     )
     return {"message": f"Canceled user {user_id} follow request"}
 
@@ -84,7 +85,8 @@ async def reject_follow_request(
     user_svc = UserService()
     follow = await user_svc.delete_follow(
         followed_user_id=req.user.id,
-        following_user_id=user_id
+        following_user_id=user_id,
+        accept_status=0
     )
     return {"message": f"Rejected user {user_id} follow request"}
 
@@ -101,7 +103,8 @@ async def unfollow(
     user_svc = UserService()
     follow = await user_svc.delete_follow(
         followed_user_id=user_id, 
-        following_user_id = req.user.id
+        following_user_id=req.user.id,
+        accept_status=1
     )
     return {"message": f"Unfollowed user {user_id}"}
 
@@ -118,6 +121,7 @@ async def reject_follow(
     user_svc = UserService()
     follow = await user_svc.delete_follow(
         followed_user_id=req.user.id,
-        following_user_id=user_id
+        following_user_id=user_id,
+        accept_status=1
     )
     return {"message": f"Rejected user {user_id} follow"}
