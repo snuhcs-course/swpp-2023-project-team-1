@@ -142,3 +142,19 @@ async def get_followers(
         user_id=user_id, **pagination
     )
     return {"total": total, "items": items, "next_cursor": next_cursor}
+
+@user_router.get(
+    "/{user_id}/followings",
+    summary="Get user followings",
+    description="Get user followings",
+    dependencies=[Depends(PermissionDependency([AllowAll]))],
+)
+async def get_followings(
+    user_id: UUID4,
+    pagination: dict = Depends(limit_offset_query)
+):
+    user_svc = UserService()
+    total, items, next_cursor = await user_svc.get_followings(
+        user_id=user_id, **pagination
+    )
+    return {"total": total, "items": items, "next_cursor": next_cursor}

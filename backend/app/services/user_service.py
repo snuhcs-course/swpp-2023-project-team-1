@@ -89,7 +89,21 @@ class UserService:
             )
 
         except NoResultFound as e:
-            raise NotFoundException("User not found") from e
+            raise NotFoundException("Follow not found") from e
+
+        next_cursor = offset + len(users) if total and total > offset + len(users) else None
+        return total, users, next_cursor
+    
+    @Transactional()
+    async def get_followings(self, user_id: UUID4, limit: int, offset: int, session: AsyncSession):
+        try:
+            total, users = await asyncio.gather(
+                user.count_followings(user_id),
+                user.get_followings(user_id, limit, offset)
+            )
+
+        except NoResultFound as e:
+            raise NotFoundException("Follow not found") from e
 
         next_cursor = offset + len(users) if total and total > offset + len(users) else None
         return total, users, next_cursor
