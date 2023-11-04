@@ -17,6 +17,7 @@ import com.example.spire.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.project.spire.ui.create.CameraActivity
 import com.project.spire.ui.create.ImageEditActivity
 
 class MainActivity : AppCompatActivity() {
@@ -68,7 +69,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         bottomSheetCamera.setOnClickListener {
-            // TODO: Add camera functionality
+            val intent = Intent(this, CameraActivity::class.java)
+            startActivity(intent)
             bottomSheetDialog.hide()
         }
 

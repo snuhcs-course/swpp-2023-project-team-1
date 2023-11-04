@@ -3,6 +3,7 @@ package com.project.spire.ui.create
 import android.Manifest
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaScannerConnection
 import android.os.Bundle
@@ -59,8 +60,14 @@ class CameraActivity : AppCompatActivity() {
         startCamera()
 
         captureButton.setOnClickListener {
+            binding.cameraProgressBar.show()
             onTakePhoto()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.cameraProgressBar.hide()
     }
 
     // Initialize camera
@@ -126,12 +133,10 @@ class CameraActivity : AppCompatActivity() {
                 // Success
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     val outputURI = outputFileResults.savedUri
-                    MediaScannerConnection.scanFile(
-                        safeContext,
-                        arrayOf(outputURI?.path), null
-                    ) { _, _ ->
-                        Toast.makeText(safeContext, "Photo saved", Toast.LENGTH_SHORT).show()
-                    }
+                    Log.d("CameraActivity", "Image saved to $outputURI")
+                    val intent = Intent(safeContext, ImageEditActivity::class.java)
+                    intent.putExtra("imageUri", outputURI.toString())
+                    startActivity(intent)
                 }
                 // Error
                 override fun onError(exception: ImageCaptureException) {
