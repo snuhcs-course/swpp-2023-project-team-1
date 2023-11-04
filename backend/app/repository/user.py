@@ -7,7 +7,16 @@ from sqlalchemy.orm import with_expression, selectinload, contains_eager
 from app.models.user import User, Follow
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import load_only
-from app.core.exceptions.user import FollowAlreadyExistsException
+from app.core.exceptions.user import UserNotFoundException, FollowAlreadyExistsException
+
+
+@Transactional()
+async def get_user_by_user_id(user_id: int, session: AsyncSession) -> Follow | None:
+    stmt = select(User).where(
+        User.id == user_id
+    )
+    res = await session.execute(stmt)
+    return res.scalar_one()
 
 @Transactional()
 async def get_follow_by_user_ids(following_user_id: int, followed_user_id: int, session: AsyncSession) -> Follow | None:
@@ -29,6 +38,11 @@ async def get_follow_by_user_ids_with_none(following_user_id: int, followed_user
 
 @Transactional()
 async def create_follow(following_user_id: int, followed_user_id: int, session: AsyncSession):
+    try:
+        await get_user_by_user_id(followed_user_id, session=session)
+    except NoResultFound as e:
+        raise UserNotFoundException from e
+
     follow = await get_follow_by_user_ids_with_none(following_user_id, followed_user_id, session=session)
 
     if follow is None:
@@ -73,14 +87,20 @@ async def count_followers(user_id: int, session: AsyncSession):
 async def get_followers(user_id: int, limit: int, offset: int, session: AsyncSession):
     stmt = (
         select(Follow)
-        .where(Follow.followed_user_id == user_id)
+        .where(Follow.followed_user_id == user_id, Follow.accept_status == 1)
         .options(selectinload(Follow.following_user).load_only(User.id, User.username, User.profile_image_url))
         .options(load_only(Follow.id))
+        .order_by(Follow.updated_at.desc())
     )
 
     stmt = stmt.limit(limit).offset(offset)
     res = await session.execute(stmt)
-    return res.scalars().all()
+
+    follower_list = []
+    for follower in res.scalars().all():
+        follower_list.append({"id": follower.following_user.id, "username": follower.following_user.username, "profile_image_url": follower.following_user.profile_image_url})
+
+    return follower_list
 
 @Transactional()
 async def count_followings(user_id: int, session: AsyncSession):
@@ -92,14 +112,20 @@ async def count_followings(user_id: int, session: AsyncSession):
 async def get_followings(user_id: int, limit: int, offset: int, session: AsyncSession):
     stmt = (
         select(Follow)
-        .where(Follow.following_user_id == user_id)
+        .where(Follow.following_user_id == user_id, Follow.accept_status == 1)
         .options(selectinload(Follow.followed_user).load_only(User.id, User.username, User.profile_image_url))
         .options(load_only(Follow.id))
+        .order_by(Follow.updated_at.desc())
     )
 
     stmt = stmt.limit(limit).offset(offset)
     res = await session.execute(stmt)
-    return res.scalars().all()
+    
+    following_list = []
+    for following in res.scalars().all():
+        following_list.append({"id": following.followed_user.id, "username": following.followed_user.username, "profile_image_url": following.followed_user.profile_image_url})
+
+    return following_list
 
 @Transactional()
 async def count_users_by_user_name(search_string: str, session: AsyncSession):
