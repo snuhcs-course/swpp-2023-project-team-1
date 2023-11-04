@@ -28,11 +28,12 @@ search_router = APIRouter()
     dependencies=[Depends(PermissionDependency([AllowAll]))]
 )
 async def search_user(
+    req: Request,
     search_string: str, 
     pagination: dict = Depends(limit_offset_query)
 ):
     user_svc = UserService()
     total, items, next_cursor = await user_svc.search_user(
-        search_string = search_string, **pagination
+        search_string = search_string, current_user_id=req.user.id, **pagination
     )
     return {"total": total, "items": items, "next_cursor": next_cursor}

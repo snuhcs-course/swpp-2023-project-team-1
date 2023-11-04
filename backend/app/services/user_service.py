@@ -81,11 +81,11 @@ class UserService:
             raise FollowNotFoundException from e
 
     @Transactional()
-    async def search_user(self, search_string: str, limit: int, offset: int, session: AsyncSession):
+    async def search_user(self, search_string: str, current_user_id: UUID4, limit: int, offset: int, session: AsyncSession):
         try:
             total, users = await asyncio.gather(
                 user.count_by_user_name(search_string),
-                user.get_list_by_user_name(search_string, limit, offset),
+                user.get_list_by_user_name(search_string, current_user_id, limit, offset),
             )
 
         except NoResultFound as e:

@@ -64,7 +64,7 @@ async def count_by_user_name(search_string: str, session: AsyncSession):
 
 @Transactional()
 async def get_list_by_user_name(
-    search_string: int, limit: int, offset: int, session: AsyncSession
+    search_string: str, current_user_id: int, limit: int, offset: int, session: AsyncSession
 ):
     order_case = case(
         (User.username.ilike(f"{search_string}%"), 0),  # Exact match at the beginning has highest priority
