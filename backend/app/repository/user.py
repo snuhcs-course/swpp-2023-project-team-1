@@ -2,7 +2,7 @@ from pydantic import UUID4
 from app.models.user import User
 from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import and_, delete, select, func, case, update
+from sqlalchemy import and_, delete, select, func, case, update, exists
 from sqlalchemy.orm import with_expression, selectinload, contains_eager
 from app.models.user import User, Follow
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -146,5 +146,30 @@ async def get_list_by_user_name(
     stmt = stmt.order_by(order_case, User.username)
     stmt = stmt.limit(limit).offset(offset)
     res = await session.execute(stmt)
-    return res.scalars().all()
+
+    users = res.scalars().all()
+
+    user_list = []
+    for user in users:
+        stmt_following = select(Follow).where(Follow.following_user_id == current_user_id, Follow.followed_user_id == user.id, Follow.accept_status == 1)
+        res_following = await session.execute(stmt_following)
+        following = res_following.scalar_one_or_none()
+        if following is None:
+            following = False
+        else:
+            following = True
+
+        stmt_follwer = select(Follow).where(Follow.following_user_id == user.id, Follow.followed_user_id == current_user_id, Follow.accept_status == 1)
+        res_follower = await session.execute(stmt_follwer)
+        follower = res_follower.scalar_one_or_none()
+        if follower is None:
+            follower = False
+        else:
+            follower = True
+        
+        user_list.append({"id": user.id, "username": user.username, "profile_image_url": user.profile_image_url, "is_following": following, "is_follower": follower})
+
+
+    return user_list
+
 
