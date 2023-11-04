@@ -6,7 +6,7 @@
     android:layout_margin="@dimen/prompt_dialog_margin"
     android:orientation="vertical"
     android:padding="@dimen/prompt_dialog_padding"
-    tools:context="com.project.spire.ui.auth.PromptDialogFragment">
+    tools:context="com.project.spire.ui.create.PromptDialogFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <com.google.android.material.textfield.TextInputLayout

@@ -1,10 +1,8 @@
 package com.project.spire.ui
 
-import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.Toolbar
 import androidx.activity.result.PickVisualMediaRequest
@@ -19,7 +17,7 @@ import com.example.spire.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.project.spire.ui.auth.PromptDialogFragment
+import com.project.spire.ui.create.PromptDialogFragment
 import com.project.spire.ui.create.CameraActivity
 import com.project.spire.ui.create.ImageEditActivity
 

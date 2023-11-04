@@ -1,4 +1,4 @@
-package com.project.spire.ui.auth
+package com.project.spire.ui.create
 
 import android.app.Dialog
 import android.os.Bundle
