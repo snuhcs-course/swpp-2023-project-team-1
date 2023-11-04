@@ -68,7 +68,7 @@ class User(Base, TimestampMixin):
         passive_deletes=True,
     )
 
-    following: Mapped[list["Follow"]] = relationship(
+    followings: Mapped[list["Follow"]] = relationship(
         "Follow",
         foreign_keys="Follow.following_user_id",
         back_populates="followed_user",
@@ -105,7 +105,7 @@ class Follow(Base, TimestampMixin):
     followed_user: Mapped[User] = relationship(
         "User",
         foreign_keys=[followed_user_id],
-        back_populates="following",
+        back_populates="followings",
         cascade="save-update, merge, delete",
         passive_deletes=True,
     )

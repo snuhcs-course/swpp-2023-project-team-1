@@ -16,6 +16,7 @@ from app.schemas.user import (
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.user_service import UserService
+from app.utils.pagination import limit_offset_query
 
 
 user_router = APIRouter()
@@ -125,3 +126,19 @@ async def reject_follow(
         accept_status=1
     )
     return {"message": f"Rejected user {user_id} follow"}
+
+@user_router.get(
+    "/{user_id}/followers",
+    summary="Get user followers",
+    description="Get user followers",
+    dependencies=[Depends(PermissionDependency([AllowAll]))],
+)
+async def get_followers(
+    user_id: UUID4,
+    pagination: dict = Depends(limit_offset_query)
+):
+    user_svc = UserService()
+    total, items, next_cursor = await user_svc.get_followers(
+        user_id=user_id, **pagination
+    )
+    return {"total": total, "items": items, "next_cursor": next_cursor}
