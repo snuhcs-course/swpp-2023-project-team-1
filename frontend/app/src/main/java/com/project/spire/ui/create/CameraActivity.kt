@@ -47,6 +47,8 @@ class CameraActivity : AppCompatActivity() {
 
         previewView = binding.previewView
         val captureButton = binding.captureButton
+        val cameraFlipButton = binding.cameraFlipButton
+        val backButton = binding.backButton
 
         handleCameraUI()
 
@@ -62,6 +64,14 @@ class CameraActivity : AppCompatActivity() {
         captureButton.setOnClickListener {
             binding.cameraProgressBar.show()
             onTakePhoto()
+        }
+
+        cameraFlipButton.setOnClickListener {
+            onSwitchCamera()
+        }
+
+        backButton.setOnClickListener {
+            finish()
         }
     }
 

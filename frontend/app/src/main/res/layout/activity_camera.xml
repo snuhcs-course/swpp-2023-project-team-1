@@ -11,17 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/capture_button"
-        android:layout_width="@dimen/camera_btn_size"
-        android:layout_height="@dimen/camera_btn_size"
-        android:layout_marginBottom="@dimen/camera_btn_margin_bottom"
-        android:background="@android:color/transparent"
-        android:foreground="@drawable/ic_camera_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <View
         android:id="@+id/camera_blind_top"
         android:layout_width="match_parent"
@@ -37,6 +26,40 @@
         android:alpha="0.8"
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/back_button"
+        android:layout_width="@dimen/image_edit_toolbar_btn_size"
+        android:layout_height="@dimen/image_edit_toolbar_btn_size"
+        android:background="@null"
+        android:padding="@dimen/image_edit_toolbar_btn_padding"
+        android:layout_marginTop="20dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_img_back"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/capture_button"
+        android:layout_width="@dimen/camera_btn_size"
+        android:layout_height="@dimen/camera_btn_size"
+        android:layout_marginBottom="@dimen/camera_btn_margin_bottom"
+        android:background="@android:color/transparent"
+        android:foreground="@drawable/ic_camera_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/camera_flip_button"
+        android:layout_width="@dimen/camera_flip_btn_size"
+        android:layout_height="@dimen/camera_flip_btn_size"
+        android:layout_marginBottom="@dimen/camera_flip_btn_margin_bottom"
+        app:layout_constraintStart_toEndOf="@id/capture_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:foreground="@drawable/ic_flip_camera"
+        android:background="@android:color/transparent" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/camera_progress_bar"
