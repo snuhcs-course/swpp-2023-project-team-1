@@ -12,6 +12,7 @@ from app.schemas.user import (
     LoginRequest,
     LoginResponse,
     UserCreate,
+    GetUsersResponse
 )
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,7 +26,8 @@ search_router = APIRouter()
     "/user/{search_string}",
     summary="Search user by username",
     description="Search user by username", 
-    dependencies=[Depends(PermissionDependency([AllowAll]))]
+    dependencies=[Depends(PermissionDependency([AllowAll]))],
+    response_model=GetUsersResponse,
 )
 async def search_user(
     req: Request,
