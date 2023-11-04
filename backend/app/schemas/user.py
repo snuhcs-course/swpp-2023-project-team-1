@@ -56,3 +56,12 @@ class GetUsersResponse(BaseModel):
     total: int
     items: list[UserRead]
     next_cursor: int | None
+
+class UserSearch(UserRead):
+    is_following: bool = Field(..., description="Following Status")
+    is_follower: bool = Field(..., description="Follower Status")
+
+class UserSearchResponse(BaseModel):
+    total: int
+    items: list[UserSearch]
+    next_cursor: int | None

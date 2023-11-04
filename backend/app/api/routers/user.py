@@ -12,7 +12,8 @@ from app.schemas.user import (
     LoginRequest,
     LoginResponse,
     UserCreate,
-    GetUsersResponse
+    GetUsersResponse,
+    UserSearchResponse
 )
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -150,7 +151,7 @@ async def get_followers(
     summary="Get user followings",
     description="Get user followings",
     dependencies=[Depends(PermissionDependency([AllowAll]))],
-    response_model=GetUsersResponse,
+    response_model=UserSearchResponse,
 )
 async def get_followings(
     user_id: UUID4,
