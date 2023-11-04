@@ -1,3 +1,4 @@
+import asyncio
 from pydantic import UUID4
 from sqlalchemy import or_, select, and_
 from app.session import Transactional
@@ -80,12 +81,18 @@ class UserService:
             raise FollowNotFoundException from e
 
     @Transactional()
-    async def search_user(self, search_string: str, session: AsyncSession):
+    async def search_user(self, search_string: str, limit: int, offset: int, session: AsyncSession):
         try:
-            await user.query_user_by_user_name(search_string)
+            total, users = await asyncio.gather(
+                user.count_by_user_name(search_string),
+                user.get_list_by_user_name(search_string, limit, offset),
+            )
 
-        except IntegrityError as e:
-            raise BadRequestException(str(e.orig)) from e
+        except NoResultFound as e:
+            raise NotFoundException("User not found") from e
+
+        next_cursor = offset + len(users) if total and total > offset + len(users) else None
+        return total, users, next_cursor
 
 
 async def get_my_info_by_id(user_id: UUID4, session: AsyncSession) -> User:

@@ -16,20 +16,23 @@ from app.schemas.user import (
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.user_service import UserService
+from app.utils.pagination import limit_offset_query
 
 
 search_router = APIRouter()
 
 @search_router.get(
-    "/search/user/{search_string}",
+    "/user/{search_string}",
     summary="Search user by username",
-    description="Search user by username"
+    description="Search user by username", 
+    dependencies=[Depends(PermissionDependency([AllowAll]))]
 )
 async def search_user(
-    search_string: str
+    search_string: str, 
+    pagination: dict = Depends(limit_offset_query)
 ):
     user_svc = UserService()
-    search_user_list = await user_svc.search_user(
-        search_string = search_string
+    total, items, next_cursor = await user_svc.search_user(
+        search_string = search_string, **pagination
     )
-    return search_user_list
+    return {"total": total, "items": items, "next_cursor": next_cursor}
