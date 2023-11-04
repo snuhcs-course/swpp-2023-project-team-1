@@ -8,6 +8,11 @@
     <string name="title_notification">Notifications</string>
     <string name="title_profile">Profile</string>
 
+    <!-- Prompt Dialog -->
+    <string name="prompt_dialog_hint">✨What are you inspired with?</string>
+    <string name="prompt_dialog_button">Generate</string>
+    <string name="prompt_dialog_cancel">Cancel</string>
+
     <!-- image edit activities -->
     <string name="bottom_sheet_camera">Take picture</string>
     <string name="bottom_sheet_gallery">Choose from gallery</string>
@@ -53,6 +58,8 @@
     <string name="password_rule_2"> ✦ Contain at least 1 alphabet</string>
     <string name="password_rule_3"> ✦ Contain at least 1 number</string>
     <string name="password_rule_4"> ✦ Contain at least 1 special character</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

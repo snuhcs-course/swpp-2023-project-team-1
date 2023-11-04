@@ -9,6 +9,6 @@ interface InferenceAPI {
     @GET("health/ready")
     suspend fun ready(): Response<Void>
 
-    @POST("models/deep_floyd_if/infer")
+    @POST("models/stable_diffusion/infer")
     suspend fun infer(@Body request: InferenceRequest): Response<InferenceSuccess>
 }

@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.example.spire.R
 import com.example.spire.databinding.ActivityCameraBinding
+import com.project.spire.ui.MainActivity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.Executors
@@ -71,6 +72,8 @@ class CameraActivity : AppCompatActivity() {
         }
 
         backButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
             finish()
         }
     }
