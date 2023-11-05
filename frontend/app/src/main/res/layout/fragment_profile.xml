@@ -21,6 +21,7 @@
         android:background="@drawable/bg_profile_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:padding="@dimen/profile_image_border_width"
         app:layout_constraintTop_toTopOf="@id/profile_header_background" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -96,6 +97,7 @@
         android:padding="8dp"
         android:text="LOGOUT"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="50dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

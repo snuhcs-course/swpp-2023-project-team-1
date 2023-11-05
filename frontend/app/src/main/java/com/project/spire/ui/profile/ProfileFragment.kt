@@ -14,6 +14,9 @@ import android.widget.TextView
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import coil.load
+import coil.transform.CircleCropTransformation
+import com.example.spire.R
 import com.example.spire.databinding.FragmentProfileBinding
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
@@ -44,6 +47,16 @@ class ProfileFragment : Fragment() {
         val logoutBtn: Button = binding.tempLogoutButton
         logoutBtn.setOnClickListener {
             val success = profileViewModel.logout()
+        }
+
+        // TEST: Setting profile image
+        binding.profileImage.load(R.drawable.img_dummy) {
+            transformations(CircleCropTransformation())
+        }
+
+        // TEST: Navigate to EditProfileActivity
+        binding.profileLargeButton.setOnClickListener {
+            startActivity(Intent(requireContext(), EditProfileActivity::class.java))
         }
 
         profileViewModel.logoutSuccess.observe(viewLifecycleOwner) {
