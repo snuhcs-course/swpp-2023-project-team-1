@@ -11,6 +11,7 @@ from app.schemas.post import (
     CommentUpdate,
     CommentResponse,
     GetPostsResponse,
+    ImageCreate,
     PostCreate,
     PostUpdate,
     PostResponse,
@@ -73,13 +74,33 @@ async def get_my_posts(
     description="Only authenticated user can create new post",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
-async def create_post(req: Request, post: PostCreate = Body(...)):
+async def create_post(
+    post: PostCreate = Body(...),
+    image: ImageCreate = Body(...),
+    user_id: UUID4 = Depends(get_user_id_from_request),
+    ):
     post_svc = PostService()
-    new_post = await post_svc.create_post(
-        user_id=req.user.id,
+
+    _post = await post_svc.create_post(
+        user_id=user_id,
         post_data=post,
     )
-    
+
+    image_url = await post_svc.create_image(
+        user_id=user_id,
+        post_id=_post.id,
+        image_data=image
+    )
+
+    new_post = await post_svc.update_post_by_id(
+        id=_post.id,
+        user_id=user_id,
+        post_data=PostUpdate(
+            content=_post.content,
+            image_url=image_url
+        )
+    )
+
     return normalize_post(new_post)
 
 

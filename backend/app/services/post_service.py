@@ -1,10 +1,14 @@
 import asyncio
+import base64
+from datetime import datetime
+import io
+from app.utils.ecs_log import logger
 from pydantic import UUID4
 from sqlalchemy import select, and_
 from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.post import Post
-from app.schemas.post import PostCreate, PostUpdate, CommentCreate, CommentUpdate
+from app.schemas.post import ImageCreate, PostCreate, PostUpdate, CommentCreate, CommentUpdate
 from app.core.exceptions.post import PostNotFoundException, CommentNotFoundException, UserNotOwnerException
 from app.models.post import Comment, PostLike
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -16,6 +20,8 @@ from app.core.exceptions.base import (
 from sqlalchemy import and_, delete, select, func, case, update
 from app.repository import post
 from app.repository import comment
+from app.utils.aws import s3_client, bucket_name
+
 class PostService:
     @Transactional()
     async def get_posts(self, user_id: UUID4 | None, limit: int, offset: int, session: AsyncSession):
@@ -54,7 +60,7 @@ class PostService:
         session: AsyncSession,
         **kwargs
     ) -> Post:
-        
+
         post_dict = post_data.create_dict(user_id)
 
         try:
@@ -62,8 +68,29 @@ class PostService:
         
         except IntegrityError as e:
             raise BadRequestException(str(e.orig)) from e
+    
+    @Transactional()
+    async def create_image(
+        self,
+        user_id: UUID4,
+        post_id: UUID4,
+        image_data: ImageCreate,
+        session: AsyncSession,
+        **kwargs
+    ) -> Post:
+        
+        img_url = upload_post_image_to_s3(post_id, image_data.modified_image)
 
+        image_dict = image_data.create_dict(user_id, post_id)
 
+        try:
+            await post.create_image(image_dict)
+        
+        except IntegrityError as e:
+            raise BadRequestException(str(e.orig)) from e
+
+        return img_url
+    
     @Transactional()
     async def get_post_by_id(self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs) -> Post:
 
@@ -206,3 +233,35 @@ class PostService:
         await session.delete(comment)
         await session.commit()
         return comment
+
+
+def upload_post_image_to_s3(
+    post_id: UUID4,
+    image_base64: str,
+    file_extension: str = "png",
+    ):
+    img_url = None
+    try:
+        image_bytes = base64.b64decode(image_base64)
+
+        image_key = f"post_image/{post_id}/{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}"
+
+        with io.BytesIO(image_bytes) as image_file:
+        # Upload the image to the S3 bucket
+            s3_client.upload_fileobj(
+                image_file,
+                bucket_name,
+                image_key,
+                ExtraArgs={
+                    "ContentType": f"image/{file_extension}",
+                },
+            )
+        
+        img_url = f"https://{bucket_name}.s3.amazonaws.com/{image_key}"
+
+    except Exception as e:
+            logger.error(e)
+            raise e
+    
+    return img_url
+

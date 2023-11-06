@@ -4,7 +4,7 @@ from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import and_, delete, select, func, case, update
 from sqlalchemy.orm import with_expression, selectinload, contains_eager
-from app.models.post import Comment, Post, PostLike
+from app.models.post import Comment, Image, Post, PostLike
 
 @Transactional()
 async def count( session: AsyncSession):
@@ -116,6 +116,13 @@ async def create(post: dict, session: AsyncSession):
     await session.refresh(post_obj)
     return post_obj
 
+@Transactional()
+async def create_image(image: dict, session: AsyncSession):
+    image_obj = Image(**image)
+    session.add(image_obj)
+    await session.commit()
+    await session.refresh(image_obj)
+    return image_obj
 
 @Transactional()
 async def update_by_id(id: int, post_data: dict, session: AsyncSession) -> Post:
