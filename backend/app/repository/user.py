@@ -11,7 +11,7 @@ from app.core.exceptions.user import UserNotFoundException, FollowAlreadyExistsE
 
 
 @Transactional()
-async def get_user_by_user_id(user_id: int, session: AsyncSession) -> User | None:
+async def get_user_by_user_id(user_id: UUID4, session: AsyncSession) -> User | None:
     stmt = select(User).where(
         User.id == user_id
     )
@@ -19,7 +19,7 @@ async def get_user_by_user_id(user_id: int, session: AsyncSession) -> User | Non
     return res.scalar_one()
 
 @Transactional()
-async def get_follow_by_user_ids(following_user_id: int, followed_user_id: int, session: AsyncSession) -> Follow | None:
+async def get_follow_by_user_ids(following_user_id: UUID4, followed_user_id: UUID4, session: AsyncSession) -> Follow | None:
     stmt = select(Follow).where(
         Follow.following_user_id == following_user_id,
         Follow.followed_user_id == followed_user_id
@@ -28,7 +28,7 @@ async def get_follow_by_user_ids(following_user_id: int, followed_user_id: int, 
     return res.scalar_one()
 
 @Transactional()
-async def get_follow_by_user_ids_with_none(following_user_id: int, followed_user_id: int, session: AsyncSession) -> Follow | None:
+async def get_follow_by_user_ids_with_none(following_user_id: UUID4, followed_user_id: UUID4, session: AsyncSession) -> Follow | None:
     stmt = select(Follow).where(
         Follow.following_user_id == following_user_id,
         Follow.followed_user_id == followed_user_id
@@ -37,7 +37,7 @@ async def get_follow_by_user_ids_with_none(following_user_id: int, followed_user
     return res.scalar_one_or_none()
 
 @Transactional()
-async def create_follow(following_user_id: int, followed_user_id: int, session: AsyncSession):
+async def create_follow(following_user_id: UUID4, followed_user_id: UUID4, session: AsyncSession):
     try:
         await get_user_by_user_id(followed_user_id, session=session)
     except NoResultFound as e:
@@ -58,7 +58,7 @@ async def create_follow(following_user_id: int, followed_user_id: int, session: 
     return follow
         
 @Transactional()
-async def update_follow(following_user_id: int, followed_user_id: int, session: AsyncSession):
+async def update_follow(following_user_id: UUID4, followed_user_id: UUID4, session: AsyncSession):
     follow = await get_follow_by_user_ids(following_user_id, followed_user_id, session=session)
 
     if follow is not None:
@@ -71,20 +71,20 @@ async def update_follow(following_user_id: int, followed_user_id: int, session: 
     return follow
 
 @Transactional()
-async def delete_follow(following_user_id: int, followed_user_id: int, session: AsyncSession):
+async def delete_follow(following_user_id: UUID4, followed_user_id: UUID4, session: AsyncSession):
     follow = await get_follow_by_user_ids(following_user_id, followed_user_id, session=session)
     stmt = delete(Follow).where(Follow.following_user_id == following_user_id, Follow.followed_user_id == followed_user_id)
     await session.execute(stmt)
     return
 
 @Transactional()
-async def count_followers(user_id: int, session: AsyncSession):
+async def count_followers(user_id: UUID4, session: AsyncSession):
     stmt = select(func.count(Follow.id)).where(Follow.followed_user_id == user_id, Follow.accept_status == 1)
     res = await session.execute(stmt)
     return res.scalar_one()
 
 @Transactional()
-async def get_followers(user_id: int, limit: int, offset: int, session: AsyncSession):
+async def get_followers(user_id: UUID4, limit: int, offset: int, session: AsyncSession):
     stmt = (
         select(Follow)
         .where(Follow.followed_user_id == user_id, Follow.accept_status == 1)
@@ -103,13 +103,13 @@ async def get_followers(user_id: int, limit: int, offset: int, session: AsyncSes
     return follower_list
 
 @Transactional()
-async def count_followings(user_id: int, session: AsyncSession):
+async def count_followings(user_id: UUID4, session: AsyncSession):
     stmt = select(func.count(Follow.id)).where(Follow.following_user_id == user_id, Follow.accept_status == 1)
     res = await session.execute(stmt)
     return res.scalar_one()
 
 @Transactional()
-async def get_followings(user_id: int, limit: int, offset: int, session: AsyncSession):
+async def get_followings(user_id: UUID4, limit: int, offset: int, session: AsyncSession):
     stmt = (
         select(Follow)
         .where(Follow.following_user_id == user_id, Follow.accept_status == 1)
@@ -135,7 +135,7 @@ async def count_users_by_user_name(search_string: str, session: AsyncSession):
 
 @Transactional()
 async def get_list_by_user_name(
-    search_string: str, current_user_id: int, limit: int, offset: int, session: AsyncSession
+    search_string: str, current_user_id: UUID4, limit: int, offset: int, session: AsyncSession
 ):
     order_case = case(
         (User.username.ilike(f"{search_string}%"), 0),  # Exact match at the beginning has highest priority
