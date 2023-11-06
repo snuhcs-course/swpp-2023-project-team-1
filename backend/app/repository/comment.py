@@ -74,7 +74,7 @@ async def create(comment_data: dict, session: AsyncSession):
 
 
 @Transactional()
-async def get_by_id(id: int, session: AsyncSession):
+async def get_by_id(id: UUID4, session: AsyncSession):
     res = await session.execute(
         select(Comment)
         .join(Comment.user, isouter=True)
@@ -85,7 +85,7 @@ async def get_by_id(id: int, session: AsyncSession):
 
 
 @Transactional()
-async def get_with_like_cnt_by_id(id: int, user_id: UUID4 | None, session: AsyncSession):
+async def get_with_like_cnt_by_id(id: UUID4, user_id: UUID4 | None, session: AsyncSession):
     stmt = (
         select(Comment)
         .join(Comment.user, isouter=True)
@@ -157,7 +157,7 @@ async def delete_by_id(id, session: AsyncSession):
 
 
 @Transactional()
-async def get_like_by_comment_id_and_user_id(c_id: int, u_id: UUID, session: AsyncSession):
+async def get_like_by_comment_id_and_user_id(c_id: UUID4, u_id: UUID4, session: AsyncSession):
     stmt = select(CommentLike).where(
         (CommentLike.comment_id == c_id),
         (CommentLike.user_id == u_id),
@@ -167,7 +167,7 @@ async def get_like_by_comment_id_and_user_id(c_id: int, u_id: UUID, session: Asy
 
 
 @Transactional()
-async def create_or_update_like(comment_id: int, user_id: int, is_like: int, session: AsyncSession):
+async def create_or_update_like(comment_id: UUID4, user_id: UUID4, is_like: int, session: AsyncSession):
     comment_like: CommentLike = await get_like_by_comment_id_and_user_id(
         comment_id,
         user_id,
@@ -187,7 +187,7 @@ async def create_or_update_like(comment_id: int, user_id: int, is_like: int, ses
 
 
 @Transactional()
-async def delete_like_by_comment_id_and_user_id(comment_id: int, user_id: int, session: AsyncSession):
+async def delete_like_by_comment_id_and_user_id(comment_id: UUID4, user_id: UUID4, session: AsyncSession):
     stmt = delete(CommentLike).where(
         (CommentLike.comment_id == comment_id),
         (CommentLike.user_id == user_id),
