@@ -44,5 +44,8 @@
     <string name="password_rule_3"> ✦ Contain at least 1 number</string>
     <string name="password_rule_4"> ✦ Contain at least 1 special character</string>
 
+    <!-- feed, post and comment -->
+    <string name="comment_write_hint">Write your comment here</string>
+
 
 </resources>
