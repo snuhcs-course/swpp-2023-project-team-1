@@ -7,7 +7,7 @@ from sqlalchemy.orm import with_expression, selectinload, contains_eager
 from app.models.post import Comment, Image, Post, PostLike
 
 @Transactional()
-async def count( session: AsyncSession):
+async def count(session: AsyncSession):
     res = await session.execute(select(func.count(Post.id)))
     return res.scalar_one()
 
@@ -67,40 +67,11 @@ async def get_list_with_like_cnt_comment_cnt(
                 ),
             )
         )
+
     stmt = stmt.limit(limit).offset(offset)
     res = await session.execute(stmt)
     return res.scalars().all()
 
-@Transactional()
-async def get_list_with_like_cnt_comment_cnt_by_user_id(
-    user_id: UUID4,
-    limit: int,
-    offset: int,
-    session: AsyncSession,
-):
-    stmt = (
-        select(Post)
-        .join(Post.user)
-        .options(contains_eager(Post.user).load_only(User.id, User.username, User.profile_image_url))
-        .join_from(Post, PostLike, isouter=True, onclause=Post.id == PostLike.post_id)
-        .options(
-            with_expression(
-                Post.like_cnt,
-                func.count(
-                    case(
-                        (PostLike.is_liked == 1, PostLike.id),
-                        else_=None,
-                    ).distinct()
-                ),
-            )
-        )
-        .where(Post.user_id == user_id)
-        .group_by(Post.id, User.id)
-        .order_by(Post.created_at.desc())
-    )
-    stmt = stmt.limit(limit).offset(offset)
-    res = await session.execute(stmt)
-    return res.scalars().all()
 
 @Transactional()
 async def get_by_id(id: int, session: AsyncSession):

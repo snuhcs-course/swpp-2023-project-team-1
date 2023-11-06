@@ -61,10 +61,44 @@ async def get_my_posts(
     user_id: UUID4 = Depends(get_user_id_from_request),
 ):
     post_svc = PostService()
-    total, posts, next_cursor = await post_svc.get_posts(
+    total, posts, next_cursor = await post_svc.get_posts_by_user_id(
         user_id, **pagination
     )
 
+    posts = normalize_post(posts)
+
+    return {
+        "total": total,
+        "items": posts,
+        "next_cursor": next_cursor,
+    }
+
+
+@post_router.get(
+    "/{user_id}",
+    status_code=200,
+    response_model=GetPostsResponse,
+    summary="Get other user posts with pagination",
+    dependencies=[
+        Depends(PermissionDependency([IsAuthenticated])),
+    ],
+)
+async def get_posts_by_user_id(  
+    user_id: UUID4,
+    pagination: dict = Depends(limit_offset_query),
+):
+    post_svc = PostService()
+    total, posts, next_cursor = await post_svc.get_posts_by_user_id(
+        user_id, **pagination
+    )
+
+    posts = normalize_post(posts)
+
+    return {
+        "total": total,
+        "items": posts,
+        "next_cursor": next_cursor,
+    }
 
 
 @post_router.post(

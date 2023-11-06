@@ -39,11 +39,11 @@ class PostService:
 
 
     @Transactional()
-    async def get_my_posts(self, user_id: UUID4, limit: int, offset: int, session: AsyncSession):
+    async def get_posts_by_user_id(self, user_id: UUID4, limit: int, offset: int, session: AsyncSession):
         try:
             total, posts = await asyncio.gather(
                 post.count_by_user_id(user_id),
-                post.get_list_with_like_cnt_comment_cnt_by_user_id(user_id, limit, offset),
+                post.get_list_with_like_cnt_comment_cnt(limit, offset, user_id),
             )
 
         except NoResultFound as e:
