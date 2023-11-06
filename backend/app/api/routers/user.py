@@ -11,7 +11,7 @@ from app.schemas.user import (
 )
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.services.user_service import get_my_info_by_id, update_my_info_by_id, upload_image_to_s3
+from app.services.user_service import get_my_info_by_id, update_my_info_by_id, upload_profile_image_to_s3
 from app.utils.user import get_user_id_from_request
 
 
@@ -46,7 +46,7 @@ async def patch_my_info(
     user_id: UUID4 = Depends(get_user_id_from_request),
     session: AsyncSession = Depends(get_db_transactional_session),
 ):
-    img_url = upload_image_to_s3(file, user_id) if file else None
+    img_url = upload_profile_image_to_s3(file, user_id) if file else None
     
     if img_url:
         user_update.profile_image_url = img_url

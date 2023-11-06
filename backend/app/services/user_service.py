@@ -46,7 +46,7 @@ async def update_my_info_by_id(user_id: UUID4, update_data: UserUpdate, session:
     return user
 
 
-def upload_image_to_s3(file: UploadFile, user_id: UUID4) -> str:
+def upload_profile_image_to_s3(file: UploadFile, user_id: UUID4) -> str:
     img_url = None
     try:
         image_key = f"profile_image/{user_id}/{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}"
