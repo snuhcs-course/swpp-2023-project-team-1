@@ -16,7 +16,7 @@ class UserCreate(UserBase):
 class UserRead(UserBase):
     id: UUID4 = Field(..., description="User Id")
     username: str = Field(..., description="Username")
-    profile_image_url: str = Field(..., description="Profile Image Url")
+    profile_image_url: str | None= Field(None, description="Profile Image Url")
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -25,7 +25,6 @@ class UserRead(UserBase):
 
 class UserUpdate(BaseModel):
     username: str | None = Field(None, description="Username")
-    password: str | None = Field(None, description="Password")
     profile_image_url: str | None = Field(None, description="Profile Image Url")
 
     def update_dict(self) -> dict:
