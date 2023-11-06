@@ -14,12 +14,14 @@ class AuthorRead(BaseModel):
 
 class PostBase(BaseModel):
     content: str = Field(..., description="Post Content")
-    image_url: str = Field(..., description="Post Image Url")
+    image_url: str | None = Field(None, description="Post Image Url")
 
+class ImageBase(BaseModel):
+    modified_image: str = Field(..., description="Modified Image Base64")
 
 class PostCreate(PostBase):
     content: Annotated[str, Form(min_length=1, max_length=1000)]
-    image_url: Annotated[str, Form(min_length=1, max_length=1000)]
+    image_url: str | None = Field(None, description="Post Image Url")
 
     def create_dict(self, user_id: UUID4) -> dict:
         d = self.model_dump(exclude_unset=True)
@@ -27,8 +29,22 @@ class PostCreate(PostBase):
 
         return d
 
+class ImageCreate(ImageBase):
+    origin_image: str = Field(..., description="Original Image Base64")
+    mask_image: str = Field(..., description="Mask Image Base64")
+    modified_image: str = Field(..., description="Modified Image Base64")
+    prompt: str | None = Field(None, description="Prompt")
+
+    def create_dict(self, user_id: UUID4, post_id: UUID4) -> dict:
+        d = self.model_dump(exclude_unset=True)
+        d["user_id"] = user_id
+        d["post_id"] = post_id
+
+        return d
+    
 class PostUpdate(BaseModel):
     content: str | None = Field(None, min_length=1, max_length=1000)
+    image_url: str | None = Field(None, description="Post Image Url")
 
     def create_dict(self) -> dict:
         d = self.model_dump(exclude_unset=True)
@@ -55,8 +71,7 @@ class CommentBase(BaseModel):
     post_id: UUID4
     content: str
 
-class CommentCreate(CommentBase):
-    post_id: UUID4 = Field(...)
+class CommentCreate(BaseModel):
     content: str = Field(...)
 
 class CommentUpdate(BaseModel):
