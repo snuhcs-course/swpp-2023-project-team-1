@@ -46,6 +46,25 @@ async def get_posts(
         "next_cursor": next_cursor,
     }
 
+@post_router.get(
+    "/me",
+    status_code=200,
+    response_model=GetPostsResponse,
+    summary="Get my posts with pagination",
+    dependencies=[
+        Depends(PermissionDependency([IsAuthenticated])),
+    ],
+)
+async def get_my_posts(
+    pagination: dict = Depends(limit_offset_query),
+    user_id: UUID4 = Depends(get_user_id_from_request),
+):
+    post_svc = PostService()
+    total, posts, next_cursor = await post_svc.get_posts(
+        user_id, **pagination
+    )
+
+
 
 @post_router.post(
     "",

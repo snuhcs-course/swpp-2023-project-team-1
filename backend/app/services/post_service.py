@@ -26,11 +26,26 @@ class PostService:
             )
 
         except NoResultFound as e:
-            raise NotFoundException("Community not found") from e
+            raise NotFoundException("Posts not found") from e
 
         next_cursor = offset + len(posts) if total and total > offset + len(posts) else None
         return total, posts, next_cursor
 
+
+    @Transactional()
+    async def get_my_posts(self, user_id: UUID4, limit: int, offset: int, session: AsyncSession):
+        try:
+            total, posts = await asyncio.gather(
+                post.count_by_user_id(user_id),
+                post.get_list_with_like_cnt_comment_cnt_by_user_id(user_id, limit, offset),
+            )
+
+        except NoResultFound as e:
+            raise NotFoundException("Posts not found") from e
+
+        next_cursor = offset + len(posts) if total and total > offset + len(posts) else None
+        return total, posts, next_cursor
+    
     @Transactional()
     async def create_post(
         self,
