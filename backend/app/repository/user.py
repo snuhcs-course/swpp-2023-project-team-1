@@ -11,7 +11,7 @@ from app.core.exceptions.user import UserNotFoundException, FollowAlreadyExistsE
 
 
 @Transactional()
-async def get_user_by_user_id(user_id: int, session: AsyncSession) -> Follow | None:
+async def get_user_by_user_id(user_id: int, session: AsyncSession) -> User | None:
     stmt = select(User).where(
         User.id == user_id
     )
