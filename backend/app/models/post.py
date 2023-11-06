@@ -14,6 +14,7 @@ class Post(Base, TimestampMixin):
     image_url: Mapped[str] = mapped_column(TEXT, nullable=False)
     user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id", ondelete="CASCADE"), index=True, nullable=False)
     user: Mapped[User] = relationship("User", back_populates="posts")
+    image: Mapped["Image"] = relationship("Image", back_populates="post", uselist=False)
     post_likes: Mapped[list["PostLike"]] = relationship("PostLike", back_populates="post")
     comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="post")
     like_cnt: Mapped[int] = query_expression()
@@ -69,3 +70,5 @@ class Image(Base, TimestampMixin):
     prompt: Mapped[str] = mapped_column(TEXT, nullable=False)
     user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id", ondelete="CASCADE"), index=True, nullable=False)
     user: Mapped[User] = relationship("User", back_populates="images")
+    post_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("post.id", ondelete="CASCADE"), index=True, nullable=True)
+    post: Mapped[Post] = relationship("Post", back_populates="image")
