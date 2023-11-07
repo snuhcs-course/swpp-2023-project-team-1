@@ -12,7 +12,6 @@ class UserCreate(UserBase):
     password: str = Field(..., description="Password")
 
     def create_dict(self) -> dict:
-    def create_dict(self) -> dict:
         return self.model_dump(exclude_unset=True)
 
 
@@ -34,7 +33,6 @@ class UserUpdate(BaseModel):
     bio: str | None = Field(None, description="Bio")
     profile_image_url: str | None = Field(None, description="Profile Image Url")
 
-    def update_dict(self) -> dict:
     def update_dict(self) -> dict:
         return self.model_dump(exclude_unset=True)
 

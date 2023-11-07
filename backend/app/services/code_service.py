@@ -10,9 +10,6 @@ class CodeService:
     async def creat_verification_code(
         self, email: str, code: int, session: AsyncSession
     ) -> Code:
-    async def creat_verification_code(
-        self, email: str, code: int, session: AsyncSession
-    ) -> Code:
         try:
             query = select(Code).where(Code.email == email)
             result = await session.execute(query)

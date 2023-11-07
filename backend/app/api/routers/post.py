@@ -177,9 +177,7 @@ async def update_post_by_id(
     "/{post_id}",
     summary="Delete Post",
     description="Delete post",
-    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
-    description="Delete post",
-    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))]
 )
 
 async def delete_post(
@@ -198,8 +196,7 @@ async def delete_post(
     "/{post_id}/like",
     summary="Toggle Post Like",
     description="Toggle post like",
-    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
-    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))]
 )
 async def toggle_post_like(post_id: UUID4, req: Request):
     post_svc = PostService()

@@ -5,6 +5,7 @@ from app.core.exceptions.base import BadRequestException
 from app.core.fastapi.dependency.permission import (
     IsAuthenticated,
     PermissionDependency,
+    AllowAll
 )
 from app.schemas.user import (
     CheckUserInfoResponse,
