@@ -1,6 +1,7 @@
 package com.project.spire.network
 
 import com.project.spire.network.auth.AuthAPI
+import com.project.spire.network.user.UserAPI
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -22,5 +23,6 @@ class RetrofitClient {
             .build()
 
         val authAPI: AuthAPI = retrofit.create(AuthAPI::class.java)
+        val userAPI: UserAPI = retrofit.create(UserAPI::class.java)
     }
 }

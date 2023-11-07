@@ -26,7 +26,7 @@ class SignUpViewModel(
 
     fun register(password: String, username: String) {
         viewModelScope.launch {
-            val response = authRepository.register(_email.value!!, password, username)
+            val response = authRepository.register(_email.value!!, username, password)
             if (response is RegisterSuccess) {
                 _registerResult.postValue(true)
             } else if (response is RegisterError) {
