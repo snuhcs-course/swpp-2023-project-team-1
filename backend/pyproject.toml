@@ -14,6 +14,13 @@ sqlalchemy = "^2.0.21"
 alembic = "^1.12.0"
 asyncpg = "^0.28.0"
 greenlet = "^3.0.0"
+pyjwt = {extras = ["crypto"], version = "^2.8.0"}
+passlib = "^1.7.4"
+python-multipart = "^0.0.6"
+bcrypt = "^4.0.1"
+fastapi-mail = {extras = ["httpx"], version = "^1.4.1"}
+jinja2 = "^3.1.2"
+boto3 = "^1.28.70"
 
 [tool.poetry.group.local.dependencies]
 mypy = "^1.5.1"

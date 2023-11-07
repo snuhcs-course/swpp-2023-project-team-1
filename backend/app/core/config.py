@@ -39,7 +39,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     JWT_SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
-    ENVIRONMENT: str = environ.get("ENV", "LOCAL")  # Literal["DEV", "PRODUCTION", "STAGING"]
+    ENVIRONMENT: str = environ.get(
+        "ENV", "LOCAL"
+    )  # Literal["DEV", "PRODUCTION", "STAGING"]
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     BACKEND_CORS_ORIGINS: str | list[AnyHttpUrl]
 
@@ -55,6 +57,13 @@ class Settings(BaseSettings):
     AWS_ACCESS_KEY_ID: str
     AWS_SECRET_ACCESS_KEY: str
 
+    MAIL_USERNAME: str
+    MAIL_PASSWORD: str
+    MAIL_FROM: str
+    MAIL_PORT: str
+    MAIL_SERVER: str
+    MAIL_FROM_NAME: str
+
     # VALIDATORS
     @field_validator("BACKEND_CORS_ORIGINS")
     @classmethod
@@ -69,7 +78,7 @@ class Settings(BaseSettings):
         if environ.get("ENV", "LOCAL") == "LOCAL":
             return "127.0.0.1"
         return v
-    
+
     @validator("DEFAULT_SQLALCHEMY_DATABASE_URI")
     @classmethod
     def _assemble_default_db_connection(cls, v: str, values: dict[str, str]) -> URL:
