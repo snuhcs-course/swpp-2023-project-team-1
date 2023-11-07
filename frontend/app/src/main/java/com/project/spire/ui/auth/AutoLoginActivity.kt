@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
  * This Activity is invisible
  * For automated login
  * Must be the initial launch Activity */
-class AutoLoginActivity : AppCompatActivity() {
+class   AutoLoginActivity : AppCompatActivity() {
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {

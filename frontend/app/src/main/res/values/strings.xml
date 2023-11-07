@@ -61,6 +61,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!-- feed, post and comment -->
+    <string name="comment_write_hint">Write your comment here</string>
+
 
     <!-- Profile -->
     <string name="profile_username">\@username</string>

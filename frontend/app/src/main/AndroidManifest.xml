@@ -28,6 +28,9 @@
             android:name="com.project.spire.ui.create.WriteTextActivity"
             android:exported="true" />
         <activity
+            android:name="com.project.spire.ui.feed.PostActivity"
+            android:exported="true" />
+        <activity
             android:name="com.project.spire.ui.profile.EditProfileActivity"
             android:exported="true" />
         <activity

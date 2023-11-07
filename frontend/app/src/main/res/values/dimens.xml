@@ -58,8 +58,8 @@
     <dimen name="image_edit_toolbar_btn_size">60dp</dimen>
     <dimen name="image_edit_toolbar_btn_padding">20dp</dimen>
     <dimen name="image_edit_toolbar_title_font">20sp</dimen>
-  
-    <!-- feed and post -->
+
+    <!-- feed, post and comment -->
     <dimen name="bottom_sheet_height">200dp</dimen>
     <dimen name="bottom_sheet_icon_size">26dp</dimen>
     <dimen name="bottom_sheet_text_size">18sp</dimen>
@@ -72,4 +72,10 @@
     <dimen name="post_footer_icon_width">40dp</dimen>
     <dimen name="post_footer_icon_height">40dp</dimen>
     <dimen name="post_footer_text_width">35dp</dimen>
+    <dimen name="comment_padding_vertical">10dp</dimen>
+    <dimen name="comment_content_margin">10dp</dimen>
+    <dimen name="comment_write_margin">10dp</dimen>
+    <dimen name="comment_write_btn">40dp</dimen>
+    <dimen name="comment_write_btn_padding">10dp</dimen>
+
 </resources>
