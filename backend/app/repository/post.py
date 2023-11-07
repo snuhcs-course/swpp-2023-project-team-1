@@ -72,6 +72,63 @@ async def get_list_with_like_cnt_comment_cnt(
     res = await session.execute(stmt)
     return res.scalars().all()
 
+@Transactional()
+async def get_list_with_like_cnt_comment_cnt_by_user_id(
+    limit: int,
+    offset: int,
+    user_id: UUID4,
+    session: AsyncSession,
+):
+    stmt = (
+        select(Post)
+        .where(Post.user_id == user_id)
+        .join_from(Post, PostLike, isouter=True, onclause=Post.id == PostLike.post_id)
+        .join_from(Post, Comment, isouter=True, onclause=Post.id == Comment.post_id)
+        .options(selectinload(Post.user).load_only(User.id, User.username, User.profile_image_url))
+        .options(
+            with_expression(
+                Post.like_cnt,
+                func.count(
+                    case(
+                        (PostLike.is_liked == 1, PostLike.id),
+                        else_=None,
+                    ).distinct()
+                ),
+            )
+        )
+        .options(
+            with_expression(
+                Post.comment_cnt,
+                func.count(
+                    case(
+                        (Comment.id != None, Comment.id),
+                        else_=None,
+                    ).distinct()
+                ),
+            )
+        )
+        .group_by(Post.id)
+        .order_by(Post.created_at.desc())
+    )
+
+    if user_id:
+        stmt = stmt.options(
+            with_expression(
+                Post.is_liked,
+                func.max(
+                    case(
+                        (and_(PostLike.user_id == user_id, PostLike.is_liked == 1), 1),
+                        (and_(PostLike.is_liked == 0), 0),
+                        else_=-1,
+                    ),
+                ),
+            )
+        )
+
+    stmt = stmt.limit(limit).offset(offset)
+    res = await session.execute(stmt)
+    return res.scalars().all()
+
 
 @Transactional()
 async def get_by_id(id: UUID4, session: AsyncSession):
