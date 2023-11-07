@@ -50,6 +50,7 @@ class PromptDialogFragment : DialogFragment() {
             // TODO: Generate image with prompt
 
 
+
         } else {
             Log.e("PromptDialogFragment", "Prompt is null")
         }

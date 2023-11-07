@@ -21,9 +21,9 @@ import com.example.spire.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.project.spire.ui.create.PromptDialogFragment
 import com.project.spire.ui.create.CameraActivity
 import com.project.spire.ui.create.ImageEditActivity
+import com.project.spire.ui.create.PromptDialogFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -83,7 +83,6 @@ class MainActivity : AppCompatActivity() {
 
         bottomSheetGallery.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            bottomSheetDialog.hide()
         }
 
         bottomSheetNew.setOnClickListener {

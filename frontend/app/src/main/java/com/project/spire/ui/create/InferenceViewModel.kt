@@ -42,6 +42,25 @@ class InferenceViewModel (
         }
     }
 
+    fun infer(prompt: String) {
+        val request = InferenceUtils.getInferenceRequest(prompt)
+        viewModelScope.launch {
+            val result = inferenceRepository.infer(request)
+            if (result is InferenceSuccess) {
+                val output = result.outputs[0]
+                Log.d("InferenceViewModel", "Inference success: ${output.name}")
+                val generatedBase64 = output.data[0]
+                val generatedBitmap = BitmapUtils.Base64toBitmap(generatedBase64)
+                Log.d("InferenceViewModel", "Output bitmap size: ${generatedBitmap?.byteCount}")
+                _inferenceResult.postValue(generatedBitmap)
+
+            } else {
+                Log.e("InferenceViewModel", "Inference failed")
+                _inferenceResult.postValue(null)
+            }
+        }
+    }
+
     fun postUpload() {
         // TODO: Send post upload request
     }

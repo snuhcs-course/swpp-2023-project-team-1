@@ -10,16 +10,35 @@ import com.project.spire.ui.create.InferenceViewModelFactory
 object InferenceUtils {
 
     fun getInferenceRequest(image: Bitmap, mask: Bitmap, prompt: String): InferenceRequest {
-        val name = "deep_floyd_if"
+        val name = "stable_diffusion"
         val input = listOf(
             Input("INPUT_IMAGE", listOf(1), "BYTES", listOf(BitmapUtils.BitmaptoBase64(image))),
             Input("MASK", listOf(1), "BYTES", listOf(BitmapUtils.BitmaptoBase64(mask))),
             Input("PROMPT", listOf(1), "BYTES", listOf(prompt)),
             Input("NEGATIVE_PROMPT", listOf(1), "BYTES", listOf("")),
-            Input("SAMPLES", listOf(1), "INT32", listOf(1)),
-            Input("STEPS", listOf(1), "INT32", listOf(40)),
-            Input("GUIDANCE_SCALE", listOf(1), "FP32", listOf(9.0)),
-            Input("STRENGTH", listOf(1), "FP32", listOf(0.999))
+            Input("SAMPLES", listOf(1), "INT32", listOf(4)),
+            Input("BASE_STEPS", listOf(1), "INT32", listOf(20)),
+            Input("REFINER_STEPS", listOf(1), "INT32", listOf(10)),
+            Input("GUIDANCE_SCALE_BASE", listOf(1), "FP32", listOf(7.5)),
+            Input("GUIDANCE_SCALE_REFINER", listOf(1), "FP32", listOf(7.5)),
+            Input("STRENGTH_BASE", listOf(1), "FP32", listOf(0.8)),
+            Input("STRENGTH_REFINER", listOf(1), "FP32", listOf(0.4))
+        )
+        return InferenceRequest(name, input)
+    }
+
+    fun getInferenceRequest(prompt: String): InferenceRequest {
+        val name = "stable_diffusion"
+        val input = listOf(
+            Input("PROMPT", listOf(1), "BYTES", listOf(prompt)),
+            Input("NEGATIVE_PROMPT", listOf(1), "BYTES", listOf("")),
+            Input("SAMPLES", listOf(1), "INT32", listOf(4)),
+            Input("BASE_STEPS", listOf(1), "INT32", listOf(20)),
+            Input("REFINER_STEPS", listOf(1), "INT32", listOf(10)),
+            Input("GUIDANCE_SCALE_BASE", listOf(1), "FP32", listOf(7.5)),
+            Input("GUIDANCE_SCALE_REFINER", listOf(1), "FP32", listOf(7.5)),
+            Input("STRENGTH_BASE", listOf(1), "FP32", listOf(0.8)),
+            Input("STRENGTH_REFINER", listOf(1), "FP32", listOf(0.3))
         )
         return InferenceRequest(name, input)
     }

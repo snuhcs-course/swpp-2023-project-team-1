@@ -12,7 +12,8 @@ data class InferenceRequest (
 
 data class Input (
     // INPUT_IMAGE, MASK, PROMPT, NEGATIVE_PROMPT,
-    // SAMPLES, STEPS, GUIDANCE_SCALE, STRENGTH
+    // SAMPLES, BASE_STEPS, REFINER_STEPS, GUIDANCE_SCALE_BASE
+    // GUIDANCE_SCALE_REFINER, STRENGTH_BASE, STRENGTH_REFINER
     @SerializedName("name")
     val name: String,
 
