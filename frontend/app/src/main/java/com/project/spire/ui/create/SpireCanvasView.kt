@@ -1,7 +1,9 @@
-package com.project.spire.ui.create.image
+package com.project.spire.ui.create
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -9,14 +11,14 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.example.spire.R
 
+
 class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
-    private val COLOR_BLUE = ContextCompat.getColor(context, R.color.blue_500)
-    private lateinit var viewModel: ImageCreateViewModel
+    val COLOR_BLUE = ContextCompat.getColor(context, R.color.blue_mask)
 
-    fun initViewModel(viewModel: ImageCreateViewModel) {
+    private lateinit var viewModel: CanvasViewModel
+    fun initViewModel(viewModel: CanvasViewModel) {
         this.viewModel = viewModel
-        // TODO: viewmodel을 이런 식으로 불러와도 되나..
     }
 
     private var mPaint: Paint = Paint()
@@ -24,12 +26,18 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
     init {
         mPaint.isAntiAlias = true
         mPaint.style = Paint.Style.STROKE
-        mPaint.strokeJoin = Paint.Join.ROUND
+        mPaint.strokeJoin = Paint.Join.BEVEL
         mPaint.color = COLOR_BLUE
+        mPaint.strokeCap = Paint.Cap.ROUND
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        mPaint.xfermode = null
+        canvas.drawColor(Color.TRANSPARENT)
+        if (viewModel.backgroundMaskBitmap.value != null) {
+            canvas.drawBitmap(viewModel.backgroundMaskBitmap.value!!, x, y, null) // draw auto-mask from inference server
+        }
 
         for ((path, options) in viewModel.paths) {
             mPaint.xfermode = options.xfermode
@@ -47,16 +55,25 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
         }
        canvas.drawPath(viewModel.mPath, mPaint)
     }
-/*
-    override fun onSizeChanged(w: Int, h: Int, oldw:Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        mbitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-        mCanvas = Canvas(mbitmap!!)
-    }
-*/
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         viewModel.processCanvasMotionEvent(event)
         return true
+    }
+
+    fun getBitmap(width: Int = 0, height: Int = 0): Bitmap { // used when save
+        lateinit var bitmap: Bitmap
+
+        if ((width == 0) or (height == 0)) {
+            bitmap = Bitmap.createBitmap(this.width, this.height, Bitmap.Config.ARGB_8888)
+        }
+        else {
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        }
+
+        val canvas = Canvas(bitmap)
+        canvas.drawColor(Color.TRANSPARENT)
+        this.draw(canvas)
+        return bitmap
     }
 }

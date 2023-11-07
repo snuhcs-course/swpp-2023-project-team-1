@@ -1,25 +1,36 @@
-package com.project.spire.ui.create.image
+package com.project.spire.ui.create
 
+import android.graphics.Bitmap
 import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
-import android.net.Uri
 import android.view.MotionEvent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.project.spire.utils.BitmapUtils
+import com.project.spire.utils.PaintOptions
 
-class ImageCreateViewModel: ViewModel() {
-    private val _originImageUri = MutableLiveData<Uri>()
-    val originImageUri: LiveData<Uri>
-        get() = _originImageUri
+class CanvasViewModel: ViewModel() {
 
-    fun setOriginImageUri(uri: Uri) {
-        _originImageUri.value = uri
+    private var _originImageBitmap = MutableLiveData<Bitmap>()
+    val originImageBitmap: LiveData<Bitmap>
+        get() = _originImageBitmap
+
+    fun setOriginImageBitmap(bitmap: Bitmap) {
+        _originImageBitmap.value = bitmap
     }
 
-    private val STROKE_PEN = 20f
-    private val STROKE_ERASER = 50f
+    private var _backgroundMaskBitmap = MutableLiveData<Bitmap>()
+    val backgroundMaskBitmap: LiveData<Bitmap>
+        get() = _backgroundMaskBitmap
+
+    fun setBackgroundMaskBitmap(bitmap: Bitmap, color: Int? = null) {
+        _backgroundMaskBitmap.value = BitmapUtils.maskBlackToTransparent(bitmap, color)
+    }
+
+    private val STROKE_PEN = 60f
+    private val STROKE_ERASER = 80f
     private val MODE_CLEAR = PorterDuffXfermode(PorterDuff.Mode.CLEAR) // clears when overlapped
 
     private var _paths = LinkedHashMap<Path, PaintOptions>()
@@ -49,10 +60,8 @@ class ImageCreateViewModel: ViewModel() {
     val mPath: Path
         get() = _mPath
 
-    // mPath를 LiveData로 만들고 mPath를 observe하는 것이 맞겠으나, 이 경우 화면 표시에 delay가 발생하여
-    // 대신 boolean type의 isDrawing을 observe
-    // invalidate()를 호출하여 화면을 다시 그려야 하는 순간마다 isDrawing의 값을 잠시 바꾸는 것으로
-    // 화면을 실시간으로 다시 그리도록 구현
+    // mPath를 LiveData로 만들고 mPath를 observe하는 경우 화면 표시에 delay가 발생하여
+    // 대신 isDrawing을 observe
 
     fun clearCanvas() {
         _mPath.reset()
@@ -134,4 +143,8 @@ class ImageCreateViewModel: ViewModel() {
         }
         return true
     }
+
+
+
+
 }

@@ -74,8 +74,8 @@ class FeedFragment : Fragment() {
             var imageUrl="https://i.pravatar.cc/1000"
             var likedUsers=ArrayList<User>()
             var comments=ArrayList<Comment>()
-            val createdAt="1 hours ago"
-            var updatedAt="1 hours ago"
+            val createdAt="1 hour ago"
+            var updatedAt="1 hour ago"
 
             val post = Post(user_id,user,content,imageUrl,likedUsers,comments,createdAt,updatedAt)
 
