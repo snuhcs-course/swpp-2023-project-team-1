@@ -47,3 +47,22 @@ class LoginResponse(BaseModel):
 class CheckUserInfoResponse(BaseModel):
     email_exists: bool | None = None
     username_exists: bool | None = None
+
+class FollowBase(BaseModel):
+    following_user_id: UUID4 = Field(..., description="Following User Id")
+    followed_user_id: UUID4 = Field(..., description="Followed User Id")
+    accept_status: int = Field(..., description="Follow Accept Status")
+
+class GetUsersResponse(BaseModel):
+    total: int
+    items: list[UserRead]
+    next_cursor: int | None
+
+class UserSearch(UserRead):
+    is_following: bool = Field(..., description="Following Status")
+    is_follower: bool = Field(..., description="Follower Status")
+
+class UserSearchResponse(BaseModel):
+    total: int
+    items: list[UserSearch]
+    next_cursor: int | None
