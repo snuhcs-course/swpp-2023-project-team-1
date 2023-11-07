@@ -48,4 +48,22 @@
     <string name="comment_write_hint">Write your comment here</string>
 
 
+    <!-- Profile -->
+    <string name="profile_username">\@username</string>
+    <string name="profile_bio">This is my bio</string>
+    <string name="profile_edit_btn">Edit Profile</string>
+    <string name="profile_followers">Followers</string>
+    <string name="profile_following">Following</string>
+    <string name="profile_follow">Follow</string>
+    <string name="edit_profile_toolbar">Edit Your Profile</string>
+    <string name="edit_profile_change_photo">Change</string>
+    <string name="edit_profile_hint_email">Email</string>
+    <string name="edit_profile_hint_username">Username</string>
+    <string name="edit_profile_hint_bio">Bio</string>
+    <string name="edit_profile_hint_password">Password</string>
+    <string name="edit_profile_save_btn">Save</string>
+    <string name="edit_profile_logout_btn">Log out</string>
+    <string name="edit_profile_delete_account_btn">Delete Account</string>
+
+
 </resources>

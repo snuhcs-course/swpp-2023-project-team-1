@@ -23,6 +23,23 @@
     <dimen name="nav_bar_icon_size">24dp</dimen>
     <dimen name="nav_bar_create_post_btn_size">60dp</dimen>
 
+    <!-- Profile -->
+    <dimen name="profile_header_background_height">200dp</dimen>
+    <dimen name="profile_image_margin_top">150dp</dimen>
+    <dimen name="profile_image_size">100dp</dimen>
+    <dimen name="profile_image_corner_radius">50dp</dimen>
+    <dimen name="profile_image_border_width">6dp</dimen>
+    <dimen name="profile_username_margin_top">20dp</dimen>
+    <dimen name="profile_bio_margin_top">6dp</dimen>
+    <dimen name="profile_button_margin_top">10dp</dimen>
+    <dimen name="profile_button_height">40dp</dimen>
+    <dimen name="edit_profile_toolbar_height">60dp</dimen>
+    <dimen name="edit_profile_toolbar_btn_padding">20dp</dimen>
+    <dimen name="edit_profile_toolbar_btn_text_size">25sp</dimen>
+    <dimen name="edit_profile_padding_horizontal">50dp</dimen>
+    <dimen name="edit_profile_profile_image_size">150dp</dimen>
+    <dimen name="edit_profile_profile_image_radius">75dp</dimen>
+
     <!-- image edit -->
     <dimen name="img_edit_btn_size">45dp</dimen>
     <dimen name="prompt_suggestion_btn_height">25dp</dimen>

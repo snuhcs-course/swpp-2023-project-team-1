@@ -20,6 +20,9 @@
             android:name="com.project.spire.ui.feed.PostActivity"
             android:exported="true" />
         <activity
+            android:name="com.project.spire.ui.profile.EditProfileActivity"
+            android:exported="true" />
+        <activity
             android:name="com.project.spire.ui.auth.VerifyEmailActivity"
             android:exported="false" />
         <activity
