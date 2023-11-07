@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
-import android.widget.TextView
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -20,15 +19,16 @@ import com.example.spire.R
 import com.example.spire.databinding.FragmentProfileBinding
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
+import com.project.spire.core.user.UserRepository
 import com.project.spire.ui.auth.LoginActivity
 
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+
+    private lateinit var profileViewModel: ProfileViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,29 +36,70 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val authRepository = AuthRepository(requireContext().authDataStore)
-        val viewModelFactory = ProfileViewModelFactory(authRepository)
-        val profileViewModel = ViewModelProvider(this, viewModelFactory)[ProfileViewModel::class.java]
+        val userRepository = UserRepository()
+        val viewModelFactory = ProfileViewModelFactory(authRepository, userRepository)
+        profileViewModel = ViewModelProvider(this, viewModelFactory)[ProfileViewModel::class.java]
 
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireActivity().setStatusBarTransparent()
 
-        // TODO: Remove this after future implementation
+        // If bundle is null, fetch my profile
+        // Else, fetch other user's profile using bundle's user id
+        if (savedInstanceState?.getString("userId") == null) {
+            profileViewModel.getMyInfo()
+        } else {
+            val userId = savedInstanceState.getString("userId")
+            profileViewModel.getUserInfo(userId!!)
+        }
+
+        profileViewModel.username.observe(viewLifecycleOwner) {
+            val username = "@$it"
+            binding.profileUsername.text = username
+        }
+
+        profileViewModel.bio.observe(viewLifecycleOwner) {
+            binding.profileBio.text = it
+        }
+
+        profileViewModel.profileImageUrl.observe(viewLifecycleOwner) {
+            binding.profileImage.load(it) {
+                transformations(CircleCropTransformation())
+            }
+        }
+
+        val largeButton = binding.profileLargeButton
+        profileViewModel.isMyProfile.observe(viewLifecycleOwner) {
+            if (it) {
+                largeButton.text = getString(R.string.profile_edit_btn)
+                largeButton.background = resources.getDrawable(R.drawable.bg_profile_btn_grey, null)
+                largeButton.setTextColor(resources.getColor(R.color.grey_600, null))
+            } else {
+                largeButton.text = getString(R.string.profile_follow)
+                largeButton.background = resources.getDrawable(R.drawable.bg_profile_btn_blue, null)
+                largeButton.setTextColor(resources.getColor(R.color.blue_500, null))
+            }
+        }
+        
+        binding.profileLargeButton.setOnClickListener {
+            if (profileViewModel.isMyProfile.value == true) {
+                startActivity(Intent(requireContext(), EditProfileActivity::class.java))
+            } else {
+                // TODO: Follow user
+            }
+        }
+
+        // FIXME: Move this to EditProfileActivity
         val logoutBtn: Button = binding.tempLogoutButton
         logoutBtn.setOnClickListener {
             val success = profileViewModel.logout()
         }
 
-        // TEST: Setting profile image
-        binding.profileImage.load(R.drawable.img_dummy) {
-            transformations(CircleCropTransformation())
-        }
-
-        // TEST: Navigate to EditProfileActivity
-        binding.profileLargeButton.setOnClickListener {
-            startActivity(Intent(requireContext(), EditProfileActivity::class.java))
-        }
-
+        // FIXME: Move this to EditProfileActivity
         profileViewModel.logoutSuccess.observe(viewLifecycleOwner) {
             if (it) {
                 // Logout success
@@ -70,13 +111,6 @@ class ProfileFragment : Fragment() {
                 Log.d("ProfileFragment", "Logout failed")
             }
         }
-
-        return root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        requireActivity().setStatusBarTransparent()
     }
 
     override fun onDestroyView() {

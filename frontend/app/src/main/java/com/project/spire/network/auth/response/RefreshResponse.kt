@@ -13,6 +13,7 @@ data class RefreshSuccess(
     val refreshToken: String,
 ) : RefreshResponse
 
+
 data class RefreshError(
     @SerializedName("message")
     val message: String,

@@ -51,6 +51,7 @@
     <string name="profile_edit_btn">Edit Profile</string>
     <string name="profile_followers">Followers</string>
     <string name="profile_following">Following</string>
+    <string name="profile_follow">Follow</string>
 
 
 </resources>
