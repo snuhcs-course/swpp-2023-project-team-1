@@ -84,7 +84,7 @@ class ProfileFragment : Fragment() {
                 largeButton.setTextColor(resources.getColor(R.color.blue_500, null))
             }
         }
-        
+
         binding.profileLargeButton.setOnClickListener {
             if (profileViewModel.isMyProfile.value == true) {
                 startActivity(Intent(requireContext(), EditProfileActivity::class.java))

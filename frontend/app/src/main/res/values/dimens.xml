@@ -33,6 +33,12 @@
     <dimen name="profile_bio_margin_top">6dp</dimen>
     <dimen name="profile_button_margin_top">10dp</dimen>
     <dimen name="profile_button_height">40dp</dimen>
+    <dimen name="edit_profile_toolbar_height">60dp</dimen>
+    <dimen name="edit_profile_toolbar_btn_padding">20dp</dimen>
+    <dimen name="edit_profile_toolbar_btn_text_size">25sp</dimen>
+    <dimen name="edit_profile_padding_horizontal">50dp</dimen>
+    <dimen name="edit_profile_profile_image_size">150dp</dimen>
+    <dimen name="edit_profile_profile_image_radius">75dp</dimen>
 
     <!-- image edit -->
     <dimen name="img_edit_btn_size">45dp</dimen>

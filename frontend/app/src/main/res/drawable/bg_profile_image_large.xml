@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke
+        android:width="6dp"
+        android:color="@color/blue_200" />
+    <corners
+        android:radius="@dimen/edit_profile_profile_image_radius" />
+    <solid android:color="@color/white" />
+</shape>
