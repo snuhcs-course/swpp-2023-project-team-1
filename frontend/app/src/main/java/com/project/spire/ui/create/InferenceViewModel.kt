@@ -43,6 +43,7 @@ class InferenceViewModel (
     }
 
     fun infer(prompt: String) {
+        Log.d("InferenceViewModel", "Input prompt: $prompt")
         val request = InferenceUtils.getInferenceRequest(prompt)
         viewModelScope.launch {
             val result = inferenceRepository.infer(request)

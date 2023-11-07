@@ -39,12 +39,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Hide action bar
         if (supportActionBar != null) {
             supportActionBar!!.hide()
         }
 
+        // Navigation
         val navView: BottomNavigationView = binding.bottomNavigationView
-
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -56,7 +57,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_profile
             )
         )
-
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -85,7 +85,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         bottomSheetNew.setOnClickListener {
-            // TODO: Create new image from scratch
             PromptDialogFragment().show(supportFragmentManager, "PromptDialogFragment")
             bottomSheetDialog.hide()
         }

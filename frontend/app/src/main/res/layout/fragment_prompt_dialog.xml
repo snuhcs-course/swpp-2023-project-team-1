@@ -8,7 +8,6 @@
     android:padding="@dimen/prompt_dialog_padding"
     tools:context="com.project.spire.ui.create.PromptDialogFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/prompt_input_layout"
         style="@style/ImgEditTextBox"
@@ -21,7 +20,8 @@
             android:id="@+id/prompt_input"
             style="@style/ImgEditText"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:inputType="textMultiLine" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

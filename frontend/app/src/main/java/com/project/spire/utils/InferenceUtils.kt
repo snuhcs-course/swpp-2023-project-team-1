@@ -37,7 +37,6 @@ object InferenceUtils {
             Input("REFINER_STEPS", listOf(1), "INT32", listOf(10)),
             Input("GUIDANCE_SCALE_BASE", listOf(1), "FP32", listOf(7.5)),
             Input("GUIDANCE_SCALE_REFINER", listOf(1), "FP32", listOf(7.5)),
-            Input("STRENGTH_BASE", listOf(1), "FP32", listOf(0.8)),
             Input("STRENGTH_REFINER", listOf(1), "FP32", listOf(0.3))
         )
         return InferenceRequest(name, input)

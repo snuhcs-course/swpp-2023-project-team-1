@@ -17,7 +17,7 @@ class InferenceClient {
             .build()
 
         private val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(NetworkConfig.INFERENCE_URL)
+            .baseUrl(LOCAL_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
