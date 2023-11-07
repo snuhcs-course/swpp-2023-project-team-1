@@ -1,12 +1,12 @@
 package com.project.spire.models
 
 class Comment (
-    id: Int,
-    user: User,
-    content: String,
-    likedUsers: List<User>,
-    createdAt: String,
-    updatedAt: String,
+    val id: Int,
+    val user: User,
+    var content: String,
+    var likedUsers: List<User>,
+    val createdAt: String,
+    var updatedAt: String,
 ) {
     // TODO
 }
