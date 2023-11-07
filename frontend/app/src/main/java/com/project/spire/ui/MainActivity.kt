@@ -1,13 +1,17 @@
 package com.project.spire.ui
 
+import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.Toolbar
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -38,6 +42,8 @@ class MainActivity : AppCompatActivity() {
         if (supportActionBar != null) {
             supportActionBar!!.hide()
         }
+        this.setStatusBarTransparent()
+
         val navView: BottomNavigationView = binding.bottomNavigationView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
@@ -98,4 +104,16 @@ class MainActivity : AppCompatActivity() {
                 Log.d("PhotoPicker", "No media selected")
             }
         }
+
+    fun Activity.setStatusBarTransparent() {
+        window.apply {
+            setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            )
+        }
+        if(Build.VERSION.SDK_INT >= 30) {	// API 30 에 적용
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+        }
+    }
 }

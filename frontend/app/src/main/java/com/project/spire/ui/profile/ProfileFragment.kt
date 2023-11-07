@@ -46,7 +46,6 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().setStatusBarTransparent()
 
         // If bundle is null, fetch my profile
         // Else, fetch other user's profile using bundle's user id
@@ -116,17 +115,5 @@ class ProfileFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    fun Activity.setStatusBarTransparent() {
-        window.apply {
-            setFlags(
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-            )
-        }
-        if(Build.VERSION.SDK_INT >= 30) {	// API 30 에 적용
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-        }
     }
 }

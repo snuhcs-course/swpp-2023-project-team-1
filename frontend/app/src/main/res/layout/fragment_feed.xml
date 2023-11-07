@@ -14,6 +14,8 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/feed_tool_bar"
             android:layout_width="match_parent"
+            android:paddingTop="20dp"
+            android:paddingStart="30dp"
             android:layout_height="@dimen/feed_toolbar_height"
             android:background="@android:color/white">
 
