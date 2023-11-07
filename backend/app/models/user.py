@@ -20,6 +20,7 @@ class User(Base, TimestampMixin):
         String(100), nullable=False, unique=True, index=True
     )
     profile_image_url: Mapped[str] = mapped_column(String(255), nullable=True)
+    bio: Mapped[str] = mapped_column(String(255), nullable=True)
     hashed_password: Mapped[str] = mapped_column(String(100), nullable=False)
     is_super_user: Mapped[bool] = mapped_column(
         Boolean, server_default=expression.false(), nullable=False, default=False
