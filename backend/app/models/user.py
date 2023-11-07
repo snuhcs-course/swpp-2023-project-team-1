@@ -8,6 +8,7 @@ from app.models import Base
 from app.models.guid import GUID
 from app.models.timestamp_mixin import TimestampMixin
 
+
 if TYPE_CHECKING:
     from app.models import Post, PostLike, Comment, CommentLike, Image
 

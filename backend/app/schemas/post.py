@@ -67,6 +67,7 @@ class PostResponse(PostRead):
     is_liked: int = -1
 
 
+
 class CommentBase(BaseModel):
     post_id: UUID4
     content: str

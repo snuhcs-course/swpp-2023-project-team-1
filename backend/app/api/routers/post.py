@@ -172,12 +172,16 @@ async def update_post_by_id(
     return normalize_post(post)
 
 
+
 @post_router.delete(
     "/{post_id}",
     summary="Delete Post",
     description="Delete post",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
+    description="Delete post",
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
+
 async def delete_post(
     post_id: UUID4,
     user_id: UUID4 | None = Depends(get_user_id_from_request)
@@ -194,6 +198,7 @@ async def delete_post(
     "/{post_id}/like",
     summary="Toggle Post Like",
     description="Toggle post like",
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
 async def toggle_post_like(post_id: UUID4, req: Request):
@@ -269,6 +274,7 @@ async def update_comment_by_id(
     description="Delete Comment",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
+
 async def delete_comment(
     req: Request,
     comment_id: UUID4

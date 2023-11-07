@@ -9,9 +9,11 @@ from app.api.routers.search import search_router
 api_router = APIRouter(prefix="/api")
 
 
+
 @api_router.get("/")
 async def get():
     return HTMLResponse(html)
+
 
 
 api_router.include_router(

@@ -147,6 +147,14 @@ class PostService:
                 and_(PostLike.post_id == post_id, PostLike.user_id == user_id)
             )
         )
+    async def toggle_post_like(
+        self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs
+    ) -> PostLike:
+        result = await session.execute(
+            select(PostLike).where(
+                and_(PostLike.post_id == post_id, PostLike.user_id == user_id)
+            )
+        )
 
         post_like: PostLike | None = result.scalars().first()
 
@@ -157,6 +165,7 @@ class PostService:
             return post_like
 
         else:
+            post_like.is_liked = not (post_like.is_liked)
             post_like.is_liked = not (post_like.is_liked)
             await session.commit()
             return post_like
@@ -226,6 +235,9 @@ class PostService:
 
         if not comment:
             raise CommentNotFoundException("Comment not found")
+        
+        if comment.user_id != request_user_id:
+            raise UserNotOwnerException("user is not the owver")
         
         if comment.user_id != request_user_id:
             raise UserNotOwnerException("user is not the owver")

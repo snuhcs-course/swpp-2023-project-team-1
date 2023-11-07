@@ -1,8 +1,10 @@
 from pydantic import UUID4, BaseModel, ConfigDict, Field
 
 
+
 class UserBase(BaseModel):
     email: str = Field(..., description="Email")
+
 
 
 class UserCreate(UserBase):
@@ -10,7 +12,9 @@ class UserCreate(UserBase):
     password: str = Field(..., description="Password")
 
     def create_dict(self) -> dict:
+    def create_dict(self) -> dict:
         return self.model_dump(exclude_unset=True)
+
 
 
 class UserRead(UserBase):
@@ -24,17 +28,22 @@ class UserRead(UserBase):
     )
 
 
+
 class UserUpdate(BaseModel):
     username: str | None = Field(None, description="Username")
     bio: str | None = Field(None, description="Bio")
     profile_image_url: str | None = Field(None, description="Profile Image Url")
 
     def update_dict(self) -> dict:
+    def update_dict(self) -> dict:
         return self.model_dump(exclude_unset=True)
+
+
 
 
 class LoginRequest(UserBase):
     password: str = Field(..., description="Password")
+
 
 
 class LoginResponse(BaseModel):
@@ -42,6 +51,7 @@ class LoginResponse(BaseModel):
     refresh_token: str = Field(..., description="Refresh Token")
     user_id: UUID4 = Field(..., description="User Id")
     username: str = Field(..., description="Username")
+
 
 
 class CheckUserInfoResponse(BaseModel):

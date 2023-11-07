@@ -10,10 +10,14 @@ class CodeService:
     async def creat_verification_code(
         self, email: str, code: int, session: AsyncSession
     ) -> Code:
+    async def creat_verification_code(
+        self, email: str, code: int, session: AsyncSession
+    ) -> Code:
         try:
             query = select(Code).where(Code.email == email)
             result = await session.execute(query)
             is_exist = result.scalars().first()
+
 
             if is_exist:
                 raise DuplicateEmailOrUsernameException
@@ -31,8 +35,12 @@ class CodeService:
             await session.close()
             raise e
 
+
     @Transactional()
     async def verify_code(self, email: str, code: int, session: AsyncSession) -> Code:
+        result = await session.execute(
+            select(Code).where(and_(Code.email == email, Code.code == code))
+        )
         result = await session.execute(
             select(Code).where(and_(Code.email == email, Code.code == code))
         )
@@ -41,6 +49,7 @@ class CodeService:
 
         if not _code:
             raise CodeNotFoundException("Code not found")
+
 
         await session.commit()
 
