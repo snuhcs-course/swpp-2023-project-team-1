@@ -1,4 +1,4 @@
-package com.project.spire.network
+package com.project.spire.utils
 
 object ErrorUtils{
     // Available in wiki

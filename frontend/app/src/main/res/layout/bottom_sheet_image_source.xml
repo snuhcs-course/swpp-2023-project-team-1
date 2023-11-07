@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet_image_source_layout"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/bottom_sheet_height"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    app:behavior_hideable="true"
+    app:behavior_draggable="true">
+
+    <LinearLayout
+        android:id="@+id/bottom_sheet_layout_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:clickable="true"
+        android:focusable="true">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/bottom_sheet_icon_size"
+            android:layout_height="@dimen/bottom_sheet_icon_size"
+            android:layout_gravity="center"
+            android:layout_margin="17dp"
+            android:padding="20dp"
+            android:foreground="@drawable/ic_imgsrc_camera" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/bottom_sheet_camera"
+            android:textSize="@dimen/bottom_sheet_text_size"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_sheet_layout_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_layout_1"
+        android:clickable="true"
+        android:focusable="true">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/bottom_sheet_icon_size"
+            android:layout_height="@dimen/bottom_sheet_icon_size"
+            android:layout_gravity="center"
+            android:layout_margin="17dp"
+            android:padding="20dp"
+            android:foreground="@drawable/ic_imgsrc_gallery" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/bottom_sheet_gallery"
+            android:textSize="@dimen/bottom_sheet_text_size"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_sheet_layout_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_layout_2"
+        android:clickable="true"
+        android:focusable="true">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/bottom_sheet_icon_size"
+            android:layout_height="@dimen/bottom_sheet_icon_size"
+            android:layout_gravity="center"
+            android:layout_margin="17dp"
+            android:padding="20dp"
+            android:foreground="@drawable/ic_imgsrc_new" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/bottom_sheet_new"
+            android:textSize="@dimen/bottom_sheet_text_size"/>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

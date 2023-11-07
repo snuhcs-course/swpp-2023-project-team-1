@@ -8,14 +8,29 @@
     <string name="title_notification">Notifications</string>
     <string name="title_profile">Profile</string>
 
+    <!-- Prompt Dialog -->
+    <string name="prompt_dialog_hint">✨What are you inspired with?</string>
+    <string name="prompt_dialog_button">Generate</string>
+    <string name="prompt_dialog_cancel">Cancel</string>
+
     <!-- image edit activities -->
-    <string name="title_toolbar">Edit Your Image</string>
+    <string name="bottom_sheet_camera">Take picture</string>
+    <string name="bottom_sheet_gallery">Choose from gallery</string>
+    <string name="bottom_sheet_new">Generate new image</string>
+    <string name="title_toolbar_image_edit">Edit Your Image</string>
     <string name="prompt_suggestion_button">sunglasses</string>
     <string name="prompt_hint">Write your prompt here</string>
     <string name="next_button">Next</string>
-
     <string name="title_create_post">Create Post</string>
     <string name="title_edit_profile">Edit Profile</string>
+
+    <!-- write text activity -->
+    <string name="title_toolbar_write_text">Write Text</string>
+    <string name="post_text_hint">What do you want to say?</string>
+    <string name="done_button">Done</string>
+    <string name="loading_text">Recreating your image…</string>
+    <string name="loading_time_text">Might take up to 10 seconds</string>
+
 
     <!-- Auth activities -->
     <string name="email_helper_text">Must be a valid email address</string>
@@ -43,6 +58,8 @@
     <string name="password_rule_2"> ✦ Contain at least 1 alphabet</string>
     <string name="password_rule_3"> ✦ Contain at least 1 number</string>
     <string name="password_rule_4"> ✦ Contain at least 1 special character</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- feed, post and comment -->
     <string name="comment_write_hint">Write your comment here</string>

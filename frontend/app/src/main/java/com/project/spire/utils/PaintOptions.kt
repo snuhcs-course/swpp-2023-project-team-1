@@ -1,4 +1,4 @@
-package com.project.spire.ui.create.image
+package com.project.spire.utils
 
 import android.graphics.PorterDuffXfermode
 import java.io.Serializable
