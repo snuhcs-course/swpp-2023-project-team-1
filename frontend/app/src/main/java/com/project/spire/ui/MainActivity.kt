@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         if (supportActionBar != null) {
             supportActionBar!!.hide()
         }
-        this.setStatusBarTransparent()
 
         val navView: BottomNavigationView = binding.bottomNavigationView
 
