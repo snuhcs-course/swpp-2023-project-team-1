@@ -186,6 +186,24 @@ async def reject_follow(
     return {"message": f"Rejected user {user_id} follow"}
 
 @user_router.get(
+    "/{user_id}/follow_info",
+    summary="Get user follow info",
+    description="Get user follow info",
+    dependencies=[Depends(PermissionDependency([AllowAll]))],
+    # response_model=GetUsersResponse,
+)
+async def get_follow_info(
+    req: Request,
+    user_id: UUID4
+):
+    user_svc = UserService()
+    follow_info =  await user_svc.get_follow_info(
+        user_id=user_id, current_user_id=req.user.id
+    )
+    return follow_info
+
+
+@user_router.get(
     "/{user_id}/followers",
     summary="Get user followers",
     description="Get user followers",
