@@ -22,7 +22,7 @@ class FeedViewModel : ViewModel() {
         // fetch posts from backend
         viewModelScope.launch {
             // FIXME: Remove this dummy delay
-            delay(2000)
+            delay(500)
 
             // FIXME: Remove this dummy data
             for (i in 1..10) {

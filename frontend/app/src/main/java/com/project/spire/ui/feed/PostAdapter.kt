@@ -41,24 +41,12 @@ class PostAdapter(
     }
 
     inner class PostViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        var profileImage: ImageView
-        var postImage: ImageView
-        var username: TextView
-        var likes: TextView
-        var comments: TextView
-        var content: TextView
-        var updatedAt: TextView
-
-        init {
-            profileImage = view.findViewById(R.id.profile_Image)
-            postImage = view.findViewById(R.id.post_image)
-            username = view.findViewById(R.id.username)
-            likes = view.findViewById(R.id.num_likes)
-            comments = view.findViewById(R.id.num_comments)
-            content = view.findViewById(R.id.content)
-            updatedAt = view.findViewById(R.id.updated_at)
-        }
+        val profileImage: ImageView = view.findViewById(R.id.profile_Image)
+        val postImage: ImageView = view.findViewById(R.id.post_image)
+        val username: TextView = view.findViewById(R.id.username)
+        val likes: TextView = view.findViewById(R.id.num_likes)
+        val comments: TextView = view.findViewById(R.id.num_comments)
+        val content: TextView = view.findViewById(R.id.content)
+        val updatedAt: TextView = view.findViewById(R.id.updated_at)
     }
-
-
 }
