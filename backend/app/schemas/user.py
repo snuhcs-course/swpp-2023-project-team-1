@@ -63,7 +63,7 @@ class FollowBase(BaseModel):
 
 class GetFollowInfoResponse(BaseModel):
     follower_cnt: int = Field(..., description="Number of Followers")
-    following_cnt: UUID4 = Field(..., description="Number of Followings")
+    following_cnt: int = Field(..., description="Number of Followings")
     is_follower: bool = Field(..., description="Is My Follower")
     is_following: bool = Field(..., description="Is My Following")
 
