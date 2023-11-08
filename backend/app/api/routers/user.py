@@ -15,7 +15,8 @@ from app.schemas.user import (
     UserRead,
     UserUpdate,
     GetUsersResponse,
-    UserSearchResponse
+    UserSearchResponse, 
+    GetFollowInfoResponse
 )
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -190,7 +191,7 @@ async def reject_follow(
     summary="Get user follow info",
     description="Get user follow info",
     dependencies=[Depends(PermissionDependency([AllowAll]))],
-    # response_model=GetUsersResponse,
+    response_model=GetFollowInfoResponse,
 )
 async def get_follow_info(
     req: Request,
