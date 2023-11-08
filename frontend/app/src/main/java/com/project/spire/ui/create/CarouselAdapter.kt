@@ -27,14 +27,12 @@ class CarouselAdapter(
 
     override fun onBindViewHolder(holder: CarouselViewHolder, position: Int) {
         val item = carouselList[position]
-        // holder.image.load(item.bitmap)
         holder.image.load(item)
     }
 
     inner class CarouselViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         var image: ImageView
         // val text: TextView
-
 
         init {
             image = view.findViewById(R.id.list_item_image)

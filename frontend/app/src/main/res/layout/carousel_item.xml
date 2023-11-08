@@ -16,7 +16,7 @@
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/list_item_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

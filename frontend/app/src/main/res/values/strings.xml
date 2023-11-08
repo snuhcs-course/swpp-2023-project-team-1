@@ -30,6 +30,7 @@
     <string name="done_button">Done</string>
     <string name="loading_text">Recreating your image…</string>
     <string name="loading_time_text">Might take up to 10 seconds</string>
+    <string name="swipe_text">Swipe to see more images</string>
 
 
     <!-- Auth activities -->
