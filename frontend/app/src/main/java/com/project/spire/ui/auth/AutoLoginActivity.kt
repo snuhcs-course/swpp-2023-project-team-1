@@ -3,12 +3,14 @@ package com.project.spire.ui.auth
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.project.spire.core.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.ui.MainActivity
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 
 /**
  * This Activity is invisible
@@ -25,12 +27,18 @@ class   AutoLoginActivity : AppCompatActivity() {
 
         // Auto login
         GlobalScope.launch {
-            val success = authRepository.refresh()
-            if (success) {
-                goto<MainActivity>()
-            } else {
+            try {
+                val success = authRepository.refresh()
+                if (success) {
+                    goto<MainActivity>()
+                } else {
+                    goto<LoginActivity>()
+                }
+            } catch (e: SocketTimeoutException) {
+                runOnUiThread{Toast.makeText(this@AutoLoginActivity, "Connection timed out", Toast.LENGTH_SHORT).show()}
                 goto<LoginActivity>()
             }
+
         }
     }
 
