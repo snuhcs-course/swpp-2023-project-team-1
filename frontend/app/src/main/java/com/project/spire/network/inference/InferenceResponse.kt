@@ -13,7 +13,7 @@ data class InferenceSuccess (
     val modelVersion: String,
 
     @SerializedName("outputs")
-    var outputs: List<Output> // TODO: parse this
+    var outputs: List<Output>
 
 ) : InferenceResponse
 

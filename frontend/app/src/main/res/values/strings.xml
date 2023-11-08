@@ -14,7 +14,7 @@
     <string name="prompt_dialog_cancel">Cancel</string>
 
     <!-- image edit activities -->
-    <string name="bottom_sheet_camera">Take picture</string>
+    <string name="bottom_sheet_camera">Take a picture</string>
     <string name="bottom_sheet_gallery">Choose from gallery</string>
     <string name="bottom_sheet_new">Generate new image</string>
     <string name="title_toolbar_image_edit">Edit Your Image</string>

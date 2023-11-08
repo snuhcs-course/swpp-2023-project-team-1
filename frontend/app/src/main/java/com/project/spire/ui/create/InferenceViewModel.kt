@@ -2,6 +2,7 @@ package com.project.spire.ui.create
 
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -16,10 +17,12 @@ class InferenceViewModel (
     private val inferenceRepository: InferenceRepository
 ): ViewModel() {
 
-    private val _inferenceResult = MutableLiveData<Bitmap?>().apply {
+    private val _inferenceResult = MutableLiveData<ArrayList<Bitmap>?>().apply {
+        // MutableLiveData<Bitmap?>().apply {
         value = null
     }
-    val inferenceResult = _inferenceResult
+    val inferenceResult: LiveData<ArrayList<Bitmap>?>
+        get() = _inferenceResult
 
     fun infer(image: Bitmap, mask: Bitmap, prompt: String) {
         Log.d("InferenceViewModel", "Input image size: ${image.byteCount}")
@@ -30,11 +33,16 @@ class InferenceViewModel (
             if (result is InferenceSuccess) {
                 val output = result.outputs[0]
                 Log.d("InferenceViewModel", "Inference success: ${output.name}")
-                val generatedBase64 = output.data[0]
-                val generatedBitmap = BitmapUtils.Base64toBitmap(generatedBase64)
-                Log.d("InferenceViewModel", "Output bitmap size: ${generatedBitmap?.byteCount}")
-                _inferenceResult.postValue(generatedBitmap)
 
+                val generatedBitmaps = ArrayList<Bitmap>()
+                generatedBitmaps.add(image) // include original image
+                for (i in 0 until output.data.size) {
+                    val generatedBase64 = output.data[i]
+                    val generatedBitmap = BitmapUtils.Base64toBitmap(generatedBase64)
+                    Log.d("InferenceViewModel", "Output $i bitmap size: ${generatedBitmap?.byteCount}")
+                    generatedBitmaps.add(generatedBitmap!!)
+                }
+                _inferenceResult.postValue(generatedBitmaps)
             } else {
                 Log.e("InferenceViewModel", "Inference failed")
                 _inferenceResult.postValue(null)
@@ -50,10 +58,15 @@ class InferenceViewModel (
             if (result is InferenceSuccess) {
                 val output = result.outputs[0]
                 Log.d("InferenceViewModel", "Inference success: ${output.name}")
-                val generatedBase64 = output.data[0]
-                val generatedBitmap = BitmapUtils.Base64toBitmap(generatedBase64)
-                Log.d("InferenceViewModel", "Output bitmap size: ${generatedBitmap?.byteCount}")
-                _inferenceResult.postValue(generatedBitmap)
+
+                val generatedBitmaps = ArrayList<Bitmap>()
+                for (i in 0 until output.data.size) {
+                    val generatedBase64 = output.data[i]
+                    val generatedBitmap = BitmapUtils.Base64toBitmap(generatedBase64)
+                    Log.d("InferenceViewModel", "Output $i bitmap size: ${generatedBitmap?.byteCount}")
+                    generatedBitmaps.add(generatedBitmap!!)
+                }
+                _inferenceResult.postValue(generatedBitmaps)
 
             } else {
                 Log.e("InferenceViewModel", "Inference failed")
