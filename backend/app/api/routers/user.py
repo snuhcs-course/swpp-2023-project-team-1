@@ -190,7 +190,7 @@ async def reject_follow(
     "/{user_id}/follow_info",
     summary="Get user follow info",
     description="Get user follow info",
-    dependencies=[Depends(PermissionDependency([AllowAll]))],
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
     response_model=GetFollowInfoResponse,
 )
 async def get_follow_info(
@@ -202,7 +202,6 @@ async def get_follow_info(
         user_id=user_id, current_user_id=req.user.id
     )
     return follow_info
-
 
 @user_router.get(
     "/{user_id}/followers",
