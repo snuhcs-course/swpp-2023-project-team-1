@@ -61,6 +61,12 @@ class FollowBase(BaseModel):
     followed_user_id: UUID4 = Field(..., description="Followed User Id")
     accept_status: int = Field(..., description="Follow Accept Status")
 
+class GetFollowInfoResponse(BaseModel):
+    follower_cnt: int = Field(..., description="Number of Followers")
+    following_cnt: UUID4 = Field(..., description="Number of Followings")
+    is_follower: bool = Field(..., description="Is My Follower")
+    is_following: bool = Field(..., description="Is My Following")
+
 class GetUsersResponse(BaseModel):
     total: int
     items: list[UserRead]
