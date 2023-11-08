@@ -1,5 +1,7 @@
 package com.project.spire.ui.profile
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,9 +15,10 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(
     private val authRepository: AuthRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
+    private val _email = MutableLiveData<String>().apply { value = "" }
     private val _username = MutableLiveData<String>().apply { value = "" }
     private val _bio = MutableLiveData<String>().apply { value = "" }
     private val _profileImageUrl = MutableLiveData<String>().apply { value = "" }
@@ -25,6 +28,7 @@ class ProfileViewModel(
     private val _isFollowed = MutableLiveData<Boolean>().apply { value = false }
     private val _isMyProfile = MutableLiveData<Boolean>().apply { value = false }
 
+    val email: LiveData<String> = _email
     val username: LiveData<String> = _username
     val bio: LiveData<String> = _bio
     val profileImageUrl: LiveData<String> = _profileImageUrl
@@ -50,8 +54,9 @@ class ProfileViewModel(
         viewModelScope.launch {
             val accessToken = authRepository.accessTokenFlow.first()
             val myInfo = userRepository.getMyInfo(accessToken)
+            _email.postValue(myInfo?.email)
             _username.postValue(myInfo?.username)
-            // _bio.postValue(myInfo?.bio)
+            _bio.postValue(myInfo?.bio)
             _profileImageUrl.postValue(myInfo?.profileImageUrl)
             // _followers.postValue(myInfo?.followers)
             // _following.postValue(myInfo?.following)
@@ -65,8 +70,9 @@ class ProfileViewModel(
         viewModelScope.launch {
             val accessToken = authRepository.accessTokenFlow.first()
             val userInfo = userRepository.getUserInfo(accessToken, userId)
+            _email.postValue(userInfo?.email)
             _username.postValue(userInfo?.username)
-            // _bio.postValue(userInfo?.bio)
+            _bio.postValue(userInfo?.bio)
             _profileImageUrl.postValue(userInfo?.profileImageUrl)
             // _followers.postValue(userInfo?.followers)
             // _following.postValue(userInfo?.following)
@@ -79,7 +85,7 @@ class ProfileViewModel(
 
 class ProfileViewModelFactory(
     private val authRepository: AuthRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {

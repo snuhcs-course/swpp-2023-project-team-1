@@ -81,6 +81,8 @@
     <string name="edit_profile_save_btn">Save</string>
     <string name="edit_profile_logout_btn">Log out</string>
     <string name="edit_profile_delete_account_btn">Delete Account</string>
+    <string name="logout_dialog_text">Do you really want to log out?</string>
+    <string name="delete_account_dialog_text">Are you sure you want to delete your account?\nThis job cannot be undone.</string>
 
 
 </resources>
