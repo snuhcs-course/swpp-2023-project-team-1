@@ -26,6 +26,8 @@ class WriteTextActivity : AppCompatActivity() {
         appbar.toolbarText.setText(R.string.title_toolbar_write_text)
 
         val inferenceViewModel = InferenceUtils.inferenceViewModel
+        inferenceViewModel.reset()
+
         val carousel = binding.carouselRecyclerView
 
         val doneButton = binding.doneButton
@@ -34,7 +36,7 @@ class WriteTextActivity : AppCompatActivity() {
             if (it != null) {
                 Log.d("WriteTextActivity", "Inference result received. Changing image.")
                 // binding.resultImageView.setImageBitmap(it)
-                binding.resultImageView.visibility = android.view.View.GONE
+                binding.resultImageView.visibility = android.view.View.INVISIBLE
                 binding.loadingProgressBar.isActivated = false
                 binding.loadingProgressBar.visibility = android.view.View.GONE
                 binding.loadingText.visibility = android.view.View.GONE
@@ -66,6 +68,7 @@ class WriteTextActivity : AppCompatActivity() {
         val backBtn = binding.writeTextAppBarLayout.backButton
         backBtn.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
+            finish()
         }
         val exitBtn = binding.writeTextAppBarLayout.exitButton
         exitBtn.setOnClickListener {

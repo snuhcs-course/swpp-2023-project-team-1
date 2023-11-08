@@ -26,6 +26,7 @@
             android:exported="true" />
         <activity
             android:name="com.project.spire.ui.create.WriteTextActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="true" />
         <activity
             android:name="com.project.spire.ui.feed.PostActivity"
@@ -49,6 +50,7 @@
         <activity
             android:name="com.project.spire.ui.create.ImageEditActivity"
             android:exported="true"
+            android:windowSoftInputMode="adjustPan"
             android:label="@string/title_activity_image_edit" />
         <activity
             android:name="com.project.spire.ui.auth.SignUpActivity"

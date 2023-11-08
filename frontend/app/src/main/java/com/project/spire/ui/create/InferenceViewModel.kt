@@ -20,9 +20,17 @@ class InferenceViewModel (
     private val _inferenceResult = MutableLiveData<ArrayList<Bitmap>?>().apply {
         // MutableLiveData<Bitmap?>().apply {
         value = null
+
     }
     val inferenceResult: LiveData<ArrayList<Bitmap>?>
         get() = _inferenceResult
+
+    fun reset() {
+        _inferenceResult.value = null
+        Log.d("InferenceViewModel", "Reset LiveData")
+
+        // TODO: how to stall infer()?
+    }
 
     fun infer(image: Bitmap, mask: Bitmap, prompt: String) {
         Log.d("InferenceViewModel", "Input image size: ${image.byteCount}")

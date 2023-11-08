@@ -32,6 +32,7 @@ class PostAdapter(
         holder.profileImage.load(post.user.profileImage) {
             transformations(CircleCropTransformation())
         }
+        holder.postImage.load(post.imageUrl)
         holder.username.text = post.user.userName
         holder.content.text = post.content
         holder.updatedAt.text = post.updatedAt

@@ -2,18 +2,27 @@
 <com.google.android.material.carousel.MaskableFrameLayout android:id="@+id/carousel_item_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="4dp"
-    android:layout_marginEnd="4dp"
+    android:layout_marginStart="2dp"
+    android:layout_marginEnd="2dp"
     android:foreground="?attr/selectableItemBackground"
     app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ImageView
-        android:id="@+id/list_item_image"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_image_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:transitionName="image"
-        android:scaleType="centerCrop"/>
+        app:cardCornerRadius="6dp"
+        app:cardElevation="0dp">
+
+        <ImageView
+            android:id="@+id/list_item_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:transitionName="image"
+            android:scaleType="centerCrop"/>
+
+    </androidx.cardview.widget.CardView>
 
 </com.google.android.material.carousel.MaskableFrameLayout>
