@@ -87,7 +87,7 @@ class UserService:
     @Transactional()
     async def get_follow_info(self, user_id: UUID4, current_user_id: UUID4, session: AsyncSession):
         try:
-            follower_cnt, folllowing_cnt, is_follower, is_following = await asyncio.gather(
+            follower_cnt, folllowing_cnt, follower_obj, following_obj = await asyncio.gather(
                 user.count_followers(user_id),
                 user.count_followings(user_id),
                 user.get_is_my_follower(user_id, current_user_id),
@@ -96,8 +96,18 @@ class UserService:
 
         except NoResultFound as e:
             raise NotFoundException("Follow not found") from e
+        
+        if follower_obj is None:
+            follower_status = -1
+        else:
+            follower_status = follower_obj.accept_status
 
-        return {"follower_cnt":follower_cnt, "following_cnt":folllowing_cnt, "is_follower":is_follower > 0,"is_following":is_following > 0}
+        if following_obj is None:
+            following_status = -1
+        else:
+            following_status = following_obj.accept_status
+
+        return {"follower_cnt":follower_cnt, "following_cnt":folllowing_cnt, "follower_status": follower_status, "following_status":following_status}
 
     @Transactional()
     async def get_followers(self, user_id: UUID4, limit: int, offset: int, session: AsyncSession):

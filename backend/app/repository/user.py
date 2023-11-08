@@ -104,15 +104,15 @@ async def get_followers(user_id: UUID4, limit: int, offset: int, session: AsyncS
 
 @Transactional()
 async def get_is_my_follower(user_id: UUID4, current_user_id: UUID4, session: AsyncSession):
-    stmt = select(func.count(Follow.id)).where(Follow.following_user_id == user_id, Follow.followed_user_id == current_user_id, Follow.accept_status == 1)
+    stmt = select(Follow).where(Follow.following_user_id == user_id, Follow.followed_user_id == current_user_id)
     res = await session.execute(stmt)
-    return res.scalar_one()
+    return res.scalar_one_or_none()
 
 @Transactional()
 async def get_is_my_following(user_id: UUID4, current_user_id: UUID4, session: AsyncSession):
-    stmt = select(func.count(Follow.id)).where(Follow.followed_user_id == user_id, Follow.following_user_id == current_user_id,  Follow.accept_status == 1)
+    stmt = select(Follow).where(Follow.followed_user_id == user_id, Follow.following_user_id == current_user_id)
     res = await session.execute(stmt)
-    return res.scalar_one()
+    return res.scalar_one_or_none()
 
 @Transactional()
 async def count_followings(user_id: UUID4, session: AsyncSession):
