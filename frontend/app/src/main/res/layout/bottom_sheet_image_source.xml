@@ -29,7 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/bottom_sheet_camera"
-            android:textSize="@dimen/bottom_sheet_text_size"/>
+            android:textSize="@dimen/bottom_sheet_text_size"
+            android:textColor="@color/black"/>
 
     </LinearLayout>
 
@@ -54,7 +55,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/bottom_sheet_gallery"
-            android:textSize="@dimen/bottom_sheet_text_size"/>
+            android:textSize="@dimen/bottom_sheet_text_size"
+            android:textColor="@color/black"/>
 
     </LinearLayout>
 
@@ -79,7 +81,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/bottom_sheet_new"
-            android:textSize="@dimen/bottom_sheet_text_size"/>
+            android:textSize="@dimen/bottom_sheet_text_size"
+            android:textColor="@color/black"/>
 
     </LinearLayout>
 
