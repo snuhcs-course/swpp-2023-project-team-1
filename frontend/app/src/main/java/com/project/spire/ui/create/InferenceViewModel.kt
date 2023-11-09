@@ -9,8 +9,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.project.spire.core.inference.InferenceRepository
+import com.project.spire.network.RetrofitClient
 import com.project.spire.network.inference.InferenceResponse
 import com.project.spire.network.inference.InferenceSuccess
+import com.project.spire.network.post.request.NewImage
+import com.project.spire.network.post.request.NewPost
+import com.project.spire.network.post.request.NewPostRequest
 import com.project.spire.utils.BitmapUtils
 import com.project.spire.utils.InferenceUtils
 import kotlinx.coroutines.launch
@@ -128,8 +132,37 @@ class InferenceViewModel (
         }
     }
 
-    fun postUpload() {
+    fun postUpload(image: Bitmap, content: String) {
         // TODO: Send post upload request
+
+        val request = makePostRequest(image, content)
+
+        viewModelScope.launch {
+            RetrofitClient.postAPI.newPost(request)
+        }
+    }
+
+    private fun makePostRequest(image: Bitmap, content: String) : NewPostRequest {
+        val modifiedImage = BitmapUtils.BitmaptoBase64(image)
+        val request: NewPostRequest
+
+        if (previousInference.value is Inpainting) {
+            val input = previousInference.value as Inpainting
+            val originalImage = BitmapUtils.BitmaptoBase64(input.image)
+            val maskImage = BitmapUtils.BitmaptoBase64(input.mask)
+            val prompt = input.prompt
+            request = NewPostRequest(
+                NewPost(content, ""),
+                NewImage(modifiedImage, originalImage, maskImage, prompt)
+            )
+        } else {
+            val prompt = (previousInference.value as Txt2Img).prompt
+            request = NewPostRequest(
+                NewPost(content, ""),
+                NewImage(modifiedImage, null, null, prompt)
+            )
+        }
+        return request
     }
 }
 

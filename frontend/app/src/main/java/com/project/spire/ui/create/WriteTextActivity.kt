@@ -52,6 +52,7 @@ class WriteTextActivity : AppCompatActivity() {
             }
         }
 
+        // Inference result received
         inferenceViewModel.inferenceResult.observe(this) {
             if (it != null) {
                 Log.d("WriteTextActivity", "Inference result received. Changing image.")
@@ -86,7 +87,7 @@ class WriteTextActivity : AppCompatActivity() {
         }
 
         doneButton.setOnClickListener {
-            // TODO: Send post upload request
+
         }
 
         regenerateBtn.setOnClickListener {

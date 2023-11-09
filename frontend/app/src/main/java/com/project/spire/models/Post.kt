@@ -8,4 +8,5 @@ class Post (
     var likedUsers: List<User>,
     var comments: List<Comment>,
     val createdAt: String,
-    var updatedAt: String)
+    var updatedAt: String
+)

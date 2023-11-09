@@ -6,6 +6,7 @@ import com.project.spire.network.post.response.UpdatePostResponse
 import com.project.spire.network.post.response.GetPostResponse
 import com.project.spire.network.post.response.NewPostResponse
 import com.project.spire.network.post.response.NewPostSuccess
+import com.project.spire.network.post.response.PostSuccess
 import com.project.spire.network.post.response.UpdatePostSuccess
 import retrofit2.Response
 import retrofit2.http.Body
@@ -18,7 +19,7 @@ import retrofit2.http.POST
 interface PostAPI {
     // TODO
     @POST("post")
-    suspend fun newPost(@Body newPostRequest: NewPostRequest): Response<NewPostSuccess>
+    suspend fun newPost(@Body newPostRequest: NewPostRequest): Response<PostSuccess>
 
     @GET("post/{post_id}")
     suspend fun getPost(): Response<GetPostResponse>
@@ -43,12 +44,4 @@ interface PostAPI {
 
     @DELETE("post/{post_id}/comment/{comment_id}") // TODO
     suspend fun deleteComment(): Response<Void>
-
-
-
-
-
-
-//    @GET("auth/check")
-//    suspend fun check(@Body checkRequest: CheckRequest): Response<CheckSuccess>
 }

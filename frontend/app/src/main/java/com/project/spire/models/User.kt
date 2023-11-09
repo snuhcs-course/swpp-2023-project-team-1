@@ -1,8 +1,16 @@
 package com.project.spire.models
 
+import com.google.gson.annotations.SerializedName
+
 open class User (
+
+    @SerializedName("id")
     val id: Int,
+
+    @SerializedName("username")
     var userName: String,
+
+    @SerializedName("profile_image_url")
     var profileImage: String
 ) {
     // TODO
