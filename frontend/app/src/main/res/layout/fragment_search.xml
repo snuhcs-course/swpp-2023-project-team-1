@@ -6,17 +6,33 @@
     android:layout_height="match_parent"
     tools:context="com.project.spire.ui.search.SearchFragment">
 
-    <TextView
-        android:id="@+id/text_search"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/search_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="@dimen/search_bar_height"
+        style="@style/search_bar"
+        android:layout_marginHorizontal="@dimen/search_bar_margin"
+        android:layout_marginTop="@dimen/search_bar_margin"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/search_bar_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/search_bar_text_padding"
+            android:textSize="@dimen/search_bar_text_size"
+            android:hint="@string/search_bar_hint" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="@dimen/search_bar_icon_size"
+        android:layout_height="@dimen/search_bar_icon_size"
+        android:foreground="@drawable/ic_search_bar"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="@id/search_bar_layout"
+        app:layout_constraintTop_toTopOf="@id/search_bar_layout"
+        app:layout_constraintBottom_toBottomOf="@id/search_bar_layout"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

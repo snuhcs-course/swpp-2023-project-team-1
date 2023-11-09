@@ -34,7 +34,7 @@
     <dimen name="camera_blind_top_height">100dp</dimen>
     <dimen name="camera_flip_btn_size">40dp</dimen>
     <dimen name="camera_flip_btn_margin_bottom">70dp</dimen>
-  
+
     <!-- Profile -->
     <dimen name="profile_header_background_height">200dp</dimen>
     <dimen name="profile_image_margin_top">150dp</dimen>
@@ -80,6 +80,13 @@
     <dimen name="comment_write_margin">10dp</dimen>
     <dimen name="comment_write_btn">40dp</dimen>
     <dimen name="comment_write_btn_padding">10dp</dimen>
+
+    <!-- search -->
+    <dimen name="search_bar_height">50dp</dimen>
+    <dimen name="search_bar_margin">20dp</dimen>
+    <dimen name="search_bar_icon_size">25dp</dimen>
+    <dimen name="search_bar_text_size">16sp</dimen>
+    <dimen name="search_bar_text_padding">46dp</dimen>
 
 
 </resources>

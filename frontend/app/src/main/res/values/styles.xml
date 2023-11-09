@@ -93,6 +93,15 @@
         <item name="android:foreground">@drawable/ic_nav_create_post</item>
     </style>
 
+    <style name="search_bar" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/boxBackgroundColor</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxCornerRadiusBottomEnd">20dp</item>
+        <item name="boxCornerRadiusBottomStart">20dp</item>
+        <item name="boxCornerRadiusTopEnd">20dp</item>
+        <item name="boxCornerRadiusTopStart">20dp</item>
+    </style>
+
     <style name="filled_edit_text" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">@color/boxBackgroundColor</item>
         <item name="boxStrokeWidth">0dp</item>
@@ -170,6 +179,12 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="notifications_title">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
