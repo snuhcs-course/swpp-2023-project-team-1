@@ -37,11 +37,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/loading_text"
-        app:layout_constraintBottom_toBottomOf="@+id/result_image_view"
+        android:layout_marginTop="15dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loading_progress_bar"
-        app:layout_constraintVertical_bias="0.2" />
+        app:layout_constraintTop_toBottomOf="@+id/carousel_recycler_view" />
 
     <TextView
         android:id="@+id/loading_time_text"
@@ -53,14 +52,17 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/loading_text" />
 
-    <me.relex.circleindicator.CircleIndicator2
-        android:id="@+id/indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="10dp"
-        android:layout_marginVertical="10dp"
-        app:layout_constraintBottom_toBottomOf="@id/carousel_recycler_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/describe_your_image_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:text="@string/describe_your_image"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/loading_time_text" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/post_text_input_layout"
@@ -68,11 +70,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="15dp"
         android:hint="@string/post_text_hint"
         app:layout_constraintBottom_toTopOf="@id/done_button"
-        app:layout_constraintTop_toBottomOf="@id/carousel_recycler_view">
+        app:layout_constraintTop_toBottomOf="@id/describe_your_image_text">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/post_text_input"
@@ -105,5 +107,83 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/write_text_app_bar_layout" />
+
+    <me.relex.circleindicator.CircleIndicator2
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_marginTop="13dp"
+        android:visibility="visible"
+        app:ci_drawable="@drawable/indicator_active"
+        app:ci_drawable_unselected="@drawable/indicator_inactive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/carousel_recycler_view" />
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:id="@+id/regenerate_btn"
+        style="@style/SelectImageUtilBtn"
+        android:layout_width="wrap_content"
+        android:layout_margin="15dp"
+        android:visibility="gone"
+        android:elevation="2dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/carousel_recycler_view">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/select_image_btn_icon_size"
+            android:layout_height="@dimen/select_image_btn_icon_size"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_regenerate" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            android:text="@string/regenerate"
+            android:textColor="@color/black"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/original_image_btn"
+        style="@style/SelectImageUtilBtn"
+        android:layout_width="@dimen/select_image_btn_height"
+        android:layout_margin="15dp"
+        android:visibility="gone"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/carousel_recycler_view">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/select_image_btn_icon_size"
+            android:layout_height="@dimen/select_image_btn_icon_size"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_original_image" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/download_btn"
+        style="@style/SelectImageUtilBtn"
+        android:layout_width="@dimen/select_image_btn_height"
+        android:layout_margin="15dp"
+        android:visibility="gone"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toStartOf="@id/original_image_btn"
+        app:layout_constraintTop_toBottomOf="@id/carousel_recycler_view">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/select_image_btn_icon_size"
+            android:layout_height="@dimen/select_image_btn_icon_size"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_download" />
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package com.project.spire.ui.create
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -39,12 +41,17 @@ class WriteTextActivity : AppCompatActivity() {
                 binding.resultImageView.visibility = View.INVISIBLE
                 binding.loadingProgressBar.isActivated = false
                 binding.loadingProgressBar.visibility = View.GONE
-                binding.loadingText.visibility = View.GONE
-                binding.loadingTimeText.visibility = View.GONE
+                binding.loadingText.visibility = View.INVISIBLE
+                binding.loadingTimeText.visibility = View.INVISIBLE
+                binding.regenerateBtn.visibility = View.VISIBLE
+                binding.originalImageBtn.visibility = View.VISIBLE
+                binding.downloadBtn.visibility = View.VISIBLE
+
+                carouselAdapter = CarouselAdapter(it)
 
                 carousel.visibility = View.VISIBLE
                 carousel.onFlingListener = null
-                carousel.adapter = CarouselAdapter(it)
+                carousel.adapter = carouselAdapter
                 carousel.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
                 val snapHelper = PagerSnapHelper()  // Can only snap to one item at a time
@@ -54,9 +61,23 @@ class WriteTextActivity : AppCompatActivity() {
             }
         }
 
-
         doneButton.setOnClickListener {
             // TODO: Send post upload request
+        }
+
+        val regenerateBtn = binding.regenerateBtn
+        regenerateBtn.setOnClickListener {
+            // TODO: Regenerate image
+        }
+
+        val originalImageBtn = binding.originalImageBtn
+        originalImageBtn.setOnClickListener {
+            // TODO: Show original image
+        }
+
+        val downloadBtn = binding.downloadBtn
+        downloadBtn.setOnClickListener {
+            // TODO: Download image
         }
 
         val backBtn = binding.writeTextAppBarLayout.backButton

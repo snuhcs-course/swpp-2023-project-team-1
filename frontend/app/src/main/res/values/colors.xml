@@ -2,6 +2,7 @@
 <resources>
 
     <color name="blue_50">#E7EAFF</color>
+    <color name="blue_100">#D7DCFF</color>
     <color name="blue_200">#8696FE</color>
     <color name="blue_500">#4942E4</color>
     <color name="blue_700">#11009E</color>

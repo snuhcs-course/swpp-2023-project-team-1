@@ -31,12 +31,10 @@ class CarouselAdapter(
     }
 
     inner class CarouselViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        var image: ImageView
-        // val text: TextView
+        val image: ImageView = view.findViewById(R.id.list_item_image)
 
-        init {
-            image = view.findViewById(R.id.list_item_image)
-        }
+
+
     }
 
 
