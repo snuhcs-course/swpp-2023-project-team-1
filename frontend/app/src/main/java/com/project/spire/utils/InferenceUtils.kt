@@ -1,6 +1,8 @@
 package com.project.spire.utils
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.widget.Toast
 import com.project.spire.core.inference.InferenceRepository
 import com.project.spire.network.inference.InferenceRequest
 import com.project.spire.network.inference.Input
@@ -40,6 +42,24 @@ object InferenceUtils {
             Input("STRENGTH_REFINER", listOf(1), "FP32", listOf(0.3))
         )
         return InferenceRequest(name, input)
+    }
+
+    fun saveImage(context: Context, bitmap: Bitmap) {
+        try {
+            saveImageToInternalStorage(context, bitmap)
+            Toast.makeText(context, "Image saved", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(context, "Failed to save image", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun saveImageToInternalStorage(context: Context, bitmap: Bitmap): String {
+        val filename = "spire_${System.currentTimeMillis()}.jpg"
+        val stream = context.openFileOutput(filename, Context.MODE_PRIVATE)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        stream.close()
+        return filename
     }
 
     // Singleton ViewModel
