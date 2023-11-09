@@ -259,8 +259,6 @@ kubectl get deployments
 
 <img width="565" alt="스크린샷 2023-10-27 오후 8 44 02" src="https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/37a51ae6-148b-4167-88d3-d3b5f0a2f34b">
 
-Currently this takes several minutes, since pods keep restarting before it is ready and it takes time to load model. 
-
 You can see what happening inside a pod via following command.
 
 ```bash
