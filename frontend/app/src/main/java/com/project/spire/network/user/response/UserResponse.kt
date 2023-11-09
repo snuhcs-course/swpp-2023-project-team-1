@@ -12,6 +12,9 @@ data class UserSuccess (
     @SerializedName("id")
     val id: String,
 
+    @SerializedName("bio")
+    val bio: String,
+
     @SerializedName("username")
     val username: String,
 

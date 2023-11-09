@@ -91,25 +91,6 @@ class ProfileFragment : Fragment() {
                 // TODO: Follow user
             }
         }
-
-        // FIXME: Move this to EditProfileActivity
-        val logoutBtn: Button = binding.tempLogoutButton
-        logoutBtn.setOnClickListener {
-            val success = profileViewModel.logout()
-        }
-
-        // FIXME: Move this to EditProfileActivity
-        profileViewModel.logoutSuccess.observe(viewLifecycleOwner) {
-            if (it) {
-                // Logout success
-                Log.d("ProfileFragment", "Logout success")
-                startActivity(Intent(requireContext(), LoginActivity::class.java))
-                requireActivity().finish()
-            } else {
-                // Logout failed
-                Log.d("ProfileFragment", "Logout failed")
-            }
-        }
     }
 
     override fun onDestroyView() {
