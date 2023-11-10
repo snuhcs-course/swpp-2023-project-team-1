@@ -1,7 +1,7 @@
 package com.project.spire.models
 
 class Comment (
-    val id: Int,
+    val id: String,
     val user: User,
     var content: String,
     var likedUsers: List<User>,

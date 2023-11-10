@@ -15,7 +15,7 @@ data class NewImage (
     @SerializedName("modified_image")
     val modifiedImage: String,
 
-    @SerializedName("original_image")
+    @SerializedName("origin_image")
     val originalImage: String?,
 
     @SerializedName("mask_image")

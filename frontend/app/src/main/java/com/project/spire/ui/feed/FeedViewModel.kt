@@ -26,7 +26,7 @@ class FeedViewModel : ViewModel() {
 
             // FIXME: Remove this dummy data
             for (i in 1..10) {
-                val userId = 345
+                val userId = "345"
                 val username = "donghaahn"
                 val profileImage = "https://i.pravatar.cc/1000"
                 val user = User(userId, username, profileImage)

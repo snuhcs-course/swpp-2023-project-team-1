@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 open class User (
 
     @SerializedName("id")
-    val id: Int,
+    val id: String,
 
     @SerializedName("username")
     var userName: String,
@@ -17,7 +17,7 @@ open class User (
 }
 
 class UserDetail (
-    id: Int,
+    id: String,
     userName: String,
     profileImage: String,
     email: String,

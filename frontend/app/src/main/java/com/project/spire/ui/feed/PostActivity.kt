@@ -66,7 +66,7 @@ class PostActivity : AppCompatActivity() {
     private fun fetchPost(): Post {
         // TODO: fetch from backend, and move to ViewModel
 
-        val user_id = 100
+        val user_id = "100"
         val username = "jimin"
         val profileImage = "https://i.pravatar.cc/1000"
         val user = User(user_id,username,profileImage)
@@ -86,8 +86,8 @@ class PostActivity : AppCompatActivity() {
         var commentList = ArrayList<Comment>()
         // TODO: fetch from backend, and move to ViewModel
         for(i in 1..10){
-            val id = 100
-            val user_id = 100
+            val id = "100"
+            val user_id = "100"
             val username = "jimin"
             val profileImage = "https://i.pravatar.cc/1000"
             val user = User(user_id, username, profileImage)

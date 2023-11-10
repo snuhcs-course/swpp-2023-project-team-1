@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.inference.InferenceRepository
 import com.project.spire.network.RetrofitClient
 import com.project.spire.network.inference.InferenceResponse
@@ -19,7 +20,9 @@ import com.project.spire.network.post.response.PostResponse
 import com.project.spire.network.post.response.PostSuccess
 import com.project.spire.utils.AuthProvider
 import com.project.spire.utils.BitmapUtils
+import com.project.spire.utils.DataStoreProvider
 import com.project.spire.utils.InferenceUtils
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 sealed interface Inference {
@@ -153,8 +156,10 @@ class InferenceViewModel(
         val request = makePostRequest(image, content)
 
         viewModelScope.launch {
-            val accessToken = AuthProvider.getAccessToken()
-            val response = RetrofitClient.postAPI.newPost(accessToken, request)
+            val authRepository = AuthRepository(DataStoreProvider.authDataStore)
+            val accessToken = authRepository.accessTokenFlow.first()
+            val response = RetrofitClient.postAPI.newPost("Bearer $accessToken", request)
+
             if (response.isSuccessful) {
                 // Post upload success
                 val result = response.body() as PostSuccess
