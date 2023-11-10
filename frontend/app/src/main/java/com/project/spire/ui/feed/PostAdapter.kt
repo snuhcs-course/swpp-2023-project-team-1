@@ -10,6 +10,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.spire.R
 import com.project.spire.models.Post
+import com.project.spire.utils.DateUtils
 
 class PostAdapter(
     private val postList: List<Post>
@@ -35,9 +36,9 @@ class PostAdapter(
         holder.postImage.load(post.imageUrl)
         holder.username.text = post.user.userName
         holder.content.text = post.content
-        holder.updatedAt.text = post.updatedAt
-        holder.likes.text = post.likedUsers.size.toString()
-        holder.comments.text = post.comments.size.toString()
+        holder.updatedAt.text = DateUtils.formatTime(post.updatedAt)
+        holder.likes.text = post.likeCount.toString()
+        holder.comments.text = post.commentCount.toString()
     }
 
     inner class PostViewHolder(val view: View) : RecyclerView.ViewHolder(view) {

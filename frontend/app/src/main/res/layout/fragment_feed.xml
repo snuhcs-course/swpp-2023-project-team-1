@@ -14,9 +14,9 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/feed_tool_bar"
             android:layout_width="match_parent"
-            android:paddingStart="30dp"
             android:layout_height="@dimen/feed_toolbar_height"
-            android:background="@android:color/white">
+            android:background="@android:color/white"
+            android:paddingStart="30dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -39,15 +39,15 @@
         android:id="@+id/recycler_view_feed"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/app_bar" />
+        android:layout_below="@id/app_bar" />
 
     <!-- Adding 7 placeholders -->
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmer_view_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_below="@id/app_bar"
+        android:layout_gravity="center"
         android:orientation="vertical"
         shimmer:duration="800">
 
@@ -57,11 +57,17 @@
             android:orientation="vertical">
 
             <include layout="@layout/post_shimmer_placeholder" />
+
             <include layout="@layout/post_shimmer_placeholder" />
+
             <include layout="@layout/post_shimmer_placeholder" />
+
             <include layout="@layout/post_shimmer_placeholder" />
+
             <include layout="@layout/post_shimmer_placeholder" />
+
             <include layout="@layout/post_shimmer_placeholder" />
+
             <include layout="@layout/post_shimmer_placeholder" />
         </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>

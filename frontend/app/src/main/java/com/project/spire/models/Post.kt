@@ -1,12 +1,33 @@
 package com.project.spire.models
 
+import com.google.gson.annotations.SerializedName
+
 class Post (
-    val id: String,
-    val user: User,
-    var content: String,
-    var imageUrl: String,
-    var likedUsers: List<User>,
-    var comments: List<Comment>,
+
+    @SerializedName("id")
+    val postId: String,
+
+    @SerializedName("content")
+    val content: String,
+
+    @SerializedName("image_url")
+    val imageUrl: String,
+
+    @SerializedName("created_at")
     val createdAt: String,
-    var updatedAt: String
+
+    @SerializedName("updated_at")
+    val updatedAt: String,
+
+    @SerializedName("user")
+    val user: User,
+
+    @SerializedName("like_cnt")
+    val likeCount: Int,
+
+    @SerializedName("comment_cnt")
+    val commentCount: Int,
+
+    @SerializedName("is_liked")
+    val isLiked: Int
 )

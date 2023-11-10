@@ -24,7 +24,6 @@ class FeedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentFeedBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -33,7 +32,7 @@ class FeedFragment : Fragment() {
 
         val feedViewModel = ViewModelProvider(this)[FeedViewModel::class.java]
 
-        feedViewModel.fetchPosts()
+        feedViewModel.getInitialPosts()
 
         binding.appBar.setOutlineProvider(null);
 

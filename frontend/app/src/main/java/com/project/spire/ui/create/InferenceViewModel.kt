@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.inference.InferenceRepository
+import com.project.spire.models.Post
 import com.project.spire.network.RetrofitClient
 import com.project.spire.network.inference.InferenceResponse
 import com.project.spire.network.inference.InferenceSuccess
@@ -156,8 +157,7 @@ class InferenceViewModel(
         val request = makePostRequest(image, content)
 
         viewModelScope.launch {
-            val authRepository = AuthRepository(DataStoreProvider.authDataStore)
-            val accessToken = authRepository.accessTokenFlow.first()
+            val accessToken = AuthProvider.getAccessToken()
             val response = RetrofitClient.postAPI.newPost("Bearer $accessToken", request)
 
             if (response.isSuccessful) {

@@ -93,17 +93,18 @@ class WriteTextActivity : AppCompatActivity() {
         // Post upload result received
         inferenceViewModel.postResult.observe(this) {
             if (it is PostSuccess) {
-                val intent = Intent(this, PostActivity::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                intent.putExtra("postId", it.postId)
                 startActivity(intent)
                 finish()
             } else if (it is PostError) {
                 Toast.makeText(this, "Post upload failed", Toast.LENGTH_SHORT).show()
+                binding.postUploadProgressBar.visibility = View.GONE
             }
         }
 
         doneButton.setOnClickListener {
+            binding.postUploadProgressBar.visibility = View.VISIBLE
             val currentPosition = (carousel.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             val currentImage: Bitmap = inferenceViewModel.inferenceResult.value!![currentPosition]
             val content = binding.postTextInputLayout.editText?.text.toString()

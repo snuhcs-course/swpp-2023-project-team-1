@@ -1,29 +1,27 @@
 package com.project.spire.network.post.response
 
 import com.google.gson.annotations.SerializedName
+import com.project.spire.models.Post
 
-interface GetPostResponse {
+interface GetPostsResponse {
 }
 
-data class GetPostSuccess(
+data class GetPostsSuccess(
 
-    @SerializedName("content")
-    val content: String,
+    @SerializedName("total")
+    val total: Int,
 
-    @SerializedName("post_image_url")
-    val postImageUrl: String,
+    @SerializedName("items")
+    val items: List<Post>,
 
-    @SerializedName("created_at")
-    val createdAt: String,
+    @SerializedName("next_cursor")
+    val nextCursor: Int
 
-    @SerializedName("updated_at")
-    val updatedAt: String
+) : GetPostsResponse
 
-) : GetPostResponse
-
-data class GetPostError(
+data class GetPostsError(
 
     @SerializedName("message")
     val message: String
 
-) : GetPostResponse
+) : GetPostsResponse
