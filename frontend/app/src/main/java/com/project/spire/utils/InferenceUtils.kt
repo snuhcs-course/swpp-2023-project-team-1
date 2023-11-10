@@ -1,7 +1,9 @@
 package com.project.spire.utils
 
+import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
+import android.provider.MediaStore
 import android.widget.Toast
 import com.project.spire.core.inference.InferenceRepository
 import com.project.spire.network.inference.InferenceRequest
@@ -14,8 +16,8 @@ object InferenceUtils {
     fun getInferenceRequest(image: Bitmap, mask: Bitmap, prompt: String): InferenceRequest {
         val name = "stable_diffusion"
         val input = listOf(
-            Input("INPUT_IMAGE", listOf(1), "BYTES", listOf(BitmapUtils.BitmaptoBase64(image))),
-            Input("MASK", listOf(1), "BYTES", listOf(BitmapUtils.BitmaptoBase64(mask))),
+            Input("INPUT_IMAGE", listOf(1), "BYTES", listOf(BitmapUtils.BitmaptoBase64String(image))),
+            Input("MASK", listOf(1), "BYTES", listOf(BitmapUtils.BitmaptoBase64String(mask))),
             Input("PROMPT", listOf(1), "BYTES", listOf(prompt)),
             Input("NEGATIVE_PROMPT", listOf(1), "BYTES", listOf("")),
             Input("SAMPLES", listOf(1), "INT32", listOf(4)),
@@ -46,20 +48,31 @@ object InferenceUtils {
 
     fun saveImage(context: Context, bitmap: Bitmap) {
         try {
-            saveImageToInternalStorage(context, bitmap)
+            saveImageToGallery(context, bitmap)
             Toast.makeText(context, "Image saved", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            e.printStackTrace()
             Toast.makeText(context, "Failed to save image", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun saveImageToInternalStorage(context: Context, bitmap: Bitmap): String {
-        val filename = "spire_${System.currentTimeMillis()}.jpg"
-        val stream = context.openFileOutput(filename, Context.MODE_PRIVATE)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-        stream.close()
-        return filename
+    private fun saveImageToGallery(context: Context, bitmap: Bitmap) {
+        val fileName = "spire_${System.currentTimeMillis()}.jpg"
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            // Add more metadata if needed
+        }
+
+        val resolver = context.contentResolver
+        val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+        uri?.let {
+            resolver.openOutputStream(it).use { outputStream ->
+                if (outputStream != null) {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                }
+            }
+        }
     }
 
     // Singleton ViewModel

@@ -2,7 +2,6 @@ package com.project.spire.ui.create
 
 import android.graphics.Bitmap
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,6 +14,10 @@ import com.project.spire.network.inference.InferenceSuccess
 import com.project.spire.network.post.request.NewImage
 import com.project.spire.network.post.request.NewPost
 import com.project.spire.network.post.request.NewPostRequest
+import com.project.spire.network.post.response.PostError
+import com.project.spire.network.post.response.PostResponse
+import com.project.spire.network.post.response.PostSuccess
+import com.project.spire.utils.AuthProvider
 import com.project.spire.utils.BitmapUtils
 import com.project.spire.utils.InferenceUtils
 import kotlinx.coroutines.launch
@@ -25,25 +28,27 @@ sealed interface Inference {
 
 data class Txt2Img(
     override val prompt: String
-): Inference
+) : Inference
 
 data class Inpainting(
     val image: Bitmap,
     val mask: Bitmap,
     override val prompt: String
-): Inference
+) : Inference
 
-class InferenceViewModel (
+class InferenceViewModel(
     private val inferenceRepository: InferenceRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _inferenceResult = MutableLiveData<ArrayList<Bitmap>?>().apply { value = null }
     private val _previousInference = MutableLiveData<Inference?>().apply { value = null }
     private val _inferenceError = MutableLiveData<Boolean>().apply { value = false }
+    private val _postResult = MutableLiveData<PostResponse?>().apply { value = null }
 
     val inferenceResult: LiveData<ArrayList<Bitmap>?> get() = _inferenceResult
     val previousInference: LiveData<Inference?> get() = _previousInference
     val inferenceError: LiveData<Boolean> get() = _inferenceError
+    val postResult: LiveData<PostResponse?> get() = _postResult
 
     fun reset() {
         _inferenceResult.value = null
@@ -63,7 +68,10 @@ class InferenceViewModel (
                 result = inferenceRepository.infer(request)
             } catch (e: Exception) {
                 try {
-                    Log.e("InferenceViewModel", "Inference failed with exception: ${e.message}, retrying...")
+                    Log.e(
+                        "InferenceViewModel",
+                        "Inference failed with exception: ${e.message}, retrying..."
+                    )
                     result = inferenceRepository.infer(request) // just retry
                 } catch (e: Exception) {
                     Log.e("InferenceViewModel", "Inference failed")
@@ -80,7 +88,10 @@ class InferenceViewModel (
                 for (i in 0 until output.data.size) {
                     val generatedBase64 = output.data[i]
                     val generatedBitmap = BitmapUtils.Base64toBitmap(generatedBase64)
-                    Log.d("InferenceViewModel", "Output $i bitmap size: ${generatedBitmap?.byteCount}")
+                    Log.d(
+                        "InferenceViewModel",
+                        "Output $i bitmap size: ${generatedBitmap?.byteCount}"
+                    )
                     generatedBitmaps.add(generatedBitmap!!)
                 }
                 _inferenceResult.postValue(generatedBitmaps)
@@ -103,7 +114,10 @@ class InferenceViewModel (
                 result = inferenceRepository.infer(request)
             } catch (e: Exception) {
                 try {
-                    Log.e("InferenceViewModel", "Inference failed with exception: ${e.message}, retrying...")
+                    Log.e(
+                        "InferenceViewModel",
+                        "Inference failed with exception: ${e.message}, retrying..."
+                    )
                     result = inferenceRepository.infer(request) // just retry
                 } catch (e: Exception) {
                     Log.e("InferenceViewModel", "Inference failed")
@@ -119,7 +133,10 @@ class InferenceViewModel (
                 for (i in 0 until output.data.size) {
                     val generatedBase64 = output.data[i]
                     val generatedBitmap = BitmapUtils.Base64toBitmap(generatedBase64)
-                    Log.d("InferenceViewModel", "Output $i bitmap size: ${generatedBitmap?.byteCount}")
+                    Log.d(
+                        "InferenceViewModel",
+                        "Output $i bitmap size: ${generatedBitmap?.byteCount}"
+                    )
                     generatedBitmaps.add(generatedBitmap!!)
                 }
                 _inferenceResult.postValue(generatedBitmaps)
@@ -133,23 +150,36 @@ class InferenceViewModel (
     }
 
     fun postUpload(image: Bitmap, content: String) {
-        // TODO: Send post upload request
-
         val request = makePostRequest(image, content)
 
         viewModelScope.launch {
-            RetrofitClient.postAPI.newPost(request)
+            val accessToken = AuthProvider.getAccessToken()
+            val response = RetrofitClient.postAPI.newPost(accessToken, request)
+            if (response.isSuccessful) {
+                // Post upload success
+                val result = response.body() as PostSuccess
+                Log.d("InferenceViewModel", "Post upload success: ${result.postId}")
+                _postResult.postValue(result)
+            } else {
+                // Post upload failed
+                val result = PostError(response.errorBody().toString())
+                Log.e(
+                    "InferenceViewModel",
+                    "Post upload failed with error: ${response.code()} ${response.message()}"
+                )
+                _postResult.postValue(result)
+            }
         }
     }
 
-    private fun makePostRequest(image: Bitmap, content: String) : NewPostRequest {
-        val modifiedImage = BitmapUtils.BitmaptoBase64(image)
+    private fun makePostRequest(image: Bitmap, content: String): NewPostRequest {
+        val modifiedImage = BitmapUtils.BitmaptoBase64String(image)
         val request: NewPostRequest
 
         if (previousInference.value is Inpainting) {
             val input = previousInference.value as Inpainting
-            val originalImage = BitmapUtils.BitmaptoBase64(input.image)
-            val maskImage = BitmapUtils.BitmaptoBase64(input.mask)
+            val originalImage = BitmapUtils.BitmaptoBase64String(input.image)
+            val maskImage = BitmapUtils.BitmaptoBase64String(input.mask)
             val prompt = input.prompt
             request = NewPostRequest(
                 NewPost(content, ""),
@@ -167,7 +197,8 @@ class InferenceViewModel (
 }
 
 
-class InferenceViewModelFactory(private val inferenceRepository: InferenceRepository): ViewModelProvider.Factory {
+class InferenceViewModelFactory(private val inferenceRepository: InferenceRepository) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(InferenceViewModel::class.java)) {
             return InferenceViewModel(inferenceRepository) as T

@@ -36,11 +36,20 @@ object BitmapUtils {
 
     /**
      * Bitmap을 Base64 String형으로 변환 */
-    fun BitmaptoBase64(bitmap: Bitmap): String {
+    fun BitmaptoBase64String(bitmap: Bitmap): String {
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
         val bytes = baos.toByteArray()
         return Base64.encodeToString(bytes, Base64.DEFAULT)
+    }
+
+    /**
+     * Bitmap을 Base64로 변환 */
+    fun BitmaptoBase64ByteArray(bitmap: Bitmap): ByteArray {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        val byteArray = outputStream.toByteArray()
+        return Base64.encode(byteArray, Base64.DEFAULT)
     }
 
     /**

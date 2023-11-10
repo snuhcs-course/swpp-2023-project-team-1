@@ -1,6 +1,7 @@
 package com.project.spire.network.post.request
 
 import com.google.gson.annotations.SerializedName
+import java.util.Base64
 
 data class NewPost (
     @SerializedName("content")

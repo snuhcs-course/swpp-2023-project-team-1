@@ -1,7 +1,7 @@
 package com.project.spire
 
 import android.app.Application
-import com.project.spire.core.DataStoreProvider
+import com.project.spire.utils.DataStoreProvider
 
 class SpireApplication : Application() {
 

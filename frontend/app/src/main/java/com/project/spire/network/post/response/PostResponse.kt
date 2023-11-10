@@ -36,3 +36,10 @@ data class PostSuccess(
     val isLiked: Int
 
 ) : PostResponse
+
+data class PostError(
+
+    @SerializedName("message")
+    val message: String
+
+) : PostResponse

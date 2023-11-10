@@ -3,14 +3,12 @@ package com.project.spire.ui.auth
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.PopupWindow
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
@@ -18,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.spire.R
 import com.example.spire.databinding.ActivitySignUpBinding
 import com.google.android.material.textfield.TextInputLayout
-import com.project.spire.core.DataStoreProvider
+import com.project.spire.utils.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.Validation
 import com.project.spire.ui.MainActivity

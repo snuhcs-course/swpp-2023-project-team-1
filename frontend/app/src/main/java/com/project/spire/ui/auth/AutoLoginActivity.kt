@@ -4,7 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.project.spire.core.DataStoreProvider
+import com.project.spire.utils.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.ui.MainActivity
 import kotlinx.coroutines.DelicateCoroutinesApi

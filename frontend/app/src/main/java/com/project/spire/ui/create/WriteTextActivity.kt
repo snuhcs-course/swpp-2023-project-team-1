@@ -15,7 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.spire.R
 import com.example.spire.databinding.ActivityWriteTextBinding
+import com.project.spire.network.post.response.PostError
+import com.project.spire.network.post.response.PostSuccess
 import com.project.spire.ui.MainActivity
+import com.project.spire.ui.feed.PostActivity
 import com.project.spire.utils.InferenceUtils
 
 
@@ -48,7 +51,8 @@ class WriteTextActivity : AppCompatActivity() {
         inferenceViewModel.inferenceError.observe(this) {
             if (it) {
                 Toast.makeText(this, "Inference failed", Toast.LENGTH_SHORT).show()
-                inferenceViewModel.reset()
+                onBackPressedDispatcher.onBackPressed()
+                finish()
             }
         }
 
@@ -86,8 +90,24 @@ class WriteTextActivity : AppCompatActivity() {
             }
         }
 
-        doneButton.setOnClickListener {
+        // Post upload result received
+        inferenceViewModel.postResult.observe(this) {
+            if (it is PostSuccess) {
+                val intent = Intent(this, PostActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                intent.putExtra("postId", it.postId)
+                startActivity(intent)
+                finish()
+            } else if (it is PostError) {
+                Toast.makeText(this, "Post upload failed", Toast.LENGTH_SHORT).show()
+            }
+        }
 
+        doneButton.setOnClickListener {
+            val currentPosition = (carousel.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            val currentImage: Bitmap = inferenceViewModel.inferenceResult.value!![currentPosition]
+            val content = binding.postTextInputLayout.editText?.text.toString()
+            inferenceViewModel.postUpload(currentImage, content)
         }
 
         regenerateBtn.setOnClickListener {
