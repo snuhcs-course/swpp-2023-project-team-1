@@ -7,7 +7,7 @@ from sqlalchemy.orm import with_expression, selectinload, contains_eager
 from app.models.user import User, Follow
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import load_only
-from app.core.exceptions.user import UserNotFoundException, FollowAlreadyExistsException
+from app.core.exceptions.user import UserNotFoundException, FollowRequestAlreadyExistsException, FollowAlreadyExistsException
 
 
 @Transactional()
@@ -51,7 +51,10 @@ async def create_follow(following_user_id: UUID4, followed_user_id: UUID4, sessi
         session.add(follow)
 
     else:
-        raise FollowAlreadyExistsException()
+        if follow.accept_status == 0:
+            raise FollowRequestAlreadyExistsException()
+        else 
+            raise FollowAlreadyExistsException()
     
     await session.commit()
 
