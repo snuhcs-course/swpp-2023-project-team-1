@@ -30,6 +30,8 @@ class ProfileFragment : Fragment() {
 
     private lateinit var profileViewModel: ProfileViewModel
 
+    private var TEST_USER_ID = "92142569-d579-44e7-bf06-102770db6eb4"
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,6 +44,10 @@ class ProfileFragment : Fragment() {
 
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -89,6 +95,16 @@ class ProfileFragment : Fragment() {
                 startActivity(Intent(requireContext(), EditProfileActivity::class.java))
             } else {
                 // TODO: Follow user
+            }
+        }
+
+        binding.testButton.setOnClickListener {
+            if (profileViewModel.isMyProfile.value == true) {
+                profileViewModel.getUserInfo(TEST_USER_ID)
+                binding.testButton.text = "My Profile"
+            } else {
+                profileViewModel.getMyInfo()
+                binding.testButton.text = "Test Profile"
             }
         }
     }

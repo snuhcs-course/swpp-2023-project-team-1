@@ -89,7 +89,7 @@
     <string name="delete_account_dialog_text">Are you sure you want to delete your account?\nThis job cannot be undone.</string>
 
     <!-- Search -->
-    <string name="search_bar_hint">Search User, Post, Prompt, etc.</string>
+    <string name="search_bar_hint">Search People by Username</string>
 
     <!-- Notifications -->
     <string name="notifications_title">Notifications</string>

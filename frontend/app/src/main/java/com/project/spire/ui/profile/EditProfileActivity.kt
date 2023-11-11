@@ -1,9 +1,13 @@
 package com.project.spire.ui.profile
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +19,11 @@ import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
 import com.project.spire.core.user.UserRepository
 import com.project.spire.ui.auth.LoginActivity
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.net.URI
 
 class EditProfileActivity : AppCompatActivity() {
 
@@ -28,6 +37,9 @@ class EditProfileActivity : AppCompatActivity() {
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val usernameInput = binding.editProfileUsernameInput
+        val bioInput = binding.editProfileBioInput
+
         val authRepository = AuthRepository(this.authDataStore)
         val userRepository = UserRepository()
         val viewModelFactory = ProfileViewModelFactory(authRepository, userRepository)
@@ -37,6 +49,25 @@ class EditProfileActivity : AppCompatActivity() {
 
         binding.backButton.setOnClickListener {
             finish()
+        }
+
+        var fileUri: Uri? = null
+
+        val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            // Callback is invoked after the user selects a media item or closes the
+            // photo picker.
+            if (uri != null) {
+                Log.d("PhotoPicker", "Selected URI: $uri")
+                fileUri = uri
+            } else {
+                Log.d("PhotoPicker", "No media selected")
+            }
+        }
+
+        binding.editProfileChangePhotoBtn.setOnClickListener {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            // TODO: add image cropper?
+            // TODO: add camera option?
         }
 
         binding.editProfileDropdownMenu.setOnClickListener {
@@ -51,7 +82,20 @@ class EditProfileActivity : AppCompatActivity() {
         binding.editProfileSaveBtn.setOnClickListener {
             // TODO: Save the changes to the user's profile
 
+            // TODO: create password change page
+            var username = usernameInput.editText?.text.toString()
+            var bio = bioInput.editText?.text.toString()
+
+            //  if (password.isEmpty()) password =
+            if (username.isEmpty()) username = profileViewModel.username.value!!
+            if (bio.isEmpty()) bio = profileViewModel.bio.value!!
+
+            profileViewModel.updateProfile(username, bio, fileUri)
+            finish()
+            // TODO: handle profile image
+
         }
+
     }
 
     override fun onStart() {

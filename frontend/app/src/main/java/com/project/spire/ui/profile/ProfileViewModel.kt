@@ -1,6 +1,7 @@
 package com.project.spire.ui.profile
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.user.UserRepository
 import com.project.spire.models.Post
+import com.project.spire.utils.AuthProvider
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -30,7 +32,8 @@ class ProfileViewModel(
 
     val email: LiveData<String> = _email
     val username: LiveData<String> = _username
-    val bio: LiveData<String> = _bio
+    val bio: LiveData<String>
+        get() = _bio
     val profileImageUrl: LiveData<String> = _profileImageUrl
     val followers: LiveData<Int> = _followers
     val following: LiveData<Int> = _following
@@ -44,7 +47,7 @@ class ProfileViewModel(
 
     fun logout() {
         viewModelScope.launch {
-            val accessToken = authRepository.accessTokenFlow.first()
+            val accessToken = AuthProvider.getAccessToken()
             val logout = authRepository.logout(accessToken)
             _logoutSuccess.postValue(logout)
         }
@@ -52,7 +55,7 @@ class ProfileViewModel(
 
     fun getMyInfo() {
         viewModelScope.launch {
-            val accessToken = authRepository.accessTokenFlow.first()
+            val accessToken = AuthProvider.getAccessToken()
             val myInfo = userRepository.getMyInfo(accessToken)
             _email.postValue(myInfo?.email)
             _username.postValue(myInfo?.username)
@@ -68,7 +71,7 @@ class ProfileViewModel(
 
     fun getUserInfo(userId: String) {
         viewModelScope.launch {
-            val accessToken = authRepository.accessTokenFlow.first()
+            val accessToken = AuthProvider.getAccessToken()
             val userInfo = userRepository.getUserInfo(accessToken, userId)
             _email.postValue(userInfo?.email)
             _username.postValue(userInfo?.username)
@@ -81,6 +84,19 @@ class ProfileViewModel(
             _isMyProfile.postValue(false)
         }
     }
+
+    fun updateProfile(username: String, bio: String, profileImage: Uri?) {
+        viewModelScope.launch {
+            val accessToken = AuthProvider.getAccessToken()
+            val updateProfile = userRepository.updateMyInfo(accessToken, username, bio, profileImage)
+
+            _username.postValue(updateProfile?.username)
+            _bio.postValue(updateProfile?.bio)
+            _profileImageUrl.postValue(updateProfile?.profileImageUrl)
+        }
+    }
+
+
 }
 
 class ProfileViewModelFactory(

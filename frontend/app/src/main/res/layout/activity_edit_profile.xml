@@ -109,32 +109,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Password -->
-            <TextView
-                android:id="@+id/edit_profile_password_title"
-                style="@style/edit_profile_content_title"
-                android:layout_marginTop="15dp"
-                android:text="@string/edit_profile_hint_password"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/edit_profile_email_input" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/edit_profile_password_input"
-                style="@style/filled_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                app:endIconMode="password_toggle"
-                app:layout_constraintTop_toBottomOf="@id/edit_profile_password_title">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    android:padding="10dp" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
             <!-- Username -->
             <TextView
                 android:id="@+id/edit_profile_username_title"
@@ -142,7 +116,7 @@
                 android:layout_marginTop="15dp"
                 android:text="@string/edit_profile_hint_username"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/edit_profile_password_input" />
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_email_input" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edit_profile_username_input"
