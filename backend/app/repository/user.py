@@ -53,7 +53,7 @@ async def create_follow(following_user_id: UUID4, followed_user_id: UUID4, sessi
     else:
         if follow.accept_status == 0:
             raise FollowRequestAlreadyExistsException()
-        else 
+        else:
             raise FollowAlreadyExistsException()
     
     await session.commit()
@@ -82,12 +82,22 @@ async def delete_follow(following_user_id: UUID4, followed_user_id: UUID4, sessi
 
 @Transactional()
 async def count_followers(user_id: UUID4, session: AsyncSession):
+    try:
+        await get_user_by_user_id(user_id, session=session)
+    except NoResultFound as e:
+        raise UserNotFoundException from e
+    
     stmt = select(func.count(Follow.id)).where(Follow.followed_user_id == user_id, Follow.accept_status == 1)
     res = await session.execute(stmt)
     return res.scalar_one()
 
 @Transactional()
 async def get_followers(user_id: UUID4, limit: int, offset: int, session: AsyncSession):
+    try:
+        await get_user_by_user_id(user_id, session=session)
+    except NoResultFound as e:
+        raise UserNotFoundException from e
+    
     stmt = (
         select(Follow)
         .where(Follow.followed_user_id == user_id, Follow.accept_status == 1)
@@ -119,12 +129,22 @@ async def get_is_my_following(user_id: UUID4, current_user_id: UUID4, session: A
 
 @Transactional()
 async def count_followings(user_id: UUID4, session: AsyncSession):
+    try:
+        await get_user_by_user_id(user_id, session=session)
+    except NoResultFound as e:
+        raise UserNotFoundException from e
+    
     stmt = select(func.count(Follow.id)).where(Follow.following_user_id == user_id, Follow.accept_status == 1)
     res = await session.execute(stmt)
     return res.scalar_one()
 
 @Transactional()
 async def get_followings(user_id: UUID4, limit: int, offset: int, session: AsyncSession):
+    try:
+        await get_user_by_user_id(user_id, session=session)
+    except NoResultFound as e:
+        raise UserNotFoundException from e
+    
     stmt = (
         select(Follow)
         .where(Follow.following_user_id == user_id, Follow.accept_status == 1)
