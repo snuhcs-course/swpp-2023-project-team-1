@@ -51,7 +51,10 @@ async def create_follow(following_user_id: UUID4, followed_user_id: UUID4, sessi
         session.add(follow)
 
     else:
-        raise FollowAlreadyExistsException()
+        if follow.accept_status == 0:
+            raise FollowRequestAlreadyExistsException()
+        else 
+            raise FollowAlreadyExistsException()
     
     await session.commit()
 

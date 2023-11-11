@@ -33,6 +33,11 @@ class FollowAlreadyExistsException(CustomException):
     error_code = "FOLLOW__ALREADY_EXISTS"
     message = "follow already exists"
 
+class FollowRequestAlreadyExistsException(CustomException):
+    code = 400
+    error_code = "FOLLOW__REQUEST_ALREADY_EXISTS"
+    message = "follow request already exists"
+
 class FollowAlreadyAcceptedException(CustomException):
     code = 400
     error_code = "FOLLOW__ALREADY_ACCEPTED"
