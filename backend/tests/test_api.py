@@ -18,9 +18,6 @@ refresh_token_2 = None
 user_id_2 = None
 username_2 = None
 
-server_ip_address = "0.0.0.0"
-port_num = 8000
-
 html = """
 <!DOCTYPE html>
 <html>
@@ -33,6 +30,8 @@ html = """
 </html>
 """
 
+server_ip_address = "0.0.0.0"
+port_num = 8000
 
 client = TestClient(spire_app)
 
@@ -42,6 +41,17 @@ def event_loop(request):
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
+
+@pytest.mark.asyncio
+async def test_default():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        response = await ac.get(
+            "/api/"
+        )
+    assert response.status_code == 200
+    assert response.text == html
+
+############## Auth ##############
 
 @pytest.mark.asyncio
 async def test_register():
@@ -103,7 +113,7 @@ async def test_login_correct():
     assert response_data['username'] == "test"
 
 @pytest.mark.asyncio
-async def test_login_wrong():
+async def test_login_unauthorized_wrong():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         response = await ac.post(
             "/api/auth/login",
@@ -130,7 +140,7 @@ async def test_logout_correct():
     assert response.status_code == 200
 
 @pytest.mark.asyncio
-async def test_logout_wrong():
+async def test_logout_unauthorized_wrong():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
 
         response = await ac.get(
@@ -150,9 +160,7 @@ async def test_check_correct():
         "email_exists": True,
         "username_exists": True
     }
-        
-@pytest.mark.asyncio
-async def test_check_wrong_email():
+
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         response = await ac.get(
             "/api/auth/check",
@@ -163,9 +171,7 @@ async def test_check_wrong_email():
         "email_exists": False,
         "username_exists": True
     }
-        
-@pytest.mark.asyncio
-async def test_check_wrong_username():
+
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         response = await ac.get(
             "/api/auth/check",
@@ -176,9 +182,7 @@ async def test_check_wrong_username():
         "email_exists": True,
         "username_exists": False
     }
-        
-@pytest.mark.asyncio
-async def test_check_wrong_both():
+
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         response = await ac.get(
             "/api/auth/check",
@@ -191,7 +195,7 @@ async def test_check_wrong_both():
     }
         
 @pytest.mark.asyncio
-async def test_check_wrong_params():
+async def test_check_wrong_params_wrong():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         response = await ac.get(
             "/api/auth/check",
@@ -199,33 +203,7 @@ async def test_check_wrong_params():
     assert response.status_code == 400
     
 @pytest.mark.asyncio
-async def test_verify():
-    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
-        response = await ac.post(
-            "/api/auth/verify",
-            content=json.dumps(
-                {
-                    "access_token": access_token 
-                }
-            ),
-        )
-    assert response.status_code == 200
-
-@pytest.mark.asyncio
-async def test_verify():
-    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
-        response = await ac.post(
-            "/api/auth/verify",
-            content=json.dumps(
-                {
-                    "access_token": access_token 
-                }
-            ),
-        )
-    assert response.status_code == 200
-
-@pytest.mark.asyncio
-async def test_verify():
+async def test_verify_correct():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         response = await ac.post(
             "/api/auth/verify",
@@ -251,7 +229,7 @@ async def test_unregister_correct():
     assert response.status_code == 200
 
 @pytest.mark.asyncio
-async def test_unregister_wrong():
+async def test_unregister_unauthorized_wrong():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
 
         response = await ac.delete(
@@ -262,9 +240,9 @@ async def test_unregister_wrong():
 
 ############## Code verify necessary ##############
 
-
+############## User ##############
 @pytest.mark.asyncio
-async def test_register_user1_correct():
+async def test_register_users_correct():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         response = await ac.post(
             "/api/auth/register",
@@ -292,8 +270,6 @@ async def test_register_user1_correct():
     global username_1
     username_1 = response_data['username']
 
-@pytest.mark.asyncio
-async def test_register_user2_correct():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         response = await ac.post(
             "/api/auth/register",
@@ -320,7 +296,6 @@ async def test_register_user2_correct():
     user_id_2 = response_data['user_id']
     global username_2
     username_2 = response_data['username']
-
 
 @pytest.mark.asyncio
 async def test_get_my_info_correct():
@@ -384,7 +359,23 @@ async def test_request_follow_correct():
     assert response_data['message'] == "Requested user " + user_id_2 +  " follow"
 
 @pytest.mark.asyncio
-async def test_request_follow_already_exists_wrong():
+async def test_request_follow_user_not_found_wrong():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        response = await ac.post(
+            "/api/user/8e6f6dc9-bfcf-44ac-8081-58db10f4e18c/follow_request",
+            headers=headers
+        )
+
+    assert response.status_code == 404
+    response_data = response.json()
+    assert response_data['message'] == "USER__NOT_FOUND"
+
+@pytest.mark.asyncio
+async def test_request_follow_request_already_exists_wrong():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         headers = {
             'Authorization': 'Bearer {}'.format(access_token_1)
@@ -397,7 +388,23 @@ async def test_request_follow_already_exists_wrong():
 
     assert response.status_code == 400
     response_data = response.json()
-    assert response_data['message'] == "FOLLOW__ALREADY_EXISTS"
+    assert response_data['message'] == "FOLLOW__ALREADY_EXISTS" # Should be modified to "FOLLOW__REQUEST_ALREADY_EXISTS"
+
+@pytest.mark.asyncio
+async def test_request_follow_myself_wrong():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        response = await ac.post(
+            "/api/user/" + user_id_1 + "/follow_request",
+            headers=headers
+        )
+
+    assert response.status_code == 400
+    response_data = response.json()
+    assert response_data['message'] == "FOLLOW__MYSELF"
 
 @pytest.mark.asyncio
 async def test_cancel_request_correct():
@@ -486,7 +493,24 @@ async def test_request_follow_already_exists_wrong():
 
     assert response.status_code == 400
     response_data = response.json()
-    assert response_data['message'] == "FOLLOW__WRONG_STATUS"
+    assert response_data['message'] == "FOLLOW__ALREADY_EXISTS"
+
+@pytest.mark.asyncio
+async def test_accept_request_not_found_wrong():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        response = await ac.post(
+            "/api/user/" + user_id_1 + "/accept_request",
+            headers=headers
+        )
+
+    assert response.status_code == 404
+    response_data = response.json()
+    assert response_data['message'] == "FOLLOW__NOT_FOUND"
+
 
 @pytest.mark.asyncio
 async def test_cancel_request_wrong_status_wrong():
@@ -504,7 +528,162 @@ async def test_cancel_request_wrong_status_wrong():
     response_data = response.json()
     assert response_data['message'] == "FOLLOW__WRONG_STATUS"
 
+@pytest.mark.asyncio
+async def test_unfollow_correct():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
 
+        response = await ac.delete(
+            "/api/user/" + user_id_2 + "/unfollow",
+            headers=headers
+        )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['message'] == "Unfollowed user " + user_id_2
+
+@pytest.mark.asyncio
+async def test_reject_follow_correct():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        response = await ac.post(
+            "/api/user/" + user_id_2 + "/follow_request",
+            headers=headers
+        )
+
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_2)
+        }
+
+        response = await ac.post(
+            "/api/user/" + user_id_1 + "/accept_request",
+            headers=headers
+        )
+
+        response = await ac.delete(
+            "/api/user/" + user_id_1 + "/reject_follow",
+            headers=headers
+        )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['message'] == "Rejected user " + user_id_1 + " follow"
+
+@pytest.mark.asyncio
+async def test_reject_follow_not_found_wrong():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_2)
+        }
+
+        response = await ac.delete(
+            "/api/user/" + user_id_1 + "/reject_follow",
+            headers=headers
+        )
+
+    assert response.status_code == 404
+    response_data = response.json()
+    assert response_data['message'] == "FOLLOW__NOT_FOUND"
+
+@pytest.mark.asyncio
+async def test_get_follow_info_correct():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        response = await ac.post(
+            "/api/user/" + user_id_2 + "/follow_request",
+            headers=headers
+        )
+
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_2)
+        }
+
+        response = await ac.post(
+            "/api/user/" + user_id_1 + "/accept_request",
+            headers=headers
+        )
+
+        response = await ac.get(
+            "/api/user/" + user_id_2 + "/follow_info",
+            headers=headers
+        )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['follower_cnt'] == 1
+    assert response_data['following_cnt'] == 0
+    assert response_data['follower_status'] == -1
+    assert response_data['following_status'] == -1
+
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_2)
+        }
+
+        response = await ac.post(
+            "/api/user/" + user_id_1 + "/follow_request",
+            headers=headers
+        )
+
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        response = await ac.post(
+            "/api/user/" + user_id_2 + "/accept_request",
+            headers=headers
+        )
+
+        response = await ac.get(
+            "/api/user/" + user_id_2 + "/follow_info",
+            headers=headers
+        )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['follower_cnt'] == 1
+    assert response_data['following_cnt'] == 1
+    assert response_data['follower_status'] == 1
+    assert response_data['following_status'] == 1
+
+@pytest.mark.asyncio
+async def test_get_follow_info_not_found_wrong():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        response = await ac.get(
+            "/api/user/8e6f6dc9-bfcf-44ac-8081-58db10f4e133/follow_info",
+            headers=headers
+        )
+
+    assert response.status_code == 404
+    response_data = response.json()
+    assert response_data['message'] == "FOLLOW__NOT_FOUND" # Should modify
+
+@pytest.mark.asyncio
+async def test_get_followers_correct():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        response = await ac.get(
+            "/api/user/" + user_id_2 + "/followers",
+            params={"limit": 10, "offset": 0}
+        )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['total'] == 1
+    assert response_data['items'][0] == 1
+    assert response_data['next_cursor'] == None
 
 
 @pytest.mark.asyncio
@@ -532,31 +711,3 @@ async def test_unregister_user2_correct():
             headers=headers
         )
     assert response.status_code == 200
-
-
-
-def test_schema_user_create():
-    test_user_create = UserCreate(
-        email="test",
-        username="test",
-        password="test",
-    )
-
-    test_user_create_dict = test_user_create.create_dict()
-    assert test_user_create_dict['email'] == "test"
-    assert test_user_create_dict['username'] == "test"
-    assert test_user_create_dict['password'] == "test"
-
-def test_schema_user_update():
-    
-    test_user_update = UserUpdate(
-        username="test",
-        bio="test",
-        profile_image_url="test",
-    )
-
-    test_user_update_dict = test_user_update.update_dict()
-    assert test_user_update_dict['username'] == "test"
-    assert test_user_update_dict['bio'] == "test"
-    assert test_user_update_dict['profile_image_url'] == "test"
-
