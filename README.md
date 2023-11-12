@@ -277,5 +277,8 @@ kubectl delete services --all
 kubectl delete deployments --all
 kubectl delete pods --all
 ```
-## 2. How to load your model on GPU server
-### TODO
+## 2. How to develop and load your model on Triton backend
+### Development
+Please refer to the following.
+https://github.com/triton-inference-server/python_backend
+
