@@ -57,6 +57,11 @@ class FeedFragment : Fragment() {
             }
         }
 
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            feedViewModel.getInitialPosts()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+
         recyclerView.adapter = postAdapter
     }
 

@@ -23,7 +23,7 @@ class PostViewModel: ViewModel() {
             val accessToken = AuthProvider.getAccessToken()
             val response = RetrofitClient.postAPI.getPost("Bearer $accessToken", postId)
 
-            if (response.isSuccessful) {
+            if (response.code() == 200 && response.isSuccessful && response.body() != null) {
                 Log.d("PostViewModel", "${response.body() as Post}")
                 _post.value = response.body()
             } else {
