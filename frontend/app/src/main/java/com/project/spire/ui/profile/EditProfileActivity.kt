@@ -10,6 +10,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
+import androidx.compose.runtime.rememberCompositionContext
 import androidx.lifecycle.ViewModelProvider
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -51,14 +52,17 @@ class EditProfileActivity : AppCompatActivity() {
             finish()
         }
 
-        var fileUri: Uri? = null
 
         val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            // Callback is invoked after the user selects a media item or closes the
-            // photo picker.
             if (uri != null) {
                 Log.d("PhotoPicker", "Selected URI: $uri")
-                fileUri = uri
+                profileViewModel.setPhotoPickerUri(uri)
+                profileViewModel.photoPickerUri.observe(this) {
+                    binding.editProfileImage.load(it) {
+                        crossfade(true)
+                        transformations(CircleCropTransformation())
+                    }
+                }
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }
@@ -80,22 +84,15 @@ class EditProfileActivity : AppCompatActivity() {
         }
 
         binding.editProfileSaveBtn.setOnClickListener {
-            // TODO: Save the changes to the user's profile
-
             // TODO: create password change page
             var username = usernameInput.editText?.text.toString()
             var bio = bioInput.editText?.text.toString()
 
-            //  if (password.isEmpty()) password =
             if (username.isEmpty()) username = profileViewModel.username.value!!
             if (bio.isEmpty()) bio = profileViewModel.bio.value!!
-
-            profileViewModel.updateProfile(username, bio, fileUri)
+            profileViewModel.updateProfile(username, bio, profileViewModel.photoPickerUri.value, applicationContext)
             finish()
-            // TODO: handle profile image
-
         }
-
     }
 
     override fun onStart() {

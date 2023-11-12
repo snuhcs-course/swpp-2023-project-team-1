@@ -1,6 +1,7 @@
 package com.project.spire.ui.profile
 
 import android.app.Application
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -29,6 +30,7 @@ class ProfileViewModel(
     private val _posts = MutableLiveData<List<Post>>().apply { value = emptyList() }
     private val _isFollowed = MutableLiveData<Boolean>().apply { value = false }
     private val _isMyProfile = MutableLiveData<Boolean>().apply { value = false }
+    private val _photoPickerUri = MutableLiveData<Uri?>().apply { value = null }
 
     val email: LiveData<String> = _email
     val username: LiveData<String> = _username
@@ -40,10 +42,15 @@ class ProfileViewModel(
     val posts: LiveData<List<Post>> = _posts
     val isFollowed: LiveData<Boolean> = _isFollowed
     val isMyProfile: LiveData<Boolean> = _isMyProfile
+    val photoPickerUri: LiveData<Uri?> = _photoPickerUri
 
 
     private val _logoutSuccess = MutableLiveData<Boolean>()
     val logoutSuccess: LiveData<Boolean> = _logoutSuccess
+
+    fun setPhotoPickerUri(uri: Uri?) {
+        _photoPickerUri.postValue(uri)
+    }
 
     fun logout() {
         viewModelScope.launch {
@@ -85,10 +92,10 @@ class ProfileViewModel(
         }
     }
 
-    fun updateProfile(username: String, bio: String, profileImage: Uri?) {
+    fun updateProfile(username: String, bio: String, profileImage: Uri?, context: Context) {
         viewModelScope.launch {
             val accessToken = AuthProvider.getAccessToken()
-            val updateProfile = userRepository.updateMyInfo(accessToken, username, bio, profileImage)
+            val updateProfile = userRepository.updateMyInfo(accessToken, username, bio, profileImage, context)
 
             _username.postValue(updateProfile?.username)
             _bio.postValue(updateProfile?.bio)
