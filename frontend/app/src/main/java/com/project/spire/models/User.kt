@@ -11,7 +11,7 @@ open class User (
     var userName: String,
 
     @SerializedName("profile_image_url")
-    var profileImage: String
+    var profileImage: String?
 ) {
     // TODO
 }

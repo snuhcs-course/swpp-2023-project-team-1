@@ -12,6 +12,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -112,5 +113,13 @@ class MainActivity : AppCompatActivity() {
         if(Build.VERSION.SDK_INT >= 30) {	// API 30 에 적용
             WindowCompat.setDecorFitsSystemWindows(window, false)
         }
+    }
+    fun replaceFragment(fragment: Fragment, addToBackStack: Boolean = true) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.nav_host_fragment_activity_main, fragment)
+        if (addToBackStack)  {
+            transaction.addToBackStack(null)
+        }
+        transaction.commit()
     }
 }

@@ -7,6 +7,7 @@
     <string name="title_search">Search</string>
     <string name="title_notification">Notifications</string>
     <string name="title_profile">Profile</string>
+    <string name="title_post">Post</string>
 
     <!-- Prompt Dialog -->
     <string name="prompt_dialog_hint">✨What are you inspired with?</string>

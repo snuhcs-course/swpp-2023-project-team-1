@@ -3,7 +3,6 @@ package com.project.spire.ui.create
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -18,7 +17,6 @@ import com.example.spire.databinding.ActivityWriteTextBinding
 import com.project.spire.network.post.response.PostError
 import com.project.spire.network.post.response.PostSuccess
 import com.project.spire.ui.MainActivity
-import com.project.spire.ui.feed.PostActivity
 import com.project.spire.utils.InferenceUtils
 
 

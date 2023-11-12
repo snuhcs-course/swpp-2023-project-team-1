@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.databinding.FragmentFeedBinding
+import com.project.spire.ui.MainActivity
 
 class FeedFragment : Fragment() {
     private var _binding: FragmentFeedBinding? = null
@@ -31,10 +32,11 @@ class FeedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val feedViewModel = ViewModelProvider(this)[FeedViewModel::class.java]
+        val parentFragmentManager = parentFragmentManager
 
         feedViewModel.getInitialPosts()
 
-        binding.appBar.setOutlineProvider(null);
+        binding.appBar.outlineProvider = null
 
         recyclerView = binding.recyclerViewFeed
         val linearLayoutManager = LinearLayoutManager(context)
@@ -47,7 +49,7 @@ class FeedFragment : Fragment() {
         feedViewModel.posts.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 recyclerView.run {
-                    adapter = PostAdapter(it)
+                    adapter = PostAdapter(it, context, activity as MainActivity)
                     binding.shimmerViewContainer.stopShimmer()
                     binding.shimmerViewContainer.visibility = View.GONE
 
