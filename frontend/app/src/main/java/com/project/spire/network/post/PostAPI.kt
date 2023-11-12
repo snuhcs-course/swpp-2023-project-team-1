@@ -13,6 +13,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -30,7 +31,7 @@ interface PostAPI {
     suspend fun newPost(
         @Header("Authorization") accessToken: String,
         @Body newPostRequest: NewPostRequest
-    ): Response<PostSuccess>
+    ): Response<Post>
 
     @GET("post/me")
     suspend fun getMyPosts(
@@ -40,7 +41,10 @@ interface PostAPI {
     ): Response<GetPostsSuccess>
 
     @GET("post/{post_id}")
-    suspend fun getPost(): Response<PostSuccess>
+    suspend fun getPost(
+        @Header("Authorization") accessToken: String,
+        @Path("post_id") postId: String
+    ): Response<Post>
 
     @PATCH("post/{post_id}")
     suspend fun updatePost(@Body updatePostRequest: UpdatePostRequest): Response<UpdatePostSuccess>

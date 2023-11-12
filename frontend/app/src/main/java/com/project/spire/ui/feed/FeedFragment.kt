@@ -33,7 +33,6 @@ class FeedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val feedViewModel = ViewModelProvider(this)[FeedViewModel::class.java]
-        val parentFragmentManager = parentFragmentManager
 
         feedViewModel.getInitialPosts()
 

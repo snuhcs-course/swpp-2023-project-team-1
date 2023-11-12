@@ -13,7 +13,9 @@ open class User (
     @SerializedName("profile_image_url")
     var profileImage: String?
 ) {
-    // TODO
+    override fun toString(): String {
+        return "User(id='$id', userName='$userName', profileImage=$profileImage)"
+    }
 }
 
 class UserDetail (

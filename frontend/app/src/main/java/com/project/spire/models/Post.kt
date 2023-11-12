@@ -2,7 +2,7 @@ package com.project.spire.models
 
 import com.google.gson.annotations.SerializedName
 
-class Post (
+class Post(
 
     @SerializedName("id")
     val postId: String,
@@ -30,4 +30,8 @@ class Post (
 
     @SerializedName("is_liked")
     val isLiked: Int
-)
+) {
+    override fun toString(): String {
+        return "Post(postId='$postId', content='$content', imageUrl='$imageUrl', createdAt='$createdAt', updatedAt='$updatedAt', user=$user, likeCount=$likeCount, commentCount=$commentCount, isLiked=$isLiked)"
+    }
+}
