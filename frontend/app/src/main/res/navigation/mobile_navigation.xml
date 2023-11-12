@@ -9,7 +9,15 @@
         android:id="@+id/navigation_feed"
         android:name="com.project.spire.ui.feed.FeedFragment"
         android:label="@string/title_feed"
-        tools:layout="@layout/fragment_feed" />
+        tools:layout="@layout/fragment_feed" >
+
+        <action
+            android:id="@+id/action_feed_to_post"
+            app:destination="@id/navigation_post"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_search"
@@ -28,5 +36,11 @@
         android:name="com.project.spire.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/navigation_post"
+        android:name="com.project.spire.ui.feed.PostFragment"
+        android:label="@string/title_post"
+        tools:layout="@layout/fragment_post" />
 
 </navigation>

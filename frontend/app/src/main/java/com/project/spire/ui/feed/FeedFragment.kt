@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.databinding.FragmentFeedBinding
@@ -49,7 +50,7 @@ class FeedFragment : Fragment() {
         feedViewModel.posts.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 recyclerView.run {
-                    adapter = PostAdapter(it, context, activity as MainActivity)
+                    adapter = PostAdapter(it, context, findNavController())
                     binding.shimmerViewContainer.stopShimmer()
                     binding.shimmerViewContainer.visibility = View.GONE
 

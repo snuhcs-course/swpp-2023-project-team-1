@@ -2,6 +2,7 @@ package com.project.spire.ui.feed
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -22,7 +24,7 @@ import com.project.spire.utils.DateUtils
 class PostAdapter(
     private val postList: List<Post>,
     private val context: Context,
-    private val activity: MainActivity
+    private val navController: NavController
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -64,15 +66,15 @@ class PostAdapter(
         }
 
         holder.content.setOnClickListener {
-            activity.replaceFragment(PostFragment())
+            showPost(post.postId)
         }
 
         holder.comments.setOnClickListener {
-
+            showPost(post.postId)
         }
 
         holder.commentCount.setOnClickListener {
-
+            showPost(post.postId)
         }
 
         holder.likes.setOnClickListener {
@@ -94,5 +96,14 @@ class PostAdapter(
         val updatedAt: TextView = view.findViewById(R.id.updated_at)
         val likeCount: TextView = view.findViewById(R.id.num_likes)
         val commentCount: TextView = view.findViewById(R.id.num_comments)
+    }
+
+    private fun showPost(postId: String) {
+        val bundle = Bundle()
+        bundle.putString("postId", postId)
+        navController.navigate(
+            R.id.action_feed_to_post,
+            bundle
+        )
     }
 }

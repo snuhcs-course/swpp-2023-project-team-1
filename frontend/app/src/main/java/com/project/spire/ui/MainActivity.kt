@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -25,11 +26,16 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.project.spire.ui.create.CameraActivity
 import com.project.spire.ui.create.ImageEditActivity
 import com.project.spire.ui.create.PromptDialogFragment
+import com.project.spire.ui.feed.FeedFragment
+import com.project.spire.ui.notifications.NotificationsFragment
+import com.project.spire.ui.profile.ProfileFragment
+import com.project.spire.ui.search.SearchFragment
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var toolbar: Toolbar
+    private var currentTab: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
