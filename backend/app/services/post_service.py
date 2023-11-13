@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import binascii
 from datetime import datetime
 import io
 from app.utils.ecs_log import logger
@@ -9,7 +10,7 @@ from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.post import Post
 from app.schemas.post import ImageCreate, PostCreate, PostUpdate, CommentCreate, CommentUpdate
-from app.core.exceptions.post import PostNotFoundException, CommentNotFoundException, UserNotOwnerException
+from app.core.exceptions.post import InvalidPostImageException, PostNotFoundException, CommentNotFoundException, UserNotOwnerException
 from app.models.post import Comment, PostLike
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from app.core.exceptions.base import (
@@ -77,9 +78,18 @@ class PostService:
         image_data: ImageCreate,
         session: AsyncSession,
         **kwargs
-    ) -> Post:
+    ) -> tuple[str , str | None, str | None]:
         
-        img_url = upload_post_image_to_s3(post_id, image_data.modified_image)
+        img_url = upload_post_image_to_s3(post_id, image_data.modified_image, "modified")
+
+        origin_img_url = None
+        mask_img_url = None
+
+        if image_data.origin_image:
+            origin_img_url = upload_post_image_to_s3(post_id, image_data.origin_image, "origin")
+
+        if image_data.mask_image:
+            mask_img_url = upload_post_image_to_s3(post_id, image_data.mask_image, "mask")
 
         image_dict = image_data.create_dict(user_id, post_id)
 
@@ -89,7 +99,7 @@ class PostService:
         except IntegrityError as e:
             raise BadRequestException(str(e.orig)) from e
 
-        return img_url
+        return img_url, origin_img_url, mask_img_url
     
     @Transactional()
     async def get_post_by_id(self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs) -> Post:
@@ -139,14 +149,6 @@ class PostService:
         await post.delete_by_id(post_id)
 
     @Transactional()
-    async def toggle_post_like(
-        self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs
-    ) -> PostLike:
-        result = await session.execute(
-            select(PostLike).where(
-                and_(PostLike.post_id == post_id, PostLike.user_id == user_id)
-            )
-        )
     async def toggle_post_like(
         self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs
     ) -> PostLike:
@@ -250,13 +252,25 @@ class PostService:
 def upload_post_image_to_s3(
     post_id: UUID4,
     image_base64: str,
+    image_type: str,
     file_extension: str = "png",
     ):
     img_url = None
-    try:
-        image_bytes = base64.b64decode(image_base64)
 
-        image_key = f"post_image/{post_id}/{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}"
+
+
+    try:
+        # Attempt to decode the base64 string
+        image_bytes = base64.b64decode(image_base64)
+    except binascii.Error as e:
+        # Handle the case where image_base64 is not a valid base64 string
+        logger.error(f"Invalid base64 format: {e}")
+        raise InvalidPostImageException("Invalid base64 format") from e
+
+    try:
+        # image_bytes = base64.b64decode(image_base64)
+
+        image_key = f"post_image/{post_id}/{image_type}/{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}"
 
         with io.BytesIO(image_bytes) as image_file:
         # Upload the image to the S3 bucket

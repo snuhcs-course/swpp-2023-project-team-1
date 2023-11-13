@@ -24,7 +24,7 @@ from app.utils.pagination import limit_offset_query
 post_router = APIRouter()
 
 @post_router.get(
-    "/",
+    "",
     status_code=200,
     response_model=GetPostsResponse,
     summary="Get posts with pagination",
@@ -120,7 +120,7 @@ async def create_post(
         post_data=post,
     )
 
-    image_url = await post_svc.create_image(
+    image_url, origin_image_url, mask_image_url = await post_svc.create_image(
         user_id=user_id,
         post_id=_post.id,
         image_data=image
@@ -131,7 +131,9 @@ async def create_post(
         user_id=user_id,
         post_data=PostUpdate(
             content=_post.content,
-            image_url=image_url
+            image_url=image_url,
+            origin_image_url=origin_image_url,
+            mask_image_url=mask_image_url
         )
     )
 
