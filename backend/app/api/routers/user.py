@@ -15,7 +15,8 @@ from app.schemas.user import (
     UserRead,
     UserUpdate,
     GetUsersResponse,
-    UserSearchResponse
+    UserSearchResponse, 
+    GetFollowInfoResponse
 )
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -184,6 +185,23 @@ async def reject_follow(
         accept_status=1
     )
     return {"message": f"Rejected user {user_id} follow"}
+
+@user_router.get(
+    "/{user_id}/follow_info",
+    summary="Get user follow info",
+    description="Get user follow info",
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
+    response_model=GetFollowInfoResponse,
+)
+async def get_follow_info(
+    req: Request,
+    user_id: UUID4
+):
+    user_svc = UserService()
+    follow_info =  await user_svc.get_follow_info(
+        user_id=user_id, current_user_id=req.user.id
+    )
+    return follow_info
 
 @user_router.get(
     "/{user_id}/followers",

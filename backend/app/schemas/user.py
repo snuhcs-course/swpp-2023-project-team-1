@@ -59,7 +59,13 @@ class CheckUserInfoResponse(BaseModel):
 class FollowBase(BaseModel):
     following_user_id: UUID4 = Field(..., description="Following User Id")
     followed_user_id: UUID4 = Field(..., description="Followed User Id")
-    accept_status: int = Field(..., description="Follow Accept Status")
+    accept_status: int = Field(..., description="Follow Accept Status, 0 : Requested, 1 : Accepted")
+
+class GetFollowInfoResponse(BaseModel):
+    follower_cnt: int = Field(..., description="Number of Followers")
+    following_cnt: int = Field(..., description="Number of Followings")
+    follower_status: int = Field(..., description="Follower Status, -1 : Not Follower, 0 : Requested, 1 : Accepted")
+    following_status: int = Field(..., description="Following Status, -1 : Not Following, 0 : Requested, 1 : Accepted")
 
 class GetUsersResponse(BaseModel):
     total: int

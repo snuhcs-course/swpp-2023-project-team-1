@@ -28,6 +28,11 @@ class FollowMyselfException(CustomException):
     error_code = "FOLLOW__MYSELF"
     message = "follow myself"
 
+class FollowRequestAlreadyExistsException(CustomException):
+    code = 400
+    error_code = "FOLLOW__REQUEST_ALREADY_EXISTS"
+    message = "follow request already exists"
+
 class FollowAlreadyExistsException(CustomException):
     code = 400
     error_code = "FOLLOW__ALREADY_EXISTS"

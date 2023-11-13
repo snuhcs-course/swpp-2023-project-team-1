@@ -7,7 +7,7 @@ from sqlalchemy.orm import with_expression, selectinload, contains_eager
 from app.models.user import User, Follow
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import load_only
-from app.core.exceptions.user import UserNotFoundException, FollowAlreadyExistsException
+from app.core.exceptions.user import UserNotFoundException, FollowRequestAlreadyExistsException, FollowAlreadyExistsException
 
 
 @Transactional()
@@ -51,7 +51,10 @@ async def create_follow(following_user_id: UUID4, followed_user_id: UUID4, sessi
         session.add(follow)
 
     else:
-        raise FollowAlreadyExistsException()
+        if follow.accept_status == 0:
+            raise FollowRequestAlreadyExistsException()
+        else:
+            raise FollowAlreadyExistsException()
     
     await session.commit()
 
@@ -79,12 +82,22 @@ async def delete_follow(following_user_id: UUID4, followed_user_id: UUID4, sessi
 
 @Transactional()
 async def count_followers(user_id: UUID4, session: AsyncSession):
+    try:
+        await get_user_by_user_id(user_id, session=session)
+    except NoResultFound as e:
+        raise UserNotFoundException from e
+    
     stmt = select(func.count(Follow.id)).where(Follow.followed_user_id == user_id, Follow.accept_status == 1)
     res = await session.execute(stmt)
     return res.scalar_one()
 
 @Transactional()
 async def get_followers(user_id: UUID4, limit: int, offset: int, session: AsyncSession):
+    try:
+        await get_user_by_user_id(user_id, session=session)
+    except NoResultFound as e:
+        raise UserNotFoundException from e
+    
     stmt = (
         select(Follow)
         .where(Follow.followed_user_id == user_id, Follow.accept_status == 1)
@@ -103,13 +116,35 @@ async def get_followers(user_id: UUID4, limit: int, offset: int, session: AsyncS
     return follower_list
 
 @Transactional()
+async def get_is_my_follower(user_id: UUID4, current_user_id: UUID4, session: AsyncSession):
+    stmt = select(Follow).where(Follow.following_user_id == user_id, Follow.followed_user_id == current_user_id)
+    res = await session.execute(stmt)
+    return res.scalar_one_or_none()
+
+@Transactional()
+async def get_is_my_following(user_id: UUID4, current_user_id: UUID4, session: AsyncSession):
+    stmt = select(Follow).where(Follow.followed_user_id == user_id, Follow.following_user_id == current_user_id)
+    res = await session.execute(stmt)
+    return res.scalar_one_or_none()
+
+@Transactional()
 async def count_followings(user_id: UUID4, session: AsyncSession):
+    try:
+        await get_user_by_user_id(user_id, session=session)
+    except NoResultFound as e:
+        raise UserNotFoundException from e
+    
     stmt = select(func.count(Follow.id)).where(Follow.following_user_id == user_id, Follow.accept_status == 1)
     res = await session.execute(stmt)
     return res.scalar_one()
 
 @Transactional()
 async def get_followings(user_id: UUID4, limit: int, offset: int, session: AsyncSession):
+    try:
+        await get_user_by_user_id(user_id, session=session)
+    except NoResultFound as e:
+        raise UserNotFoundException from e
+    
     stmt = (
         select(Follow)
         .where(Follow.following_user_id == user_id, Follow.accept_status == 1)
