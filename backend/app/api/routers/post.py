@@ -271,7 +271,6 @@ async def update_comment_by_id(
     description="Delete Comment",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
-
 async def delete_comment(
     req: Request,
     comment_id: UUID4
@@ -282,3 +281,15 @@ async def delete_comment(
         request_user_id = req.user.id
     )
     return {"message": f"Comment {comment_id} deleted successfully"}
+
+@post_router.post(
+    "/comment/{comment_id}/like",
+    summary="Toggle Comment Like",
+    description="Toggle comment like",
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))]
+)
+async def toggle_comment_like(comment_id: UUID4, req: Request):
+    post_svc = PostService()
+    comment_like = await post_svc.toggle_comment_like(comment_id=comment_id, user_id=req.user.id)
+
+    return comment_like

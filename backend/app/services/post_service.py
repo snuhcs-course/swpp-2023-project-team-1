@@ -8,7 +8,7 @@ from pydantic import UUID4
 from sqlalchemy import select, and_
 from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.post import Post
+from app.models.post import CommentLike, Post
 from app.schemas.post import ImageCreate, PostCreate, PostUpdate, CommentCreate, CommentUpdate
 from app.core.exceptions.post import InvalidPostImageException, PostNotFoundException, CommentNotFoundException, UserNotOwnerException
 from app.models.post import Comment, PostLike
@@ -18,7 +18,7 @@ from app.core.exceptions.base import (
     ForbiddenException,
     NotFoundException,
 )
-from sqlalchemy import and_, delete, select, func, case, update
+from sqlalchemy import and_, select
 from app.repository import post
 from app.repository import comment
 from app.utils.aws import s3_client, bucket_name
@@ -235,7 +235,16 @@ class PostService:
         await session.commit()
         return comment
 
-
+    @Transactional()
+    async def toggle_comment_like(
+        self, comment_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs
+    ) -> CommentLike:
+        try:
+            comment_like_obj = await comment.create_or_update_like(comment_id, user_id)
+            return comment_like_obj
+        except IntegrityError as e:
+            raise BadRequestException(str(e.orig)) from e
+        
 def upload_post_image_to_s3(
     post_id: UUID4,
     image_base64: str,
@@ -243,8 +252,6 @@ def upload_post_image_to_s3(
     file_extension: str = "png",
     ):
     img_url = None
-
-
 
     try:
         # Attempt to decode the base64 string
@@ -255,7 +262,6 @@ def upload_post_image_to_s3(
         raise InvalidPostImageException("Invalid base64 format") from e
 
     try:
-        # image_bytes = base64.b64decode(image_base64)
 
         image_key = f"post_image/{post_id}/{image_type}/{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}"
 

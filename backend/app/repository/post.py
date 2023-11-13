@@ -217,8 +217,8 @@ async def get_like_by_post_id_and_user_id(p_id: UUID4, u_id: UUID4, session: Asy
 
 @Transactional()
 async def create_or_update_like(post_id: UUID4, user_id: UUID4, session: AsyncSession) -> PostLike:
-    post_like = await get_like_by_post_id_and_user_id(post_id, user_id, session=session)
-
+    post_like: PostLike = await get_like_by_post_id_and_user_id(post_id, user_id, session=session)
+    
     if post_like is None:
         post_like = PostLike(post_id=post_id, user_id=user_id, is_liked=True)
         session.add(post_like)

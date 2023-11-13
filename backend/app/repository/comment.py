@@ -1,4 +1,3 @@
-from uuid import UUID
 from pydantic import UUID4
 from app.models.user import User
 from app.session import Transactional
@@ -157,33 +156,33 @@ async def delete_by_id(id, session: AsyncSession):
 
 
 @Transactional()
-async def get_like_by_comment_id_and_user_id(c_id: UUID4, u_id: UUID4, session: AsyncSession):
+async def get_like_by_comment_id_and_user_id(c_id: UUID4, u_id: UUID4, session: AsyncSession)-> CommentLike | None:
     stmt = select(CommentLike).where(
-        (CommentLike.comment_id == c_id),
-        (CommentLike.user_id == u_id),
+        CommentLike.comment_id == c_id,
+        CommentLike.user_id == u_id,
     )
     res = await session.execute(stmt)
     return res.scalar_one_or_none()
 
 
 @Transactional()
-async def create_or_update_like(comment_id: UUID4, user_id: UUID4, is_like: int, session: AsyncSession):
+async def create_or_update_like(comment_id: UUID4, user_id: UUID4, session: AsyncSession)-> CommentLike:
     comment_like: CommentLike = await get_like_by_comment_id_and_user_id(
         comment_id,
         user_id,
         session=session,
     )
+    
     if comment_like is None:
-        comment_like = CommentLike(comment_id=comment_id, user_id=user_id, is_liked=is_like)
+        comment_like = CommentLike(comment_id=comment_id, user_id=user_id, is_liked=True)
         session.add(comment_like)
     else:
-        if comment_like.is_liked == is_like:
-            return comment_like.is_liked
-        comment_like.is_liked = is_like
+        comment_like.is_liked = not comment_like.is_liked
 
     await session.commit()
     await session.refresh(comment_like)
-    return comment_like.is_liked
+
+    return comment_like
 
 
 @Transactional()
