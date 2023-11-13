@@ -1,9 +1,7 @@
 package com.project.spire.ui.profile
 
-import android.app.Application
 import android.content.Context
 import android.net.Uri
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,7 +11,6 @@ import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.user.UserRepository
 import com.project.spire.models.Post
 import com.project.spire.utils.AuthProvider
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
@@ -29,18 +26,19 @@ class ProfileViewModel(
     private val _following = MutableLiveData<Int>().apply { value = 0 }
     private val _posts = MutableLiveData<List<Post>>().apply { value = emptyList() }
     private val _isFollowed = MutableLiveData<Boolean>().apply { value = false }
+    private val _isFollowRequested = MutableLiveData<Boolean>().apply { value = false }
     private val _isMyProfile = MutableLiveData<Boolean>().apply { value = false }
     private val _photoPickerUri = MutableLiveData<Uri?>().apply { value = null }
 
     val email: LiveData<String> = _email
     val username: LiveData<String> = _username
-    val bio: LiveData<String>
-        get() = _bio
+    val bio: LiveData<String> = _bio
     val profileImageUrl: LiveData<String> = _profileImageUrl
     val followers: LiveData<Int> = _followers
     val following: LiveData<Int> = _following
     val posts: LiveData<List<Post>> = _posts
     val isFollowed: LiveData<Boolean> = _isFollowed
+    val isFollowRequested: LiveData<Boolean> = _isFollowRequested
     val isMyProfile: LiveData<Boolean> = _isMyProfile
     val photoPickerUri: LiveData<Uri?> = _photoPickerUri
 
@@ -64,17 +62,17 @@ class ProfileViewModel(
         viewModelScope.launch {
             val accessToken = AuthProvider.getAccessToken()
             val myInfo = userRepository.getMyInfo(accessToken)
-            val followers = userRepository.getFollowers(accessToken, myInfo?.id!!)
-            val followings = userRepository.getFollowings(accessToken, myInfo?.id!!)
+            val followInfo = userRepository.getFollowInfo(accessToken, myInfo?.id!!)
 
             _email.postValue(myInfo?.email)
             _username.postValue(myInfo?.username)
             _bio.postValue(myInfo?.bio)
             _profileImageUrl.postValue(myInfo?.profileImageUrl)
-            _followers.postValue(followers!!.total)
-            _following.postValue(followings!!.total)
+            _followers.postValue(followInfo!!.followerCnt)
+            _following.postValue(followInfo!!.followingCnt)
             // _posts.postValue(myInfo?.posts)
             _isFollowed.postValue(false)
+            _isFollowRequested.postValue(false)
             _isMyProfile.postValue(true)
         }
     }
@@ -83,16 +81,28 @@ class ProfileViewModel(
         viewModelScope.launch {
             val accessToken = AuthProvider.getAccessToken()
             val userInfo = userRepository.getUserInfo(accessToken, userId)
-            val followers = userRepository.getFollowers(accessToken, userInfo?.id!!)
-            val followings = userRepository.getFollowings(accessToken, userInfo?.id!!)
+            val followInfo = userRepository.getFollowInfo(accessToken, userId)
+
             _email.postValue(userInfo?.email)
             _username.postValue(userInfo?.username)
             _bio.postValue(userInfo?.bio)
             _profileImageUrl.postValue(userInfo?.profileImageUrl)
-            _followers.postValue(followers!!.total)
-            _following.postValue(followings!!.total)
+            _followers.postValue(followInfo!!.followerCnt)
+            _following.postValue(followInfo!!.followingCnt)
+
+            if (followInfo.followerStatus == -1) {
+                _isFollowed.postValue(false)
+                _isFollowRequested.postValue(false)
+            }
+            else if (followInfo.followerStatus == 0) {
+                _isFollowed.postValue(false)
+                _isFollowRequested.postValue(true)
+            }
+            else if (followInfo.followerStatus == 1) {
+                _isFollowed.postValue(true)
+                _isFollowRequested.postValue(false)
+            }
             // _posts.postValue(userInfo?.posts)
-            // _isFollowed.postValue(false)
             _isMyProfile.postValue(false)
         }
     }
@@ -108,7 +118,42 @@ class ProfileViewModel(
         }
     }
 
-
+    fun followRequest(userId: String) {
+        // assume that getUserInfo() called before
+        // follow, unfollow, cancel follow
+        if (_isMyProfile.value!!) {
+            return
+        }
+        viewModelScope.launch {
+            val accessToken = AuthProvider.getAccessToken()
+            if (!_isFollowed.value!!) {
+                if (!_isFollowRequested.value!!) {
+                    // send follow request
+                    val followRequest = userRepository.follow(accessToken, userId)
+                    if (followRequest) {
+                        _isFollowed.postValue(false) // TODO?
+                        _isFollowRequested.postValue(true)
+                    }
+                }
+                else {
+                    // cancel follow request
+                    val cancelFollowRequest = userRepository.cancelFollowRequest(accessToken, userId)
+                    if (cancelFollowRequest) {
+                        _isFollowed.postValue(false)
+                        _isFollowRequested.postValue(false)
+                    }
+                }
+            }
+            else {
+                // unfollow
+                val unfollowRequest = userRepository.unfollow(accessToken, userId)
+                if (unfollowRequest) {
+                    _isFollowed.postValue(false)
+                    _isFollowRequested.postValue(false)
+                }
+            }
+        }
+    }
 }
 
 class ProfileViewModelFactory(

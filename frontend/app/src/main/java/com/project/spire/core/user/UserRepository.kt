@@ -1,26 +1,18 @@
 package com.project.spire.core.user
 
 import InputStreamRequestBody
-import android.app.Application
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.core.net.toFile
 import androidx.documentfile.provider.DocumentFile
 import com.project.spire.network.RetrofitClient.Companion.userAPI
-import com.project.spire.network.auth.request.RefreshRequest
 import com.project.spire.network.user.request.UserRequest
-import com.project.spire.network.user.request.UserUpdate
+import com.project.spire.network.user.response.FollowInfoSuccess
 import com.project.spire.network.user.response.FollowListSuccess
-import com.project.spire.network.user.response.UserError
-import com.project.spire.network.user.response.UserResponse
 import com.project.spire.network.user.response.UserSuccess
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Response
-import java.io.File
 
 class UserRepository {
     private val DEFAULT_TYPE = "application/octet-stream"
@@ -44,7 +36,7 @@ class UserRepository {
 
     suspend fun updateMyInfo(accessToken: String, username: String, bio: String, profileImage: Uri?, context: Context): UserSuccess? {
         // TODO: handle duplicated username
-        val request = UserUpdate(username, bio, "")
+        val request = UserRequest(username, bio, "")
         var response: Response<UserSuccess>
         if (profileImage == null) {
             response = userAPI.updateMyInfoWithoutImage("Bearer $accessToken", request)
@@ -112,6 +104,62 @@ class UserRepository {
             val errorBody = response.errorBody()
             Log.e("UserRepository", "Get followings error: ${errorBody?.string()!!}")
             null
+        }
+    }
+
+    suspend fun getFollowInfo(accessToken: String, userId: String): FollowInfoSuccess? {
+        val response = userAPI.followInfo("Bearer $accessToken", userId)
+
+        return if (response.isSuccessful) {
+            val successBody = response.body() as FollowInfoSuccess
+            Log.d("UserRepository", "Get follow info response: ${successBody.followerCnt}")
+            successBody
+        } else {
+            val errorBody = response.errorBody()
+            Log.e("UserRepository", "Get follow info error: ${errorBody?.string()!!}")
+            null
+        }
+    }
+
+    suspend fun follow(accessToken: String, userId: String): Boolean {
+        val response = userAPI.follow("Bearer $accessToken", userId)
+
+        return if (response.isSuccessful) {
+            val successBody = response.body()
+            Log.d("UserRepository", "Follow request response: $userId")
+            true
+        } else {
+            val errorBody = response.errorBody()
+            Log.e("UserRepository", "Follow request error: ${errorBody?.string()!!}")
+            false
+        }
+    }
+
+    suspend fun unfollow(accessToken: String, userId: String): Boolean {
+        val response = userAPI.unfollow("Bearer $accessToken", userId)
+
+        return if (response.isSuccessful) {
+            val successBody = response.body()
+            Log.d("UserRepository", "Unfollow request response: $userId")
+            true
+        } else {
+            val errorBody = response.errorBody()
+            Log.e("UserRepository", "Unfollow request error: ${errorBody?.string()!!}")
+            false
+        }
+    }
+
+    suspend fun cancelFollowRequest(accessToken: String, userId: String): Boolean {
+        val response = userAPI.cancelFollowRequest("Bearer $accessToken", userId)
+
+        return if (response.isSuccessful) {
+            val successBody = response.body()
+            Log.d("UserRepository", "Cancel follow request response: $userId")
+            true
+        } else {
+            val errorBody = response.errorBody()
+            Log.e("UserRepository", "Cancel follow request error: ${errorBody?.string()!!}")
+            false
         }
     }
 }

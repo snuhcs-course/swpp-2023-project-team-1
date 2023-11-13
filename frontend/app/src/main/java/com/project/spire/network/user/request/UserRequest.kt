@@ -3,12 +3,6 @@ package com.project.spire.network.user.request
 import com.google.gson.annotations.SerializedName
 
 data class UserRequest (
-    @SerializedName("user_update")
-    val userUpdate: UserUpdate
-    // image file will handle in UserAPI
-)
-
-data class UserUpdate (
     @SerializedName("username")
     val username: String,
     @SerializedName("bio")
