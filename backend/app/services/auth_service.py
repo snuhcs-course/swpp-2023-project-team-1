@@ -103,10 +103,8 @@ class AuthService:
 
 
 async def check_user_email(email: str, session: AsyncSession):
-    print("email", email)
     result = await session.execute(select(User.id).where(User.email == email))
     id: UUID4 | None = result.scalars().first()
-    print("id", id)
     return id is not None
 
 
@@ -123,7 +121,6 @@ env = Environment(
     loader=PackageLoader("app", "templates"),
     autoescape=select_autoescape(["html", "xml"]),
 )
-
 
 conf = ConnectionConfig(
     MAIL_USERNAME=settings.MAIL_USERNAME,
