@@ -176,7 +176,7 @@ async def verify_password(
 
 
 @auth_router.patch(
-    "/change/password",
+    "/password",
     summary="Change password",
     description="Change password",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
