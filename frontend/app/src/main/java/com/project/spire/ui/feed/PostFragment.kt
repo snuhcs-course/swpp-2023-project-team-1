@@ -77,7 +77,11 @@ class PostFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            postViewModel.loadPost(arguments?.getString("postId")!!)
+            postViewModel.loadInitialComments()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
     }
 
     private fun onPostLoaded(post: Post) {

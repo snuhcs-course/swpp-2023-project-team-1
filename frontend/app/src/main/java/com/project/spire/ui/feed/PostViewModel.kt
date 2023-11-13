@@ -73,6 +73,7 @@ class PostViewModel: ViewModel() {
 
     fun likePost() {
         // TODO
+
     }
 
     fun deletePost() {
