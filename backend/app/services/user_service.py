@@ -70,7 +70,7 @@ class UserService:
             raise FollowNotFoundException from e
     
     @Transactional()
-    async def delete_follow(self, following_user_id: UUID4, followed_user_id: UUID4, accept_status: int, session: AsyncSession) -> Follow:
+    async def delete_follow(self, following_user_id: UUID4, followed_user_id: UUID4, accept_status: int, session: AsyncSession):
         try:
             follow_obj = await self.get_follow_by_user_ids(following_user_id, followed_user_id)
         except NoResultFound as e:
