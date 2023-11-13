@@ -1,8 +1,11 @@
 package com.project.spire.network.post
 
+import com.project.spire.models.Comment
 import com.project.spire.models.Post
 import com.project.spire.network.post.request.NewPostRequest
 import com.project.spire.network.post.request.UpdatePostRequest
+import com.project.spire.network.post.response.GetCommentResponse
+import com.project.spire.network.post.response.GetCommentSuccess
 import com.project.spire.network.post.response.GetPostsSuccess
 import com.project.spire.network.post.response.PostSuccess
 import com.project.spire.network.post.response.UpdatePostSuccess
@@ -56,7 +59,12 @@ interface PostAPI {
     suspend fun likePost(): Response<Void>
 
     @GET("post/{post_id}/comment") // TODO
-    suspend fun getComments(): Response<Void>
+    suspend fun getComments(
+        @Header("Authorization") accessToken: String,
+        @Path("post_id") postId: String,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int
+    ): Response<GetCommentSuccess>
 
     @POST("post/{post_id}/comment") // TODO
     suspend fun newComment(): Response<Void>

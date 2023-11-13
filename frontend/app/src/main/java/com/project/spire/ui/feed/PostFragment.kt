@@ -13,11 +13,12 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.spire.R
 import com.example.spire.databinding.FragmentPostBinding
+import com.project.spire.models.Comment
+import com.project.spire.models.Post
 import com.project.spire.utils.DateUtils
 
 class PostFragment : Fragment() {
     private var _binding: FragmentPostBinding? = null
-//    private lateinit var commentAdapter: CommentAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var postViewModel: PostViewModel
 
@@ -34,41 +35,27 @@ class PostFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         postViewModel = ViewModelProvider(this)[PostViewModel::class.java]
 
         val postView = binding.post
         val backButton = binding.backButton
-        val commentWriteLayout = binding.commentWriteLayout
 
         postView.postFooter.visibility = View.INVISIBLE
-
         recyclerView = binding.recyclerViewComments
-
         postViewModel.loadPost(arguments?.getString("postId")!!)
 
         postViewModel.post.observe(viewLifecycleOwner) {
+            // Post loaded
             if (it != null) {
-                if (it.user.profileImage == null) {
-                    postView.profileImage.load(R.drawable.default_profile_img) {
-                        transformations(CircleCropTransformation())
-                    }
-                } else {
-                    postView.profileImage.load(it.user.profileImage) {
-                        transformations(CircleCropTransformation())
-                    }
-                }
-                postView.postImage.load(it.imageUrl)
-                postView.username.text = it.user.userName
-                postView.content.text = it.content
-                postView.updatedAt.text = DateUtils.formatTime(it.updatedAt)
-                postView.numLikes.text = it.likeCount.toString()
-                postView.numComments.text = it.commentCount.toString()
+                postViewModel.loadInitialComments()
+                onPostLoaded(it)
+            }
+        }
 
-                commentWriteLayout.visibility = View.VISIBLE
-                postView.postFooter.visibility = View.VISIBLE
-
-                binding.shimmerViewContainer.stopShimmer()
+        postViewModel.comments.observe(viewLifecycleOwner) {
+            // Comments loaded
+            if (it != null) {
+                onCommentsLoaded(it)
             }
         }
 
@@ -77,8 +64,39 @@ class PostFragment : Fragment() {
         linearLayoutManager.stackFromEnd = true
 
         recyclerView.layoutManager = linearLayoutManager
+    }
 
-//        recyclerView.adapter = commentAdapter
+    private fun onPostLoaded(post: Post) {
+        val postView = binding.post
 
+        if (post.user.profileImage == null) {
+            postView.profileImage.load(R.drawable.default_profile_img) {
+                transformations(CircleCropTransformation())
+            }
+        } else {
+            postView.profileImage.load(post.user.profileImage) {
+                transformations(CircleCropTransformation())
+            }
+        }
+        postView.postImage.load(post.imageUrl)
+        postView.username.text = post.user.userName
+        postView.content.text = post.content
+        postView.updatedAt.text = DateUtils.formatTime(post.updatedAt)
+        postView.numLikes.text = post.likeCount.toString()
+        postView.numComments.text = post.commentCount.toString()
+
+        binding.commentWriteLayout.visibility = View.VISIBLE
+        postView.postFooter.visibility = View.VISIBLE
+
+        binding.shimmerViewContainer.stopShimmer()
+        binding.shimmerViewContainer.visibility = View.GONE
+    }
+
+    private fun onCommentsLoaded(comments: List<Comment>) {
+        val commentAdapter = CommentAdapter(comments)
+        recyclerView.adapter = commentAdapter
+        recyclerView.visibility = View.VISIBLE
+        binding.shimmerViewContainerComment.stopShimmer()
+        binding.shimmerViewContainerComment.visibility = View.GONE
     }
 }

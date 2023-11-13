@@ -1,12 +1,36 @@
 package com.project.spire.models
 
+import com.google.gson.annotations.SerializedName
+
 class Comment (
+    @SerializedName("post_id")
+    val postId: String,
+
+    @SerializedName("content")
+    val content: String,
+
+    @SerializedName("id")
     val id: String,
-    val user: User,
-    var content: String,
-    var likedUsers: List<User>,
+
+    @SerializedName("created_at")
     val createdAt: String,
-    var updatedAt: String,
+
+    @SerializedName("updated_at")
+    val updatedAt: String,
+
+    @SerializedName("user")
+    val user: User,
+
+    @SerializedName("like_cnt")
+    val likeCnt: Int,
+
+    @SerializedName("comment_cnt")
+    val commentCnt: Int,
+
+    @SerializedName("is_liked")
+    val isLiked: Int
 ) {
-    // TODO
+    override fun toString(): String {
+        return "\"" + content + "\" by @" + user.userName
+    }
 }

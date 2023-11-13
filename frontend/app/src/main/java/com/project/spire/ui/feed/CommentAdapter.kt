@@ -10,6 +10,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.spire.R
 import com.project.spire.models.Comment
+import com.project.spire.utils.DateUtils
 
 class CommentAdapter(
     private val commentList: List<Comment>
@@ -36,20 +37,13 @@ class CommentAdapter(
         }
         holder.username.text = comment.user.userName
         holder.content.text = comment.content
-        holder.updatedAt.text = comment.updatedAt
+        holder.updatedAt.text = DateUtils.formatTime(comment.updatedAt)
     }
 
     inner class CommentViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        var profileImage: ImageView
-        var username: TextView
-        var content: TextView
-        var updatedAt: TextView
-
-        init {
-            profileImage = view.findViewById(R.id.comment_profile_image)
-            username = view.findViewById(R.id.comment_username)
-            content = view.findViewById(R.id.comment_content)
-            updatedAt = view.findViewById(R.id.comment_updated_at)
-        }
+        var profileImage: ImageView = view.findViewById(R.id.comment_profile_image)
+        var username: TextView = view.findViewById(R.id.comment_username)
+        var content: TextView = view.findViewById(R.id.comment_content)
+        var updatedAt: TextView = view.findViewById(R.id.comment_updated_at)
     }
 }

@@ -94,9 +94,9 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
         val response = authAPI.refresh(request)
         Log.d("AuthRepository", "Refresh request: $accessToken")
         Log.d("AuthRepository", "Refresh request: $refreshToken")
-        return if (response.isSuccessful) {
+        return if (response.isSuccessful && response.code() == 200) {
             val successBody = response.body()!!
-            Log.d("AuthRepository", "Refresh success")
+            Log.d("AuthRepository", "Refresh success with new token: ${successBody.accessToken}")
 
             // Save new token to datastore
             authDataStore.edit {

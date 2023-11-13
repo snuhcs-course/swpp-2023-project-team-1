@@ -1,25 +1,23 @@
 package com.project.spire.network.post.response
 
 import com.google.gson.annotations.SerializedName
+import com.project.spire.models.Comment
 
 interface GetCommentResponse {
 }
 
 data class GetCommentSuccess(
 
-    @SerializedName("content")
-    val content: String,
+    @SerializedName("total")
+    val total: Int,
 
-    @SerializedName("post_image_url")
-    val postImageUrl: String,
+    @SerializedName("items")
+    val items: List<Comment>,
 
-    @SerializedName("created_at")
-    val createdAt: String,
+    @SerializedName("next_cursor")
+    val nextCursor: String,
 
-    @SerializedName("updated_at")
-    val updatedAt: String
-
-) : GetCommentResponse
+    ) : GetCommentResponse
 
 data class GetCommentError(
 
