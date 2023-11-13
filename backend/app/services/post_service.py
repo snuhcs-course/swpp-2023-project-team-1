@@ -125,7 +125,7 @@ class PostService:
             raise PostNotFoundException from e
         
         if post_obj.user_id != user_id:
-            raise ForbiddenException("You are not authorized to delete this post")
+            raise UserNotOwnerException("You are not authorized to update this post")
         
         post_dict = post_data.create_dict()
 
@@ -144,7 +144,7 @@ class PostService:
             raise PostNotFoundException from e
         
         if post_obj.user_id != request_user_id:
-                raise ForbiddenException("You are not authorized to delete this post")
+                raise UserNotOwnerException("You are not authorized to delete this post")
 
         await post.delete_by_id(post_id)
 
