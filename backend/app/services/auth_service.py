@@ -2,7 +2,7 @@ from fastapi import BackgroundTasks
 from fastapi.responses import JSONResponse
 from jinja2 import Environment, PackageLoader, select_autoescape
 from pydantic import UUID4
-from sqlalchemy import or_, select, and_
+from sqlalchemy import or_, select, and_, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.exceptions.user import (
     DuplicateEmailOrUsernameException,
@@ -178,3 +178,22 @@ async def verify_password_by_id(user_id: UUID4, password: str, session: AsyncSes
         raise UserNotFoundException("User not found")
 
     return PasswordHelper.verify_password(password, hashed_password)
+
+async def change_password_by_id(user_id: UUID4, password: str, session: AsyncSession) -> None:
+
+    try:
+        hashed_password = PasswordHelper.get_hashed_password(password)
+        
+        await session.execute(
+            update(User).where(User.id == user_id).values(hashed_password=hashed_password)
+        )
+
+        await session.commit()
+
+    except Exception as e:
+        print(f"An error occurred while changing the password: {str(e)}")
+        await session.rollback()
+        raise
+    
+    return
+

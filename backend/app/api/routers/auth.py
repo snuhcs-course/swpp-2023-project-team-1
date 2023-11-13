@@ -10,6 +10,7 @@ from app.schemas.user import (
 )
 from app.services.auth_service import (
     AuthService,
+    change_password_by_id,
     check_user_email,
     check_username,
     send_email_in_background,
@@ -174,14 +175,17 @@ async def verify_password(
     return {"message": "Password verified successfully"}
 
 
-@auth_router.post(
+@auth_router.patch(
     "/change/password",
     summary="Change password",
     description="Change password",
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
 async def change_password(
-    req: CodeBase,
+    new_password: str,
+    user_id: UUID4 = Depends(get_user_id_from_request),
+    session: AsyncSession = Depends(get_db_transactional_session),
 ):
-    await CodeService().verify_code(email=req.email, code=req.code)
+    await change_password_by_id(user_id=user_id, password=new_password, session=session)
 
-    return {"message": "Code verified successfully"}
+    return {"message": "Password changed successfully"}
