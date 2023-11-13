@@ -11,7 +11,9 @@ from app.models.user import User
 class Post(Base, TimestampMixin):
     id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
     content: Mapped[str] = mapped_column(TEXT, nullable=False)
-    image_url: Mapped[str] = mapped_column(TEXT, nullable=False)
+    image_url: Mapped[str] = mapped_column(TEXT, nullable=True)
+    origin_image_url = mapped_column(TEXT, nullable=True)
+    mask_image_url = mapped_column(TEXT, nullable=True)
     user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id", ondelete="CASCADE"), index=True, nullable=False)
     user: Mapped[User] = relationship("User", back_populates="posts")
     image: Mapped["Image"] = relationship("Image", back_populates="post", uselist=False)
@@ -64,8 +66,8 @@ class CommentLike(Base, TimestampMixin):
 
 class Image(Base, TimestampMixin):
     id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
-    origin_image: Mapped[str] = mapped_column(TEXT, nullable=False)
-    mask_image: Mapped[str] = mapped_column(TEXT, nullable=False)
+    origin_image: Mapped[str] = mapped_column(TEXT, nullable=True)
+    mask_image: Mapped[str] = mapped_column(TEXT, nullable=True)
     modified_image: Mapped[str] = mapped_column(TEXT, nullable=False)
     prompt: Mapped[str] = mapped_column(TEXT, nullable=False)
     user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id", ondelete="CASCADE"), index=True, nullable=False)
