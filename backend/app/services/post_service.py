@@ -105,7 +105,7 @@ class PostService:
     async def get_post_by_id(self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs) -> Post:
 
         try:
-            return await post.get_with_like_cnt_by_id(id=post_id, user_id=user_id)
+            return await post.get_with_like_cnt_comment_cnt_by_id(id=post_id, user_id=user_id)
         
         except NoResultFound as e:
             raise PostNotFoundException from e

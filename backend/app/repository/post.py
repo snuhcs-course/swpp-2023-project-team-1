@@ -156,7 +156,7 @@ async def create_image(image: dict, session: AsyncSession):
 async def update_by_id(id: UUID4, post_data: dict, session: AsyncSession) -> Post:
     stmt = update(Post).where(Post.id == id).values(**post_data)
     await session.execute(stmt)
-    res = await get_with_like_cnt_by_id(id, session=session)
+    res = await get_with_like_cnt_comment_cnt_by_id(id, session=session)
     return res
 
 
@@ -168,7 +168,7 @@ async def delete_by_id(id: UUID4, session: AsyncSession):
 
 
 @Transactional()
-async def get_with_like_cnt_by_id(id: UUID4, session: AsyncSession, user_id: UUID4 | None = None):
+async def get_with_like_cnt_comment_cnt_by_id(id: UUID4, session: AsyncSession, user_id: UUID4 | None = None):
     stmt = (
         select(Post)
         .join(Post.user, isouter=True)
@@ -180,6 +180,17 @@ async def get_with_like_cnt_by_id(id: UUID4, session: AsyncSession, user_id: UUI
                 func.count(
                     case(
                         (PostLike.is_liked == 1, PostLike.id),
+                        else_=None,
+                    ).distinct()
+                ),
+            )
+        )
+        .options(
+            with_expression(
+                Post.comment_cnt,
+                func.count(
+                    case(
+                        (Comment.id != None, Comment.id),
                         else_=None,
                     ).distinct()
                 ),
