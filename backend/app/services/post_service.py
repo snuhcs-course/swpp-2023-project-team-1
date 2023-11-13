@@ -152,25 +152,12 @@ class PostService:
     async def toggle_post_like(
         self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs
     ) -> PostLike:
-        result = await session.execute(
-            select(PostLike).where(
-                and_(PostLike.post_id == post_id, PostLike.user_id == user_id)
-            )
-        )
-
-        post_like: PostLike | None = result.scalars().first()
-
-        if post_like is None:
-            post_like = PostLike(post_id=post_id, user_id=user_id, is_liked=True)
-            session.add(post_like)
-            await session.commit()
-            return post_like
-
-        else:
-            post_like.is_liked = not (post_like.is_liked)
-            post_like.is_liked = not (post_like.is_liked)
-            await session.commit()
-            return post_like
+        try:
+            post_like_obj = await post.create_or_update_like(post_id, user_id)
+            return post_like_obj
+        except IntegrityError as e:
+            raise BadRequestException(str(e.orig)) from e
+        
 
     @Transactional()
     async def get_comments_by_post_id(self, post_id: UUID4, user_id: UUID4 | None, limit: int, offset: int, session: AsyncSession):

@@ -216,17 +216,14 @@ async def get_like_by_post_id_and_user_id(p_id: UUID4, u_id: UUID4, session: Asy
 
 
 @Transactional()
-async def create_or_update_like(post_id: UUID4, user_id: UUID4, like: int, session: AsyncSession):
+async def create_or_update_like(post_id: UUID4, user_id: UUID4, session: AsyncSession) -> PostLike:
     post_like = await get_like_by_post_id_and_user_id(post_id, user_id, session=session)
 
     if post_like is None:
-        # FIXME: mypy
-        post_like = PostLike(post_id=post_id, user_id=user_id, is_liked=like)  # type: ignore
+        post_like = PostLike(post_id=post_id, user_id=user_id, is_liked=True)
         session.add(post_like)
     else:
-        if post_like.is_liked == like:
-            return post_like
-        post_like.is_liked = like
+        post_like.is_liked = not post_like.is_liked
 
     await session.commit()
     await session.refresh(post_like)
