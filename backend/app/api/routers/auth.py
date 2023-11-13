@@ -1,5 +1,5 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, Form, Query, Request, Response
-from pydantic import Json
+from pydantic import UUID4, Json
 from app.core.exceptions.base import BadRequestException
 from app.core.fastapi.dependency.permission import IsAuthenticated, PermissionDependency
 from app.schemas.user import (
@@ -13,6 +13,7 @@ from app.services.auth_service import (
     check_user_email,
     check_username,
     send_email_in_background,
+    verify_password_by_id,
 )
 from app.session import get_db_transactional_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,6 +22,8 @@ from app.services.jwt_service import JwtService
 from app.schemas.jwt import JwtToken
 from app.schemas.code import CodeBase
 from app.services.code_service import CodeService
+from app.utils.user import get_user_id_from_request
+from app.core.exceptions.user import PasswordDoesNotMatchException
 
 
 auth_router = APIRouter()
@@ -145,6 +148,38 @@ async def send_email(
     description="Verify code",
 )
 async def verify_code(
+    req: CodeBase,
+):
+    await CodeService().verify_code(email=req.email, code=req.code)
+
+    return {"message": "Code verified successfully"}
+
+
+@auth_router.post(
+    "/verify/password",
+    summary="Verify Password",
+    description="Verify Password",
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
+)
+async def verify_password(
+    password: str,
+    user_id: UUID4 = Depends(get_user_id_from_request),
+    session: AsyncSession = Depends(get_db_transactional_session),
+):
+    is_right_password = await verify_password_by_id(password=password, user_id=user_id, session=session)
+
+    if not is_right_password:
+        raise PasswordDoesNotMatchException("Password does not match")
+    
+    return {"message": "Password verified successfully"}
+
+
+@auth_router.post(
+    "/change/password",
+    summary="Change password",
+    description="Change password",
+)
+async def change_password(
     req: CodeBase,
 ):
     await CodeService().verify_code(email=req.email, code=req.code)

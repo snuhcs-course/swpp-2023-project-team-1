@@ -166,3 +166,15 @@ async def send_email_in_background(
     background_tasks.add_task(fm.send_message, message)
 
     return JSONResponse(status_code=200, content={"message": "email has been sent"})
+
+
+async def verify_password_by_id(user_id: UUID4, password: str, session: AsyncSession) -> bool:
+    
+    result = await session.execute(select(User.hashed_password).where(User.id == user_id))
+
+    hashed_password: str | None = result.scalars().first()
+
+    if not hashed_password:
+        raise UserNotFoundException("User not found")
+
+    return PasswordHelper.verify_password(password, hashed_password)
