@@ -24,9 +24,6 @@ class Comment (
     @SerializedName("like_cnt")
     val likeCnt: Int,
 
-    @SerializedName("comment_cnt")
-    val commentCnt: Int,
-
     @SerializedName("is_liked")
     val isLiked: Int
 ) {

@@ -93,14 +93,17 @@
                     android:src="@drawable/comment" />
 
                 <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/comment_write_edit_text"
                     style="@style/small_text"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="@dimen/comment_write_margin"
                     android:layout_weight="1"
-                    android:hint="@string/comment_write_hint" />
+                    android:hint="@string/comment_write_hint"
+                    android:inputType="textMultiLine" />
 
                 <ImageButton
+                    android:id="@+id/comment_write_btn"
                     android:layout_width="@dimen/comment_write_btn"
                     android:layout_height="@dimen/comment_write_btn"
                     android:layout_weight="0"
@@ -110,15 +113,22 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_comment_write" />
 
+                <ProgressBar
+                    android:id="@+id/comment_write_progress_bar"
+                    android:layout_width="@dimen/comment_write_btn"
+                    android:layout_height="@dimen/comment_write_btn"
+                    android:layout_weight="0"
+                    android:visibility="gone" />
+
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_comments"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="invisible">
-
-            </androidx.recyclerview.widget.RecyclerView>
+                android:visibility="invisible"
+                android:paddingBottom="@dimen/nav_bar_total_height"
+                android:clipToPadding="true" />
 
             <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/shimmer_view_container_comment"

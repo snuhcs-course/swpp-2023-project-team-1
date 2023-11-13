@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.project.spire.models.Comment
 import com.project.spire.models.Post
 import com.project.spire.network.RetrofitClient
+import com.project.spire.network.post.request.NewCommentRequest
 import com.project.spire.utils.AuthProvider
 import kotlinx.coroutines.launch
 
@@ -55,19 +56,42 @@ class PostViewModel: ViewModel() {
         }
     }
 
-    fun comment() {
+    fun comment(content: String) {
+        viewModelScope.launch {
+            val request = NewCommentRequest(content)
+            val accessToken = AuthProvider.getAccessToken()
+            val response = RetrofitClient.postAPI.newComment("Bearer $accessToken", _post.value?.postId!!, request)
+
+            if (response.code() == 200 && response.isSuccessful && response.body() != null) {
+                Log.d("PostViewModel", "${response.body() as Comment}")
+                _comments.value = _comments.value?.plus(response.body()!!)
+            } else {
+                Log.e("PostViewModel", "Error commenting with ${response.code()} ${response.message()}")
+            }
+        }
+    }
+
+    fun likePost() {
         // TODO
     }
 
-    fun like() {
+    fun deletePost() {
         // TODO
     }
 
-    fun delete() {
+    fun editPost() {
         // TODO
     }
 
-    fun edit() {
+    fun likeComment() {
+        // TODO
+    }
+
+    fun deleteComment() {
+        // TODO
+    }
+
+    fun editComment() {
         // TODO
     }
 }

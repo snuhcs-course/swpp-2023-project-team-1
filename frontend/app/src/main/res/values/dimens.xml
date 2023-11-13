@@ -22,6 +22,7 @@
     <dimen name="nav_bar_height">75dp</dimen>
     <dimen name="nav_bar_icon_size">24dp</dimen>
     <dimen name="nav_bar_create_post_btn_size">60dp</dimen>
+    <dimen name="nav_bar_total_height">105dp</dimen>
 
     <!-- Prompt Dialog -->
     <dimen name="prompt_dialog_margin">20dp</dimen>

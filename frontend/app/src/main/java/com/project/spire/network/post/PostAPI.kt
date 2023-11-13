@@ -2,6 +2,7 @@ package com.project.spire.network.post
 
 import com.project.spire.models.Comment
 import com.project.spire.models.Post
+import com.project.spire.network.post.request.NewCommentRequest
 import com.project.spire.network.post.request.NewPostRequest
 import com.project.spire.network.post.request.UpdatePostRequest
 import com.project.spire.network.post.response.GetCommentResponse
@@ -21,7 +22,6 @@ import retrofit2.http.Query
 
 
 interface PostAPI {
-    // TODO
 
     @GET("post/")
     suspend fun getFeedPosts(
@@ -58,7 +58,7 @@ interface PostAPI {
     @POST("post/{post_id}/like")
     suspend fun likePost(): Response<Void>
 
-    @GET("post/{post_id}/comment") // TODO
+    @GET("post/{post_id}/comment")
     suspend fun getComments(
         @Header("Authorization") accessToken: String,
         @Path("post_id") postId: String,
@@ -66,8 +66,12 @@ interface PostAPI {
         @Query("offset") offset: Int
     ): Response<GetCommentSuccess>
 
-    @POST("post/{post_id}/comment") // TODO
-    suspend fun newComment(): Response<Void>
+    @POST("post/{post_id}/comment")
+    suspend fun newComment(
+        @Header("Authorization") accessToken: String,
+        @Path("post_id") postId: String,
+        @Body request: NewCommentRequest
+    ): Response<Comment>
 
     @PATCH("post/{post_id}/comment/{comment_id}") // TODO
     suspend fun updateComment(): Response<Void>

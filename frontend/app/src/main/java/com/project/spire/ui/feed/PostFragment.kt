@@ -39,9 +39,16 @@ class PostFragment : Fragment() {
 
         val postView = binding.post
         val backButton = binding.backButton
+        val commentButton = binding.commentWriteBtn
 
         postView.postFooter.visibility = View.INVISIBLE
         recyclerView = binding.recyclerViewComments
+
+        val linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.reverseLayout = true
+        linearLayoutManager.stackFromEnd = true
+        recyclerView.layoutManager = linearLayoutManager
+
         postViewModel.loadPost(arguments?.getString("postId")!!)
 
         postViewModel.post.observe(viewLifecycleOwner) {
@@ -59,11 +66,18 @@ class PostFragment : Fragment() {
             }
         }
 
-        val linearLayoutManager = LinearLayoutManager(context)
-        linearLayoutManager.reverseLayout = true
-        linearLayoutManager.stackFromEnd = true
+        commentButton.setOnClickListener {
+            commentButton.visibility = View.GONE
+            binding.commentWriteProgressBar.visibility = View.VISIBLE
+            val commentContent = binding.commentWriteEditText.text.toString()
+            postViewModel.comment(commentContent)
+        }
 
-        recyclerView.layoutManager = linearLayoutManager
+        backButton.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+
     }
 
     private fun onPostLoaded(post: Post) {
@@ -93,6 +107,9 @@ class PostFragment : Fragment() {
     }
 
     private fun onCommentsLoaded(comments: List<Comment>) {
+        binding.commentWriteBtn.visibility = View.VISIBLE
+        binding.commentWriteProgressBar.visibility = View.GONE
+        binding.commentWriteEditText.text?.clear()
         val commentAdapter = CommentAdapter(comments)
         recyclerView.adapter = commentAdapter
         recyclerView.visibility = View.VISIBLE
