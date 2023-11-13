@@ -75,7 +75,7 @@ async def get_my_posts(
 
 
 @post_router.get(
-    "/{user_id}",
+    "/user/{user_id}",
     status_code=200,
     response_model=GetPostsResponse,
     summary="Get other user posts with pagination",
