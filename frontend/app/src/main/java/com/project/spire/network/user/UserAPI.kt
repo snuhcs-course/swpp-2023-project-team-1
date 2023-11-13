@@ -2,6 +2,7 @@ package com.project.spire.network.user
 
 import com.project.spire.network.user.request.UserRequest
 import com.project.spire.network.user.request.UserUpdate
+import com.project.spire.network.user.response.FollowListSuccess
 import com.project.spire.network.user.response.UserSuccess
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -38,4 +39,16 @@ interface UserAPI {
         @Header("Authorization") token: String,
         @Path("user_id") userId: String
     ): Response<UserSuccess>
+
+    @GET("user/{user_id}/followers")
+    suspend fun getFollowers(
+        @Header("Authorization") token: String,
+        @Path("user_id") userId: String
+    ): Response<FollowListSuccess>
+
+    @GET("user/{user_id}/followings")
+    suspend fun getFollowings(
+        @Header("Authorization") token: String,
+        @Path("user_id") userId: String
+    ): Response<FollowListSuccess>
 }

@@ -77,6 +77,18 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        profileViewModel.followers.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.followerButton.text = "$it ${resources.getString(R.string.profile_followers)}"
+            }
+        }
+
+        profileViewModel.following.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.followingButton.text = "$it ${resources.getString(R.string.profile_following)}"
+            }
+        }
+
         val largeButton = binding.profileLargeButton
         profileViewModel.isMyProfile.observe(viewLifecycleOwner) {
             if (it) {

@@ -11,6 +11,7 @@ import com.project.spire.network.RetrofitClient.Companion.userAPI
 import com.project.spire.network.auth.request.RefreshRequest
 import com.project.spire.network.user.request.UserRequest
 import com.project.spire.network.user.request.UserUpdate
+import com.project.spire.network.user.response.FollowListSuccess
 import com.project.spire.network.user.response.UserError
 import com.project.spire.network.user.response.UserResponse
 import com.project.spire.network.user.response.UserSuccess
@@ -36,7 +37,7 @@ class UserRepository {
             successBody
         } else {
             val errorBody = response.errorBody()
-            Log.d("UserRepository", "Get my info error: ${errorBody.toString()}")
+            Log.e("UserRepository", "Get my info error: ${errorBody?.string()!!}")
             null
         }
     }
@@ -64,7 +65,7 @@ class UserRepository {
             successBody
         } else {
             val errorBody = response.errorBody()
-            Log.d("UserRepository", "Update my info error: ${errorBody?.string()!!}")
+            Log.e("UserRepository", "Update my info error: ${errorBody?.string()!!}")
             null
         }
     }
@@ -81,7 +82,35 @@ class UserRepository {
             successBody
         } else {
             val errorBody = response.errorBody()
-            Log.d("UserRepository", "Get my info error: ${errorBody.toString()}")
+            Log.e("UserRepository", "Get my info error: ${errorBody?.string()!!}")
+            null
+        }
+    }
+
+    suspend fun getFollowers(accessToken: String, userId: String): FollowListSuccess? {
+        val response = userAPI.getFollowers("Bearer $accessToken", userId)
+
+        return if (response.isSuccessful) {
+            val successBody = response.body() as FollowListSuccess
+            Log.d("UserRepository", "Get followers response: ${successBody.total}")
+            successBody
+        } else {
+            val errorBody = response.errorBody()
+            Log.e("UserRepository", "Get followers error: ${errorBody?.string()!!}")
+            null
+        }
+    }
+
+    suspend fun getFollowings(accessToken: String, userId: String): FollowListSuccess? {
+        val response = userAPI.getFollowings("Bearer $accessToken", userId)
+
+        return if (response.isSuccessful) {
+            val successBody = response.body() as FollowListSuccess
+            Log.d("UserRepository", "Get followings response: ${successBody.total}")
+            successBody
+        } else {
+            val errorBody = response.errorBody()
+            Log.e("UserRepository", "Get followings error: ${errorBody?.string()!!}")
             null
         }
     }

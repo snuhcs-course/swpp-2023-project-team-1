@@ -78,7 +78,7 @@
             android:layout_height="@dimen/profile_button_height"
             android:layout_weight="1"
             android:layout_margin="2dp"
-            android:text="@string/profile_followers" />
+            android:text="@string/profile_following" />
 
     </LinearLayout>
 
