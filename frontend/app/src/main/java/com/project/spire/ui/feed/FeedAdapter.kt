@@ -1,31 +1,25 @@
 package com.project.spire.ui.feed
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.spire.R
 import com.project.spire.models.Post
-import com.project.spire.ui.MainActivity
-import com.project.spire.ui.search.SearchFragment
 import com.project.spire.utils.DateUtils
 
-class PostAdapter(
+class FeedAdapter(
     private val postList: List<Post>,
     private val context: Context,
     private val navController: NavController
-) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
+) : RecyclerView.Adapter<FeedAdapter.PostViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val layout = LayoutInflater
@@ -54,15 +48,15 @@ class PostAdapter(
         holder.username.text = post.user.userName
         holder.content.text = post.content
         holder.updatedAt.text = DateUtils.formatTime(post.updatedAt)
-        holder.likes.text = post.likeCount.toString()
-        holder.comments.text = post.commentCount.toString()
+        holder.likeCount.text = post.likeCount.toString()
+        holder.commentCount.text = post.commentCount.toString()
 
         holder.profileImage.setOnClickListener {
-            // TODO: Show user profile
+            showProfile(post.user.id)
         }
 
         holder.username.setOnClickListener {
-            // TODO: Show user profile
+            showProfile(post.user.id)
         }
 
         holder.content.setOnClickListener {
@@ -90,8 +84,8 @@ class PostAdapter(
         val profileImage: ImageView = view.findViewById(R.id.profile_Image)
         val postImage: ImageView = view.findViewById(R.id.post_image)
         val username: TextView = view.findViewById(R.id.username)
-        val likes: TextView = view.findViewById(R.id.num_likes)
-        val comments: TextView = view.findViewById(R.id.num_comments)
+        val likes: ImageView = view.findViewById(R.id.post_image_like_btn)
+        val comments: ImageView = view.findViewById(R.id.post_image_comment_btn)
         val content: TextView = view.findViewById(R.id.content)
         val updatedAt: TextView = view.findViewById(R.id.updated_at)
         val likeCount: TextView = view.findViewById(R.id.num_likes)
@@ -103,6 +97,15 @@ class PostAdapter(
         bundle.putString("postId", postId)
         navController.navigate(
             R.id.action_feed_to_post,
+            bundle
+        )
+    }
+
+    private fun showProfile(userId: String) {
+        val bundle = Bundle()
+        bundle.putString("userId", userId)
+        navController.navigate(
+            R.id.action_feed_to_profile,
             bundle
         )
     }

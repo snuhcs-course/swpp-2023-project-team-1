@@ -12,11 +12,10 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.databinding.FragmentFeedBinding
-import com.project.spire.ui.MainActivity
 
 class FeedFragment : Fragment() {
     private var _binding: FragmentFeedBinding? = null
-    private var postAdapter: PostAdapter? = null
+    private var postAdapter: FeedAdapter? = null
 
     private val binding get() = _binding!!
     private lateinit var recyclerView: RecyclerView
@@ -49,7 +48,7 @@ class FeedFragment : Fragment() {
         feedViewModel.posts.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 recyclerView.run {
-                    adapter = PostAdapter(it, context, findNavController())
+                    adapter = FeedAdapter(it, context, findNavController())
                     binding.shimmerViewContainer.stopShimmer()
                     binding.shimmerViewContainer.visibility = View.GONE
 
