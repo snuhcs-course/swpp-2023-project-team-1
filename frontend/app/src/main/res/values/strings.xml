@@ -76,6 +76,7 @@
     <string name="profile_followers">Followers</string>
     <string name="profile_following">Following</string>
     <string name="profile_follow">Follow</string>
+    <string name="profile_follow_requested">Follow Requested</string>
     <string name="edit_profile_toolbar">Edit Your Profile</string>
     <string name="edit_profile_change_photo">Change</string>
     <string name="edit_profile_hint_email">Email</string>

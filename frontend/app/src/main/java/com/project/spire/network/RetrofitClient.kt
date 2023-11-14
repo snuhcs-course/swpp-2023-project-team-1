@@ -19,7 +19,8 @@ class RetrofitClient {
             .build()
 
         private val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(NetworkConfig.SPIRE_URL)
+            //.baseUrl(NetworkConfig.SPIRE_URL)
+            .baseUrl(LOCAL_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
