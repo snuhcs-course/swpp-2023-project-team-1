@@ -18,6 +18,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.R
 import com.example.spire.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -30,6 +31,7 @@ import com.project.spire.ui.feed.FeedFragment
 import com.project.spire.ui.notifications.NotificationsFragment
 import com.project.spire.ui.profile.ProfileFragment
 import com.project.spire.ui.search.SearchFragment
+import java.lang.NullPointerException
 
 class MainActivity : AppCompatActivity() {
 
@@ -64,9 +66,19 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_profile
             )
         ).build()
-
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        navView.setOnItemReselectedListener {
+            // Resets back stack when reselecting the same tab
+            if (it.itemId == R.id.navigation_feed) {
+                try {
+                    findViewById<RecyclerView>(R.id.recycler_view_feed).smoothScrollToPosition(0)
+                } catch (e: NullPointerException) {
+                    Log.e("MainActivity", "RecyclerView not found")
+                }
+            }
+            navController.popBackStack(it.itemId, false)
+        }
 
         // New Post Button
         val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet_image_source, null)

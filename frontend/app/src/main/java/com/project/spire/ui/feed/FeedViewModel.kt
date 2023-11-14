@@ -43,8 +43,7 @@ class FeedViewModel : ViewModel() {
                 Log.d("FeedViewModel", "Fetch feed success")
                 val body = response.body()
                 if (body != null) {
-                    val posts = body.items.sortedBy { it.updatedAt }  // Latest post first
-                    _posts.value = posts
+                    _posts.value = body.items
                     _totalPosts.value = body.total
                     _nextCursor.value = body.nextCursor
                 }

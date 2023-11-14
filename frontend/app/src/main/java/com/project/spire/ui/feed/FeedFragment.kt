@@ -41,8 +41,8 @@ class FeedFragment : Fragment() {
 
         recyclerView = binding.recyclerViewFeed
         val linearLayoutManager = LinearLayoutManager(context)
-        linearLayoutManager.reverseLayout = true
-        linearLayoutManager.stackFromEnd = true
+        linearLayoutManager.reverseLayout = false
+        linearLayoutManager.stackFromEnd = false
 
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.addOnChildAttachStateChangeListener(onChildAttachStateChangeListener)

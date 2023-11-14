@@ -45,8 +45,8 @@ class PostFragment : Fragment() {
         recyclerView = binding.recyclerViewComments
 
         val linearLayoutManager = LinearLayoutManager(context)
-        linearLayoutManager.reverseLayout = true
-        linearLayoutManager.stackFromEnd = true
+        linearLayoutManager.reverseLayout = false
+        linearLayoutManager.stackFromEnd = false
         recyclerView.layoutManager = linearLayoutManager
 
         postViewModel.loadPost(arguments?.getString("postId")!!)
