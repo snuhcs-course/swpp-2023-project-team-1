@@ -20,6 +20,10 @@ from app.services.post_service import PostService
 from app.utils.json_decoder import normalize_post
 from app.utils.user import get_user_id_from_request
 from app.utils.pagination import limit_offset_query
+from app.services.notification_service import NotificationService
+from app.models.user import User
+from app.schemas.notification import NotificationBase, NotificationType
+from app.models.post import PostLike
 
 post_router = APIRouter()
 
@@ -200,9 +204,26 @@ async def delete_post(
     description="Toggle post like",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))]
 )
-async def toggle_post_like(post_id: UUID4, req: Request):
+async def toggle_post_like(
+    post_id: UUID4,     
+    user_id: UUID4 = Depends(get_user_id_from_request),
+):
     post_svc = PostService()
-    post_like = await post_svc.toggle_post_like(post_id=post_id, user_id=req.user.id)
+    notification_svc = NotificationService()
+
+    post_like: PostLike = await post_svc.toggle_post_like(post_id=post_id, user_id=user_id)
+
+    post_author_id = await post_svc.get_author_by_id(post_id)
+
+    if post_author_id != user_id and post_like.is_liked:
+        await notification_svc.create_or_update_notification(
+            notification_data=NotificationBase(
+                notification_type=NotificationType.NEW_POST_LIKE,
+                read_at=None,
+            ),
+            sender_id=user_id,
+            recipient_id=post_author_id,
+        )
 
     return post_like
 
@@ -240,11 +261,27 @@ async def create_comment(
     user_id: UUID4 = Depends(get_user_id_from_request),
 ):
     post_svc = PostService()
-    return await post_svc.create_comment(
+    notification_svc = NotificationService()
+    
+    new_comment = await post_svc.create_comment(
         post_id,
         comment,
         user_id
     )
+
+    post_author_id = await post_svc.get_author_by_id(post_id)
+
+    if post_author_id != user_id:
+        await notification_svc.create_notification(
+            notification_data=NotificationBase(
+                notification_type=NotificationType.NEW_COMMENT,
+                read_at=None,
+            ),
+            sender_id=user_id,
+            recipient_id=post_author_id,
+        )
+
+    return new_comment
 
 @post_router.patch(
     "/comment/{comment_id}",

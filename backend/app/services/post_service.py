@@ -22,6 +22,7 @@ from sqlalchemy import and_, select
 from app.repository import post
 from app.repository import comment
 from app.utils.aws import s3_client, bucket_name
+from app.models.user import User
 
 class PostService:
     @Transactional()
@@ -154,6 +155,7 @@ class PostService:
     ) -> PostLike:
         try:
             post_like_obj = await post.create_or_update_like(post_id, user_id)
+            
             return post_like_obj
         except IntegrityError as e:
             raise BadRequestException(str(e.orig)) from e
@@ -244,6 +246,15 @@ class PostService:
             return comment_like_obj
         except IntegrityError as e:
             raise BadRequestException(str(e.orig)) from e
+        
+
+    @Transactional()
+    async def get_author_by_id(self, post_id: UUID4, session: AsyncSession):
+        try:
+            return await post.get_author_by_id(post_id)
+        except NoResultFound as e:
+            raise NotFoundException("Post not found") from e
+    
         
 def upload_post_image_to_s3(
     post_id: UUID4,

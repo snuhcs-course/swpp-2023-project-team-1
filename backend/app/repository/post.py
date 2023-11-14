@@ -131,9 +131,15 @@ async def get_list_with_like_cnt_comment_cnt_by_user_id(
 
 
 @Transactional()
-async def get_by_id(id: UUID4, session: AsyncSession):
-    res = await session.execute(select(Post).where(Post.id == id))
-    return res.scalar_one()
+async def get_author_by_id(post_id: UUID4, session: AsyncSession):
+    res = await session.execute(
+        select(Post)
+        .join(Post.user, isouter=True)
+        .options(contains_eager(Post.user).load_only(User.id, User.username, User.profile_image_url))
+        .where(Post.id == post_id)
+    )
+
+    return res.scalar_one().user_id
 
 
 @Transactional()
@@ -174,6 +180,7 @@ async def get_with_like_cnt_comment_cnt_by_id(id: UUID4, session: AsyncSession, 
         .join(Post.user, isouter=True)
         .options(contains_eager(Post.user).load_only(User.id, User.username, User.profile_image_url))
         .join_from(Post, PostLike, isouter=True, onclause=Post.id == PostLike.post_id)
+        .join_from(Post, Comment, isouter=True, onclause=Post.id == Comment.post_id)
         .options(
             with_expression(
                 Post.like_cnt,
