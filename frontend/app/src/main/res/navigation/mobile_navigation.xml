@@ -20,8 +20,8 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
         <action
-            android:id="@+id/action_feed_to_profile"
-            app:destination="@id/navigation_profile"
+            android:id="@+id/action_feed_to_other_profile"
+            app:destination="@id/navigation_other_profile"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -43,6 +43,12 @@
 
     <fragment
         android:id="@+id/navigation_profile"
+        android:name="com.project.spire.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/navigation_other_profile"
         android:name="com.project.spire.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />

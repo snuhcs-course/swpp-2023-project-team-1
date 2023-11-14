@@ -105,7 +105,7 @@ class FeedAdapter(
         val bundle = Bundle()
         bundle.putString("userId", userId)
         navController.navigate(
-            R.id.action_feed_to_profile,
+            R.id.action_feed_to_other_profile,
             bundle
         )
     }
