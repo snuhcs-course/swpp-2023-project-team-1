@@ -466,7 +466,7 @@ async def test_request_follow_request_already_exists_wrong():
 
     assert response.status_code == 400
     response_data = response.json()
-    assert response_data['message'] == "FOLLOW__REQUEST_ALREADY_EXISTS" # bug Should be modified to "FOLLOW__REQUEST_ALREADY_EXISTS"
+    assert response_data['message'] == "FOLLOW__REQUEST_ALREADY_EXISTS"
 
 @pytest.mark.asyncio
 async def test_request_follow_myself_wrong():
@@ -772,7 +772,7 @@ async def test_get_follow_info_not_found_wrong():
 
     assert response.status_code == 404
     response_data = response.json()
-    assert response_data['message'] == "USER__NOT_FOUND" # bug Should modify
+    assert response_data['message'] == "USER__NOT_FOUND" 
 
 @pytest.mark.asyncio
 async def test_get_followers_correct():
@@ -800,7 +800,7 @@ async def test_get_followers_not_found_wrong():
 
     assert response.status_code == 404
     response_data = response.json()
-    assert response_data['message'] == "USER__NOT_FOUND" # bug Should modify
+    assert response_data['message'] == "USER__NOT_FOUND"
 
 @pytest.mark.asyncio
 async def test_get_followings_correct():
@@ -827,7 +827,7 @@ async def test_get_followings_not_found_wrong():
 
     assert response.status_code == 404
     response_data = response.json()
-    assert response_data['message'] == "USER__NOT_FOUND" # bug Should modify
+    assert response_data['message'] == "USER__NOT_FOUND"
 
 @pytest.mark.asyncio
 async def test_search_user_correct():
