@@ -10,7 +10,7 @@ from app.models.timestamp_mixin import TimestampMixin
 
 
 if TYPE_CHECKING:
-    from app.models import Post, PostLike, Comment, CommentLike, Image
+    from app.models import Post, PostLike, Comment, CommentLike, Image, Notification
 
 class User(Base, TimestampMixin):
     id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
@@ -76,6 +76,22 @@ class User(Base, TimestampMixin):
         back_populates="followed_user",
         cascade="save-update, merge, delete",
         passive_deletes=True,
+    )
+
+    notifications_sender: Mapped[list["Notification"]] = relationship(
+        "Notification",
+        back_populates="sender",
+        cascade="save-update, merge, delete",
+        passive_deletes=True,
+        foreign_keys="Notification.sender_id",
+    )
+
+    notifications_recipient: Mapped[list["Notification"]] = relationship(
+        "Notification",
+        back_populates="recipient",
+        cascade="save-update, merge, delete",
+        passive_deletes=True,
+        foreign_keys="Notification.recipient_id",
     )
 
 class Follow(Base, TimestampMixin):
