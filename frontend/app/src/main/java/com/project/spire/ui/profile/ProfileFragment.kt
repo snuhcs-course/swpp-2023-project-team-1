@@ -30,7 +30,7 @@ class ProfileFragment : Fragment() {
 
     private lateinit var profileViewModel: ProfileViewModel
 
-    private var TEST_USER_ID = "d2fcfe21-82fa-4008-835d-16c39eca26d7"//"92142569-d579-44e7-bf06-102770db6eb4"
+    private var TEST_USER_ID = "d2fcfe21-82fa-4008-835d-16c39eca26d7" //"92142569-d579-44e7-bf06-102770db6eb4"
 
     override fun onCreateView(
         inflater: LayoutInflater,

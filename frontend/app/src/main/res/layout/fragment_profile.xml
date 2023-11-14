@@ -22,6 +22,7 @@
         app:layout_constraintBottom_toTopOf="@id/profile_image"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:visibility="invisible"
         />
 
     <androidx.appcompat.widget.AppCompatImageView
