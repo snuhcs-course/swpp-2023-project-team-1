@@ -1130,26 +1130,26 @@ async def test_search_user_correct():
 #     response_data = response.json()
 #     assert response_data['message'] == "COMMENT__NOT_FOUND"
 
-# @pytest.mark.asyncio
-# async def test_unregister_users_correct():
-#     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
-#         headers = {
-#             'Authorization': 'Bearer {}'.format(access_token_1)
-#         }
+@pytest.mark.asyncio
+async def test_unregister_users_correct():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
 
-#         response = await ac.delete(
-#             "/api/auth/unregister", 
-#             headers=headers
-#         )
-#     assert response.status_code == 200
+        response = await ac.delete(
+            "/api/auth/unregister", 
+            headers=headers
+        )
+    assert response.status_code == 200
 
-#     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
-#         headers = {
-#             'Authorization': 'Bearer {}'.format(access_token_2)
-#         }
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_2)
+        }
 
-#         response = await ac.delete(
-#             "/api/auth/unregister", 
-#             headers=headers
-#         )
-#     assert response.status_code == 200
+        response = await ac.delete(
+            "/api/auth/unregister", 
+            headers=headers
+        )
+    assert response.status_code == 200
