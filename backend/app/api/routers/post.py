@@ -23,7 +23,7 @@ from app.utils.pagination import limit_offset_query
 from app.services.notification_service import NotificationService
 from app.models.user import User
 from app.schemas.notification import NotificationBase, NotificationType
-from app.models.post import PostLike
+from app.models.post import CommentLike, PostLike
 
 post_router = APIRouter()
 
@@ -213,7 +213,7 @@ async def toggle_post_like(
 
     post_like: PostLike = await post_svc.toggle_post_like(post_id=post_id, user_id=user_id)
 
-    post_author_id = await post_svc.get_author_by_id(post_id)
+    post_author_id = await post_svc.get_post_author_by_id(post_id)
 
     if post_author_id != user_id and post_like.is_liked:
         await notification_svc.create_or_update_notification(
@@ -223,6 +223,7 @@ async def toggle_post_like(
             ),
             sender_id=user_id,
             recipient_id=post_author_id,
+            post_id=post_id,
         )
 
     return post_like
@@ -269,16 +270,17 @@ async def create_comment(
         user_id
     )
 
-    post_author_id = await post_svc.get_author_by_id(post_id)
+    post_author_id = await post_svc.get_post_author_by_id(post_id)
 
     if post_author_id != user_id:
-        await notification_svc.create_notification(
+        await notification_svc.create_or_update_notification(
             notification_data=NotificationBase(
                 notification_type=NotificationType.NEW_COMMENT,
                 read_at=None,
             ),
             sender_id=user_id,
             recipient_id=post_author_id,
+            post_id=post_id,
         )
 
     return new_comment
@@ -325,8 +327,27 @@ async def delete_comment(
     description="Toggle comment like",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))]
 )
-async def toggle_comment_like(comment_id: UUID4, req: Request):
+async def toggle_comment_like(
+    post_id: UUID4,
+    comment_id: UUID4,
+    user_id: UUID4 = Depends(get_user_id_from_request),
+):
     post_svc = PostService()
-    comment_like = await post_svc.toggle_comment_like(comment_id=comment_id, user_id=req.user.id)
+    notification_svc = NotificationService()
 
+    comment_like: CommentLike = await post_svc.toggle_comment_like(comment_id=comment_id, user_id=user_id)
+
+    comment_author_id = await post_svc.get_comment_author_by_id(comment_id)
+
+    if comment_author_id != user_id and comment_like.is_liked:
+        await notification_svc.create_or_update_notification(
+            notification_data=NotificationBase(
+                notification_type=NotificationType.NEW_COMMENT_LIKE,
+                read_at=None,
+            ),
+            sender_id=user_id,
+            recipient_id=comment_author_id,
+            post_id=post_id,
+        )
+    
     return comment_like

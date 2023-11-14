@@ -21,7 +21,6 @@ class NotificationService:
                 notification.count_by_user_id(user_id),
                 notification.get_list_by_user_id(limit, offset, user_id),
             )
-
         except NoResultFound as e:
             raise NotFoundException("Notifications not found") from e
 
@@ -35,15 +34,15 @@ class NotificationService:
         notification_data: NotificationBase,
         sender_id: UUID4,
         recipient_id: UUID4,
+        post_id: UUID4,
         session: AsyncSession,
         **kwargs
     ) -> Notification:
-
-
-        notification_dict = notification_data.create_dict(sender_id, recipient_id)
+        
+        notification_dict = notification_data.create_dict(sender_id, recipient_id, post_id)
 
         try:
-            return await notification.create(notification_dict)
+            return await notification.create_or_update(notification_dict)
         
         except IntegrityError as e:
             raise BadRequestException(str(e.orig)) from e

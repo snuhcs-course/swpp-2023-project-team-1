@@ -249,9 +249,16 @@ class PostService:
         
 
     @Transactional()
-    async def get_author_by_id(self, post_id: UUID4, session: AsyncSession):
+    async def get_post_author_by_id(self, post_id: UUID4, session: AsyncSession):
         try:
-            return await post.get_author_by_id(post_id)
+            return await post.get_author_by_post_id(post_id)
+        except NoResultFound as e:
+            raise NotFoundException("Post not found") from e
+        
+    @Transactional()
+    async def get_comment_author_by_id(self, comment_id: UUID4, session: AsyncSession):
+        try:
+            return await post.get_author_by_comment_id(comment_id)
         except NoResultFound as e:
             raise NotFoundException("Post not found") from e
     
