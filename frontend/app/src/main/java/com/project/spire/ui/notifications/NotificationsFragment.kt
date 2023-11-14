@@ -33,6 +33,8 @@ class NotificationsFragment : Fragment() {
         notificationsViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+
+        binding.notificationsCount.text = "(0)"
         return root
     }
 

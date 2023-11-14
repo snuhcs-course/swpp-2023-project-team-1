@@ -4,9 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context="com.project.spire.ui.notifications.NotificationsFragment">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/notifications_title"
+        style="@style/notifications_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/notifications_title"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/notifications_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/notifications_title"
+        android:textColor="@color/blue_700"
+        app:layout_constraintStart_toEndOf="@id/notifications_title"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="8dp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_notifications"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

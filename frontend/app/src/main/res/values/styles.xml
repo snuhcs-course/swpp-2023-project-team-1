@@ -57,9 +57,10 @@
         <item name="android:letterSpacing">0</item>
 
         <item name="android:layout_width">90dp</item>
-        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_height">36dp</item>
         <item name="android:minWidth">0dp</item>
         <item name="android:minHeight">0dp</item>
+        <item name="elevation">2dp</item>
 
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
@@ -91,6 +92,15 @@
 
     <style name="create_post_fab" parent="Widget.MaterialComponents.FloatingActionButton">
         <item name="android:foreground">@drawable/ic_nav_create_post</item>
+    </style>
+
+    <style name="search_bar" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/boxBackgroundColor</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxCornerRadiusBottomEnd">20dp</item>
+        <item name="boxCornerRadiusBottomStart">20dp</item>
+        <item name="boxCornerRadiusTopEnd">20dp</item>
+        <item name="boxCornerRadiusTopStart">20dp</item>
     </style>
 
     <style name="filled_edit_text" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -135,6 +145,23 @@
         <item name="android:fontFamily">@font/roboto_medium</item>
     </style>
 
+    <style name="SelectImageUtilBtn" >
+        <item name="android:background">@drawable/btn_select_image</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+
+        <item name="android:layout_height">@dimen/select_image_btn_height</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingHorizontal">10dp</item>
+    </style>
+
     <!-- Profile Page -->
     <style name="profile_username_text">
         <item name="android:textColor">@color/black</item>
@@ -170,6 +197,12 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="notifications_title">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 

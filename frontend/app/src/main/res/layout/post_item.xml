@@ -24,7 +24,8 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/username"
             style="@style/post_username_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp" />
@@ -32,7 +33,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/updated_at"
             style="@style/created_at_text"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="end" />
@@ -42,9 +43,9 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/content"
         style="@style/small_text"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="10dp" />
+        android:paddingVertical="10dp" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/post_image_card"
@@ -79,8 +80,8 @@
             android:id="@+id/num_likes"
             style="@style/post_footer_text"
             android:layout_width="@dimen/post_footer_text_width"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
+            android:layout_height="match_parent"
+            android:gravity="center_vertical" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/post_image_comment_btn"
@@ -93,9 +94,10 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/num_comments"
             style="@style/post_footer_text"
-            android:layout_width="@dimen/post_footer_text_width"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical" />
     </LinearLayout>
 
 </LinearLayout>

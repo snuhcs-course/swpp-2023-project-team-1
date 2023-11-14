@@ -1,6 +1,6 @@
 package com.project.spire.network
 
-import com.project.spire.core.DataStoreProvider
+import com.project.spire.utils.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -26,6 +26,7 @@ class TokenInterceptor : Interceptor {
                     val newRequest = originalRequest.newBuilder()
                         .header("Authorization", "Bearer $newAccessToken")
                         .build()
+                    response.close()
                     return chain.proceed(newRequest)
                 }
             }

@@ -110,14 +110,6 @@ class ImageEditActivity : AppCompatActivity() {
             startActivity(intent)
             val maskBitmap = mCanvasView.getBitmap()
             val maskBitmapToServer = BitmapUtils.maskTransparentToBlack(maskBitmap)
-
-            // FIXME: save image to local?
-
-            /* if (mImageBitmap != null) {
-                BitmapUtils.saveImageOnAboveAndroidQ(maskBitmap, this.contentResolver)
-                BitmapUtils.saveImageOnAboveAndroidQ(maskBitmapToServer, this.contentResolver)
-            } */
-
             inferenceViewModel.infer(mImageBitmap!!, maskBitmapToServer, promptInput.text.toString())
         }
 
@@ -129,6 +121,7 @@ class ImageEditActivity : AppCompatActivity() {
         exitBtn.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
             finish()
         }
 

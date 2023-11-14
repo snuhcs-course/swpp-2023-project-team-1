@@ -46,7 +46,6 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().setStatusBarTransparent()
 
         // If bundle is null, fetch my profile
         // Else, fetch other user's profile using bundle's user id
@@ -92,41 +91,10 @@ class ProfileFragment : Fragment() {
                 // TODO: Follow user
             }
         }
-
-        // FIXME: Move this to EditProfileActivity
-        val logoutBtn: Button = binding.tempLogoutButton
-        logoutBtn.setOnClickListener {
-            val success = profileViewModel.logout()
-        }
-
-        // FIXME: Move this to EditProfileActivity
-        profileViewModel.logoutSuccess.observe(viewLifecycleOwner) {
-            if (it) {
-                // Logout success
-                Log.d("ProfileFragment", "Logout success")
-                startActivity(Intent(requireContext(), LoginActivity::class.java))
-                requireActivity().finish()
-            } else {
-                // Logout failed
-                Log.d("ProfileFragment", "Logout failed")
-            }
-        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    fun Activity.setStatusBarTransparent() {
-        window.apply {
-            setFlags(
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-            )
-        }
-        if(Build.VERSION.SDK_INT >= 30) {	// API 30 에 적용
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-        }
     }
 }

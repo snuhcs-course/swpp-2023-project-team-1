@@ -1,15 +1,25 @@
 package com.project.spire.models
 
+import com.google.gson.annotations.SerializedName
+
 open class User (
-    val id: Int,
+
+    @SerializedName("id")
+    val id: String,
+
+    @SerializedName("username")
     var userName: String,
-    var profileImage: String
+
+    @SerializedName("profile_image_url")
+    var profileImage: String?
 ) {
-    // TODO
+    override fun toString(): String {
+        return "User(id='$id', userName='$userName', profileImage=$profileImage)"
+    }
 }
 
 class UserDetail (
-    id: Int,
+    id: String,
     userName: String,
     profileImage: String,
     email: String,

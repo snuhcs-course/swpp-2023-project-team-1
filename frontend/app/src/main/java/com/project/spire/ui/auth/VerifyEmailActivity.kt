@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.spire.R
 import com.example.spire.databinding.ActivityVerifyEmailBinding
 import com.google.android.material.textfield.TextInputLayout
-import com.project.spire.core.DataStoreProvider
+import com.project.spire.utils.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
 
 class VerifyEmailActivity : AppCompatActivity() {

@@ -23,10 +23,12 @@
             android:src="@drawable/ic_img_back" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            style="@style/ToolbarText"
             android:layout_width="0dp"
+            style="@style/ToolbarText"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textSize="20sp"
+            android:textStyle="bold"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="10dp"
             android:text="@string/edit_profile_toolbar" />
@@ -41,151 +43,163 @@
     </LinearLayout>
 
     <!-- Body -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/edit_profile_body"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingHorizontal="@dimen/edit_profile_padding_horizontal"
-        app:layout_constraintTop_toBottomOf="@id/edit_profile_toolbar"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="50dp"
+        app:layout_constraintTop_toBottomOf="@id/edit_profile_toolbar">
 
-        <!-- Profile Image -->
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/edit_profile_image"
-            android:layout_width="@dimen/edit_profile_profile_image_size"
-            android:layout_height="@dimen/edit_profile_profile_image_size"
-            android:background="@drawable/bg_profile_image_large"
-            android:layout_marginTop="30dp"
-            android:padding="12dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/edit_profile_change_photo_btn"
-            style="@style/ImgEditBtn"
-            android:layout_marginTop="10dp"
-            android:text="@string/edit_profile_change_photo"
-            app:backgroundTint="@null"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit_profile_image" />
-
-        <!-- Email -->
-        <TextView
-            android:id="@+id/edit_profile_email_title"
-            style="@style/edit_profile_content_title"
-            android:layout_marginTop="30dp"
-            android:text="@string/edit_profile_hint_email"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit_profile_change_photo_btn" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/edit_profile_email_input"
-            style="@style/filled_edit_text"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/edit_profile_body"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            app:endIconMode="clear_text"
-            app:layout_constraintTop_toBottomOf="@id/edit_profile_email_title">
+            android:layout_height="0dp"
+            android:paddingHorizontal="@dimen/edit_profile_padding_horizontal"
+            android:paddingBottom="50dp"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <!-- Profile Image -->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/edit_profile_image"
+                android:layout_width="@dimen/edit_profile_profile_image_size"
+                android:layout_height="@dimen/edit_profile_profile_image_size"
+                android:background="@drawable/bg_profile_image_large"
+                android:layout_marginTop="30dp"
+                android:padding="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/edit_profile_change_photo_btn"
+                style="@style/ImgEditBtn"
+                android:layout_marginTop="10dp"
+                android:text="@string/edit_profile_change_photo"
+                app:backgroundTint="@null"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_image" />
+
+            <!-- Email -->
+            <TextView
+                android:id="@+id/edit_profile_email_title"
+                style="@style/edit_profile_content_title"
+                android:layout_marginTop="30dp"
+                android:text="@string/edit_profile_hint_email"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_change_photo_btn" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/edit_profile_email_input"
+                style="@style/filled_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:enabled="false"
-                android:inputType="textEmailAddress"
-                android:padding="10dp" />
+                android:layout_marginTop="5dp"
+                app:endIconMode="clear_text"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_email_title">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="textEmailAddress"
+                    android:padding="10dp" />
 
-        <!-- Password -->
-        <TextView
-            android:id="@+id/edit_profile_password_title"
-            style="@style/edit_profile_content_title"
-            android:layout_marginTop="15dp"
-            android:text="@string/edit_profile_hint_password"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit_profile_email_input" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/edit_profile_password_input"
-            style="@style/ImgEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            app:endIconMode="password_toggle"
-            app:layout_constraintTop_toBottomOf="@id/edit_profile_password_title">
+            <!-- Password -->
+            <TextView
+                android:id="@+id/edit_profile_password_title"
+                style="@style/edit_profile_content_title"
+                android:layout_marginTop="15dp"
+                android:text="@string/edit_profile_hint_password"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_email_input" />
 
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/edit_profile_password_input"
+                style="@style/filled_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:padding="10dp" />
+                android:layout_marginTop="5dp"
+                app:endIconMode="password_toggle"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_password_title">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:padding="10dp" />
 
-        <!-- Username -->
-        <TextView
-            android:id="@+id/edit_profile_username_title"
-            style="@style/edit_profile_content_title"
-            android:layout_marginTop="15dp"
-            android:text="@string/edit_profile_hint_username"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit_profile_password_input" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/edit_profile_username_input"
-            style="@style/ImgEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            app:endIconMode="clear_text"
-            app:layout_constraintTop_toBottomOf="@id/edit_profile_username_title"
-            app:prefixText="\@">
+            <!-- Username -->
+            <TextView
+                android:id="@+id/edit_profile_username_title"
+                style="@style/edit_profile_content_title"
+                android:layout_marginTop="15dp"
+                android:text="@string/edit_profile_hint_username"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_password_input" />
 
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/edit_profile_username_input"
+                style="@style/filled_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:padding="10dp" />
+                android:layout_marginTop="5dp"
+                app:endIconMode="clear_text"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_username_title"
+                app:prefixText="\@">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:padding="10dp" />
 
-        <!-- Bio -->
-        <TextView
-            android:id="@+id/edit_profile_bio_title"
-            style="@style/edit_profile_content_title"
-            android:layout_marginTop="15dp"
-            android:text="@string/edit_profile_hint_bio"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit_profile_username_input" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/edit_profile_bio_input"
-            style="@style/ImgEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            app:endIconMode="clear_text"
-            app:layout_constraintTop_toBottomOf="@id/edit_profile_bio_title">
+            <!-- Bio -->
+            <TextView
+                android:id="@+id/edit_profile_bio_title"
+                style="@style/edit_profile_content_title"
+                android:layout_marginTop="15dp"
+                android:text="@string/edit_profile_hint_bio"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_username_input" />
 
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/edit_profile_bio_input"
+                style="@style/filled_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:padding="10dp" />
+                android:layout_marginTop="5dp"
+                app:endIconMode="clear_text"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_bio_title">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:inputType="textMultiLine"
+                    android:padding="10dp" />
 
-        <!-- Save Button -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/edit_profile_save_btn"
-            style="@style/ImgEditBtn"
-            android:text="@string/edit_profile_save_btn"
-            android:layout_marginBottom="50dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- Save Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/edit_profile_save_btn"
+                style="@style/ImgEditBtn"
+                android:text="@string/edit_profile_save_btn"
+                android:layout_marginTop="50dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_bio_input" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

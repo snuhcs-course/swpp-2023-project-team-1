@@ -1,13 +1,19 @@
 package com.project.spire.ui
 
+import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.Toolbar
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -17,14 +23,19 @@ import com.example.spire.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.project.spire.ui.create.PromptDialogFragment
 import com.project.spire.ui.create.CameraActivity
 import com.project.spire.ui.create.ImageEditActivity
+import com.project.spire.ui.create.PromptDialogFragment
+import com.project.spire.ui.feed.FeedFragment
+import com.project.spire.ui.notifications.NotificationsFragment
+import com.project.spire.ui.profile.ProfileFragment
+import com.project.spire.ui.search.SearchFragment
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var toolbar: Toolbar
+    private var currentTab: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,11 +46,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Hide action bar
         if (supportActionBar != null) {
             supportActionBar!!.hide()
         }
-        val navView: BottomNavigationView = binding.bottomNavigationView
 
+        // Navigation
+        val navView: BottomNavigationView = binding.bottomNavigationView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -51,7 +64,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_profile
             )
         )
-
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -77,11 +89,9 @@ class MainActivity : AppCompatActivity() {
 
         bottomSheetGallery.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            bottomSheetDialog.hide()
         }
 
         bottomSheetNew.setOnClickListener {
-            // TODO: Create new image from scratch
             PromptDialogFragment().show(supportFragmentManager, "PromptDialogFragment")
             bottomSheetDialog.hide()
         }
@@ -98,4 +108,24 @@ class MainActivity : AppCompatActivity() {
                 Log.d("PhotoPicker", "No media selected")
             }
         }
+
+    fun Activity.setStatusBarTransparent() {
+        window.apply {
+            setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            )
+        }
+        if(Build.VERSION.SDK_INT >= 30) {	// API 30 에 적용
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+        }
+    }
+    fun replaceFragment(fragment: Fragment, addToBackStack: Boolean = true) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.nav_host_fragment_activity_main, fragment)
+        if (addToBackStack)  {
+            transaction.addToBackStack(null)
+        }
+        transaction.commit()
+    }
 }

@@ -7,6 +7,7 @@
     <string name="title_search">Search</string>
     <string name="title_notification">Notifications</string>
     <string name="title_profile">Profile</string>
+    <string name="title_post">Post</string>
 
     <!-- Prompt Dialog -->
     <string name="prompt_dialog_hint">✨What are you inspired with?</string>
@@ -14,7 +15,7 @@
     <string name="prompt_dialog_cancel">Cancel</string>
 
     <!-- image edit activities -->
-    <string name="bottom_sheet_camera">Take picture</string>
+    <string name="bottom_sheet_camera">Take a picture</string>
     <string name="bottom_sheet_gallery">Choose from gallery</string>
     <string name="bottom_sheet_new">Generate new image</string>
     <string name="title_toolbar_image_edit">Edit Your Image</string>
@@ -25,11 +26,15 @@
     <string name="title_edit_profile">Edit Profile</string>
 
     <!-- write text activity -->
-    <string name="title_toolbar_write_text">Write Text</string>
+    <string name="title_toolbar_write_text">Select Your Image</string>
     <string name="post_text_hint">What do you want to say?</string>
     <string name="done_button">Done</string>
     <string name="loading_text">Recreating your image…</string>
-    <string name="loading_time_text">Might take up to 10 seconds</string>
+    <string name="loading_time_text">Might take up to 20 seconds</string>
+    <string name="swipe_text">Swipe to see more images</string>
+    <string name="regenerate">Regenerate</string>
+    <string name="describe_your_image">Describe your image</string>
+    <string name="only_this_image">Only the image on screen will be posted</string>
 
 
     <!-- Auth activities -->
@@ -81,6 +86,13 @@
     <string name="edit_profile_save_btn">Save</string>
     <string name="edit_profile_logout_btn">Log out</string>
     <string name="edit_profile_delete_account_btn">Delete Account</string>
+    <string name="logout_dialog_text">Do you really want to log out?</string>
+    <string name="delete_account_dialog_text">Are you sure you want to delete your account?\nThis job cannot be undone.</string>
 
+    <!-- Search -->
+    <string name="search_bar_hint">Search User, Post, Prompt, etc.</string>
+
+    <!-- Notifications -->
+    <string name="notifications_title">Notifications</string>
 
 </resources>

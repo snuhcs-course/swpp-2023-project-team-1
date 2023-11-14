@@ -1,11 +1,37 @@
 package com.project.spire.models
 
-class Post (
-    val id: Int,
-    val user: User,
-    var content: String,
-    var imageUrl: String,
-    var likedUsers: List<User>,
-    var comments: List<Comment>,
+import com.google.gson.annotations.SerializedName
+
+class Post(
+
+    @SerializedName("id")
+    val postId: String,
+
+    @SerializedName("content")
+    val content: String,
+
+    @SerializedName("image_url")
+    val imageUrl: String,
+
+    @SerializedName("created_at")
     val createdAt: String,
-    var updatedAt: String)
+
+    @SerializedName("updated_at")
+    val updatedAt: String,
+
+    @SerializedName("user")
+    val user: User,
+
+    @SerializedName("like_cnt")
+    val likeCount: Int,
+
+    @SerializedName("comment_cnt")
+    val commentCount: Int,
+
+    @SerializedName("is_liked")
+    val isLiked: Int
+) {
+    override fun toString(): String {
+        return "Post(postId='$postId', content='$content', imageUrl='$imageUrl', createdAt='$createdAt', updatedAt='$updatedAt', user=$user, likeCount=$likeCount, commentCount=$commentCount, isLiked=$isLiked)"
+    }
+}

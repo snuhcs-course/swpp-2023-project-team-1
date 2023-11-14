@@ -1,6 +1,7 @@
 package com.project.spire.ui.create
 
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
@@ -9,9 +10,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.DialogFragment
 import com.example.spire.R
+import com.project.spire.utils.InferenceUtils
 
 
-class PromptDialogFragment : DialogFragment() {
+class PromptDialogFragment() : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         super.onCreateDialog(savedInstanceState)
@@ -48,8 +50,11 @@ class PromptDialogFragment : DialogFragment() {
         val prompt = dialog?.findViewById<EditText>(R.id.prompt_input)?.text
         if (prompt != null) {
             // TODO: Generate image with prompt
+            dialog?.dismiss()
+            val intent = Intent(requireContext(), WriteTextActivity::class.java)
+            startActivity(intent)
 
-
+            InferenceUtils.inferenceViewModel.infer(prompt.toString())
         } else {
             Log.e("PromptDialogFragment", "Prompt is null")
         }

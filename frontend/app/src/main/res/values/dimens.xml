@@ -22,6 +22,7 @@
     <dimen name="nav_bar_height">75dp</dimen>
     <dimen name="nav_bar_icon_size">24dp</dimen>
     <dimen name="nav_bar_create_post_btn_size">60dp</dimen>
+    <dimen name="nav_bar_total_height">105dp</dimen>
 
     <!-- Prompt Dialog -->
     <dimen name="prompt_dialog_margin">20dp</dimen>
@@ -34,7 +35,7 @@
     <dimen name="camera_blind_top_height">100dp</dimen>
     <dimen name="camera_flip_btn_size">40dp</dimen>
     <dimen name="camera_flip_btn_margin_bottom">70dp</dimen>
-  
+
     <!-- Profile -->
     <dimen name="profile_header_background_height">200dp</dimen>
     <dimen name="profile_image_margin_top">150dp</dimen>
@@ -58,20 +59,23 @@
     <dimen name="image_edit_toolbar_btn_size">60dp</dimen>
     <dimen name="image_edit_toolbar_btn_padding">20dp</dimen>
     <dimen name="image_edit_toolbar_title_font">20sp</dimen>
+    <dimen name="select_image_btn_height">36dp</dimen>
+    <dimen name="select_image_btn_icon_size">16dp</dimen>
 
     <!-- feed, post and comment -->
     <dimen name="bottom_sheet_height">200dp</dimen>
     <dimen name="bottom_sheet_icon_size">26dp</dimen>
-    <dimen name="bottom_sheet_text_size">18sp</dimen>
+    <dimen name="bottom_sheet_text_size">16sp</dimen>
     <dimen name="feed_logo_width">80dp</dimen>
     <dimen name="feed_logo_height">40dp</dimen>
-    <dimen name="feed_toolbar_height">80dp</dimen>
+    <dimen name="feed_toolbar_height">100dp</dimen>
     <dimen name="post_padding">15dp</dimen>
     <dimen name="post_profile_image_width">40dp</dimen>
     <dimen name="post_profile_image_height">40dp</dimen>
     <dimen name="post_footer_icon_width">40dp</dimen>
     <dimen name="post_footer_icon_height">40dp</dimen>
     <dimen name="post_footer_text_width">35dp</dimen>
+    <dimen name="feed_bottom_margin">40dp</dimen>
 
     <dimen name="image_placeholder_height">350dp</dimen>
 
@@ -80,6 +84,13 @@
     <dimen name="comment_write_margin">10dp</dimen>
     <dimen name="comment_write_btn">40dp</dimen>
     <dimen name="comment_write_btn_padding">10dp</dimen>
+
+    <!-- search -->
+    <dimen name="search_bar_height">50dp</dimen>
+    <dimen name="search_bar_margin">20dp</dimen>
+    <dimen name="search_bar_icon_size">25dp</dimen>
+    <dimen name="search_bar_text_size">16sp</dimen>
+    <dimen name="search_bar_text_padding">46dp</dimen>
 
 
 </resources>
