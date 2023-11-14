@@ -225,7 +225,7 @@ async def get_followers(
     summary="Get user followings",
     description="Get user followings",
     dependencies=[Depends(PermissionDependency([AllowAll]))],
-    response_model=UserSearchResponse,
+    response_model=GetUsersResponse,
 )
 async def get_followings(
     user_id: UUID4,

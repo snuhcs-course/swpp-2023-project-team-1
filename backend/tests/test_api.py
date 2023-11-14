@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+from fastapi import Form
 from app.main import spire_app
 import json
 import pytest
@@ -337,6 +338,39 @@ async def test_get_my_info_correct():
 
 
 ############## Patch my info necessary ##############
+@pytest.mark.asyncio
+async def test_patch_my_info_correct():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+       # JSON data
+        user_update_data = json.dumps({
+            "username": "test1",
+            "bio": "test1",
+            "profile_image_url": "test1"
+        })
+
+        # Prepare the multipart data
+        data = {
+            "user_update": (None, user_update_data, "application/json"),
+        }
+
+        # Add file to the data
+        with open("tests/test_image.png", "rb") as test_image_file:
+            data["file"] = ("test_image.png", test_image_file, "image/png")
+
+        # Send the PATCH request
+        response = await ac.patch("/api/user/me", headers=headers, data=data)
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert isinstance(response_data['email'], str)  
+    assert response_data['id'] == user_id_1
+    assert response_data['username'] == username_1
+    assert isinstance(response_data['bio'], str) or response_data['bio'] == None
+    assert isinstance(response_data['profile_image_url'], str) or response_data['profile_image_url'] == None
 
 
 @pytest.mark.asyncio
@@ -405,7 +439,7 @@ async def test_request_follow_request_already_exists_wrong():
 
     assert response.status_code == 400
     response_data = response.json()
-    assert response_data['message'] == "FOLLOW__ALREADY_EXISTS" # bug Should be modified to "FOLLOW__REQUEST_ALREADY_EXISTS"
+    assert response_data['message'] == "FOLLOW__REQUEST_ALREADY_EXISTS" # bug Should be modified to "FOLLOW__REQUEST_ALREADY_EXISTS"
 
 @pytest.mark.asyncio
 async def test_request_follow_myself_wrong():
@@ -716,6 +750,7 @@ async def test_get_follow_info_not_found_wrong():
 @pytest.mark.asyncio
 async def test_get_followers_correct():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        
         response = await ac.get(
             "/api/user/" + user_id_2 + "/followers",
             params={"limit": 10, "offset": 0}
@@ -724,14 +759,15 @@ async def test_get_followers_correct():
     assert response.status_code == 200
     response_data = response.json()
     assert response_data['total'] == 1
-    assert response_data['items'][0] == 1
+    assert response_data['items'][0]['id'] == user_id_1
+    assert response_data['items'][0]['username'] == username_1
     assert response_data['next_cursor'] == None
 
 @pytest.mark.asyncio
 async def test_get_followers_not_found_wrong():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         response = await ac.get(
-            "/api/user/" + user_id_2 + "/followers",
+            "/api/user/8e6f6dc9-bfcf-44ac-8081-58db10f4e18c/followers",
             params={"limit": 10, "offset": 0}
         )
 
@@ -750,14 +786,15 @@ async def test_get_followings_correct():
     assert response.status_code == 200
     response_data = response.json()
     assert response_data['total'] == 1
-    assert response_data['items'][0] == 1
+    assert response_data['items'][0]['id'] == user_id_1
+    assert response_data['items'][0]['username'] == username_1
     assert response_data['next_cursor'] == None
 
 @pytest.mark.asyncio
 async def test_get_followings_not_found_wrong():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         response = await ac.get(
-            "/api/user/" + user_id_2 + "/followings",
+            "/api/user/8e6f6dc9-bfcf-44ac-8081-58db10f4e18c/followings",
             params={"limit": 10, "offset": 0}
         )
 
@@ -773,7 +810,7 @@ async def test_search_user_correct():
         }
 
         response = await ac.get(
-            "/api/search/user/te",
+            "/api/search/user/test",
             params={"limit": 10, "offset": 0}, 
             headers=headers
         )
@@ -863,7 +900,6 @@ async def test_search_user_correct():
 
 #     assert response.status_code == 200
 #     response_data = response.json()
-#     print(post_1['content'])
 #     assert response_data['content'] == post_1['content']
 #     assert response_data['image_url'] == post_1['image_url']
 #     assert response_data['id'] == post_1['id']

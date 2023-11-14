@@ -1,11 +1,7 @@
 from pydantic import UUID4, BaseModel, ConfigDict, Field
 
-
-
 class UserBase(BaseModel):
     email: str = Field(..., description="Email")
-
-
 
 class UserCreate(UserBase):
     username: str = Field(..., description="Username")
@@ -13,8 +9,6 @@ class UserCreate(UserBase):
 
     def create_dict(self) -> dict:
         return self.model_dump(exclude_unset=True)
-
-
 
 class UserRead(UserBase):
     id: UUID4 = Field(..., description="User Id")
@@ -26,8 +20,6 @@ class UserRead(UserBase):
         from_attributes=True,
     )
 
-
-
 class UserUpdate(BaseModel):
     username: str | None = Field(None, description="Username")
     bio: str | None = Field(None, description="Bio")
@@ -36,12 +28,8 @@ class UserUpdate(BaseModel):
     def update_dict(self) -> dict:
         return self.model_dump(exclude_unset=True)
 
-
-
-
 class LoginRequest(UserBase):
     password: str = Field(..., description="Password")
-
 
 
 class LoginResponse(BaseModel):
@@ -49,8 +37,6 @@ class LoginResponse(BaseModel):
     refresh_token: str = Field(..., description="Refresh Token")
     user_id: UUID4 = Field(..., description="User Id")
     username: str = Field(..., description="Username")
-
-
 
 class CheckUserInfoResponse(BaseModel):
     email_exists: bool | None = None
@@ -67,12 +53,17 @@ class GetFollowInfoResponse(BaseModel):
     follower_status: int = Field(..., description="Follower Status, -1 : Not Follower, 0 : Requested, 1 : Accepted")
     following_status: int = Field(..., description="Following Status, -1 : Not Following, 0 : Requested, 1 : Accepted")
 
+class UserInfoBase(BaseModel):
+    id: UUID4 = Field(..., description="User Id")
+    username: str = Field(..., description="Username")
+    profile_image_url: str | None= Field(None, description="Profile Image Url")
+
 class GetUsersResponse(BaseModel):
     total: int
-    items: list[UserRead]
+    items: list[UserInfoBase]
     next_cursor: int | None
 
-class UserSearch(UserRead):
+class UserSearch(UserInfoBase):
     is_following: bool = Field(..., description="Following Status")
     is_follower: bool = Field(..., description="Follower Status")
 
