@@ -53,17 +53,17 @@ class GetFollowInfoResponse(BaseModel):
     follower_status: int = Field(..., description="Follower Status, -1 : Not Follower, 0 : Requested, 1 : Accepted")
     following_status: int = Field(..., description="Following Status, -1 : Not Following, 0 : Requested, 1 : Accepted")
 
-class UserInfoBase(BaseModel):
+class UserInfo(BaseModel):
     id: UUID4 = Field(..., description="User Id")
     username: str = Field(..., description="Username")
     profile_image_url: str | None= Field(None, description="Profile Image Url")
 
 class GetUsersResponse(BaseModel):
     total: int
-    items: list[UserInfoBase]
+    items: list[UserInfo]
     next_cursor: int | None
 
-class UserSearch(UserInfoBase):
+class UserSearch(UserInfo):
     is_following: bool = Field(..., description="Following Status")
     is_follower: bool = Field(..., description="Follower Status")
 
