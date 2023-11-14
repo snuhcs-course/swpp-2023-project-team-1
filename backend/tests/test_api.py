@@ -336,8 +336,6 @@ async def test_get_my_info_correct():
     assert isinstance(response_data['bio'], str) or response_data['bio'] == None
     assert isinstance(response_data['profile_image_url'], str) or response_data['profile_image_url'] == None
 
-
-############## Patch my info necessary ##############
 @pytest.mark.asyncio
 async def test_patch_my_info_correct():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
@@ -345,32 +343,61 @@ async def test_patch_my_info_correct():
             'Authorization': 'Bearer {}'.format(access_token_1)
         }
 
-       # JSON data
         user_update_data = json.dumps({
             "username": "test1",
             "bio": "test1",
             "profile_image_url": "test1"
         })
-
-        # Prepare the multipart data
-        data = {
-            "user_update": (None, user_update_data, "application/json"),
+        
+        files = {
+            'user_update': (None, user_update_data, 'application/json'),
+            'file': ('test_image.png', open("tests/test_image.png", "rb"), 'image/png')
         }
 
-        # Add file to the data
-        with open("tests/test_image.png", "rb") as test_image_file:
-            data["file"] = ("test_image.png", test_image_file, "image/png")
+        response = await ac.patch(
+            "/api/user/me", 
+            headers=headers,
+            files=files)
 
-        # Send the PATCH request
-        response = await ac.patch("/api/user/me", headers=headers, data=data)
 
     assert response.status_code == 200
     response_data = response.json()
     assert isinstance(response_data['email'], str)  
     assert response_data['id'] == user_id_1
     assert response_data['username'] == username_1
-    assert isinstance(response_data['bio'], str) or response_data['bio'] == None
-    assert isinstance(response_data['profile_image_url'], str) or response_data['profile_image_url'] == None
+    assert response_data['bio'] == "test1"
+    assert isinstance(response_data['profile_image_url'], str)
+
+# @pytest.mark.asyncio
+# async def test_patch_my_info_duplicated_username_wrong():
+#     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+#         headers = {
+#             'Authorization': 'Bearer {}'.format(access_token_1)
+#         }
+
+#         user_update_data = json.dumps({
+#             "username": "test2",
+#             "bio": "test1",
+#             "profile_image_url": "test1"
+#         })
+        
+#         files = {
+#             'user_update': (None, user_update_data, 'application/json')
+#         }
+
+#         response = await ac.patch(
+#             "/api/user/me", 
+#             headers=headers,
+#             files=files)
+
+
+#     assert response.status_code == 400
+#     response_data = response.json()
+#     assert isinstance(response_data['email'], str)  
+#     assert response_data['id'] == user_id_1
+#     assert response_data['username'] == username_1
+#     assert response_data['bio'] == "test1"
+#     assert isinstance(response_data['profile_image_url'], str)
 
 
 @pytest.mark.asyncio
@@ -820,7 +847,7 @@ async def test_search_user_correct():
     assert response_data['total'] == 2
     assert response_data['items'][0]['id'] == user_id_1
     assert response_data['items'][0]['username'] == username_1
-    assert response_data['items'][0]['profile_image_url'] == None
+    assert isinstance(response_data['items'][0]['profile_image_url'], str)
     assert response_data['items'][0]['is_following'] == False
     assert response_data['items'][0]['is_follower'] == False
     assert response_data['items'][1]['id'] == user_id_2
