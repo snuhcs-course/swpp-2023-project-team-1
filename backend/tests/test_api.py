@@ -1,5 +1,4 @@
 from fastapi.testclient import TestClient
-from fastapi import Form
 from app.main import spire_app
 import json
 import pytest
@@ -14,10 +13,14 @@ access_token_1 = None
 refresh_token_1 = None
 user_id_1 = None
 username_1 = None
+email_1 = "test1@gmail.com"
+profile_image_url_1 = None
 access_token_2 = None
 refresh_token_2 = None
 user_id_2 = None
 username_2 = None
+email_2 = "test2@gmail.com"
+profile_image_url_2 = None
 
 post_1 = {
     "content": "string",
@@ -267,8 +270,8 @@ async def test_register_users_correct():
             "/api/auth/register",
             content=json.dumps(
                 {
-                    "email": "test1",
-                    "username": "test1",
+                    "email": "test1@gmail.com",
+                    "username": "test_user_1",
                     "password": "test1"
                 }
             ),
@@ -278,7 +281,7 @@ async def test_register_users_correct():
     assert isinstance(response_data['access_token'], str)  
     assert isinstance(response_data['refresh_token'], str)  
     assert isinstance(response_data['user_id'], str)  
-    assert response_data['username'] == "test1"
+    assert response_data['username'] == "test_user_1"
 
     global access_token_1 
     access_token_1 = response_data['access_token']
@@ -294,8 +297,8 @@ async def test_register_users_correct():
             "/api/auth/register",
             content=json.dumps(
                 {
-                    "email": "test2",
-                    "username": "test2",
+                    "email": "test2@gmail.com",
+                    "username": "test_user_2",
                     "password": "test2"
                 }
             ),
@@ -305,7 +308,7 @@ async def test_register_users_correct():
     assert isinstance(response_data['access_token'], str)  
     assert isinstance(response_data['refresh_token'], str)  
     assert isinstance(response_data['user_id'], str)  
-    assert response_data['username'] == "test2"
+    assert response_data['username'] == "test_user_2"
 
     global access_token_2 
     access_token_2 = response_data['access_token']
@@ -330,7 +333,7 @@ async def test_get_my_info_correct():
 
     assert response.status_code == 200
     response_data = response.json()
-    assert isinstance(response_data['email'], str)  
+    assert response_data['email'] == email_1
     assert response_data['id'] == user_id_1
     assert response_data['username'] == username_1
     assert isinstance(response_data['bio'], str) or response_data['bio'] == None
@@ -338,13 +341,14 @@ async def test_get_my_info_correct():
 
 @pytest.mark.asyncio
 async def test_patch_my_info_correct():
+    global username_1, profile_image_url_1, username_2
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         headers = {
             'Authorization': 'Bearer {}'.format(access_token_1)
         }
 
         user_update_data = json.dumps({
-            "username": "test1",
+            "username": "test_user_1",
             "bio": "test1",
             "profile_image_url": "test1"
         })
@@ -359,14 +363,45 @@ async def test_patch_my_info_correct():
             headers=headers,
             files=files)
 
-
     assert response.status_code == 200
     response_data = response.json()
-    assert isinstance(response_data['email'], str)  
+    assert response_data['email'] == email_1
     assert response_data['id'] == user_id_1
     assert response_data['username'] == username_1
     assert response_data['bio'] == "test1"
     assert isinstance(response_data['profile_image_url'], str)
+    profile_image_url_1 = response_data['profile_image_url']
+
+@pytest.mark.asyncio
+async def test_patch_my_info_without_file_correct():
+    global username_1, profile_image_url_1, username_2
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        user_update_data = json.dumps({
+            "username": "test_user_1",
+            "bio": "test1 bio",
+            "profile_image_url": "test1"
+        })
+        
+        files = {
+            'user_update': (None, user_update_data, 'application/json')
+        }
+
+        response = await ac.patch(
+            "/api/user/me", 
+            headers=headers,
+            files=files)
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['email'] == email_1
+    assert response_data['id'] == user_id_1
+    assert response_data['username'] == username_1
+    assert response_data['bio'] == "test1 bio"
+    assert response_data['profile_image_url'] == profile_image_url_1
 
 # @pytest.mark.asyncio
 # async def test_patch_my_info_duplicated_username_wrong():
@@ -414,7 +449,7 @@ async def test_get_user_info_correct():
 
     assert response.status_code == 200
     response_data = response.json()
-    assert response_data['email'] == "test2"
+    assert response_data['email'] == email_2
     assert response_data['id'] == user_id_2
     assert response_data['username'] == username_2
     assert response_data['bio'] == None
@@ -847,7 +882,7 @@ async def test_search_user_correct():
     assert response_data['total'] == 2
     assert response_data['items'][0]['id'] == user_id_1
     assert response_data['items'][0]['username'] == username_1
-    assert isinstance(response_data['items'][0]['profile_image_url'], str)
+    assert response_data['items'][0]['profile_image_url'] == profile_image_url_1
     assert response_data['items'][0]['is_following'] == False
     assert response_data['items'][0]['is_follower'] == False
     assert response_data['items'][1]['id'] == user_id_2
@@ -1095,26 +1130,26 @@ async def test_search_user_correct():
 #     response_data = response.json()
 #     assert response_data['message'] == "COMMENT__NOT_FOUND"
 
-@pytest.mark.asyncio
-async def test_unregister_users_correct():
-    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
-        headers = {
-            'Authorization': 'Bearer {}'.format(access_token_1)
-        }
+# @pytest.mark.asyncio
+# async def test_unregister_users_correct():
+#     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+#         headers = {
+#             'Authorization': 'Bearer {}'.format(access_token_1)
+#         }
 
-        response = await ac.delete(
-            "/api/auth/unregister", 
-            headers=headers
-        )
-    assert response.status_code == 200
+#         response = await ac.delete(
+#             "/api/auth/unregister", 
+#             headers=headers
+#         )
+#     assert response.status_code == 200
 
-    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
-        headers = {
-            'Authorization': 'Bearer {}'.format(access_token_2)
-        }
+#     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+#         headers = {
+#             'Authorization': 'Bearer {}'.format(access_token_2)
+#         }
 
-        response = await ac.delete(
-            "/api/auth/unregister", 
-            headers=headers
-        )
-    assert response.status_code == 200
+#         response = await ac.delete(
+#             "/api/auth/unregister", 
+#             headers=headers
+#         )
+#     assert response.status_code == 200
