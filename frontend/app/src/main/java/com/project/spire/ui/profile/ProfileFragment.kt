@@ -30,6 +30,8 @@ class ProfileFragment : Fragment() {
 
     private lateinit var profileViewModel: ProfileViewModel
 
+    private var TEST_USER_ID = "d2fcfe21-82fa-4008-835d-16c39eca26d7" //"92142569-d579-44e7-bf06-102770db6eb4"
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,6 +44,10 @@ class ProfileFragment : Fragment() {
 
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,16 +77,42 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        profileViewModel.followers.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.followerButton.text = "$it ${resources.getString(R.string.profile_followers)}"
+            }
+        }
+
+        profileViewModel.following.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.followingButton.text = "$it ${resources.getString(R.string.profile_following)}"
+            }
+        }
+
         val largeButton = binding.profileLargeButton
-        profileViewModel.isMyProfile.observe(viewLifecycleOwner) {
+        profileViewModel.isMyProfile.observe(viewLifecycleOwner) { it ->
             if (it) {
                 largeButton.text = getString(R.string.profile_edit_btn)
                 largeButton.background = resources.getDrawable(R.drawable.bg_profile_btn_grey, null)
                 largeButton.setTextColor(resources.getColor(R.color.grey_600, null))
             } else {
-                largeButton.text = getString(R.string.profile_follow)
-                largeButton.background = resources.getDrawable(R.drawable.bg_profile_btn_blue, null)
-                largeButton.setTextColor(resources.getColor(R.color.blue_500, null))
+                profileViewModel.followingState.observe(viewLifecycleOwner) { it->
+                    if (it == -1) {
+                        largeButton.text = getString(R.string.profile_follow)
+                        largeButton.background = resources.getDrawable(R.drawable.bg_profile_btn_blue, null)
+                        largeButton.setTextColor(resources.getColor(R.color.blue_500, null))
+                    }
+                    else if (it == 0) {
+                        largeButton.text = getString(R.string.profile_follow_requested)
+                        largeButton.background = resources.getDrawable(R.drawable.bg_profile_btn_grey, null)
+                        largeButton.setTextColor(resources.getColor(R.color.grey_600, null))
+                    }
+                    else {
+                        largeButton.text = getString(R.string.profile_following)
+                        largeButton.background = resources.getDrawable(R.drawable.bg_profile_btn_grey, null)
+                        largeButton.setTextColor(resources.getColor(R.color.grey_600, null))
+                    }
+                }
             }
         }
 
@@ -89,6 +121,17 @@ class ProfileFragment : Fragment() {
                 startActivity(Intent(requireContext(), EditProfileActivity::class.java))
             } else {
                 // TODO: Follow user
+                profileViewModel.followRequest(null)
+            }
+        }
+
+        binding.testButton.setOnClickListener {
+            if (profileViewModel.isMyProfile.value == true) {
+                profileViewModel.getUserInfo(TEST_USER_ID)
+                binding.testButton.text = "My Profile"
+            } else {
+                profileViewModel.getMyInfo()
+                binding.testButton.text = "Test Profile"
             }
         }
     }
