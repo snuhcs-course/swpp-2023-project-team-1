@@ -131,10 +131,26 @@ async def get_list_with_like_cnt_comment_cnt_by_user_id(
 
 
 @Transactional()
-async def get_by_id(id: UUID4, session: AsyncSession):
-    res = await session.execute(select(Post).where(Post.id == id))
-    return res.scalar_one()
+async def get_author_by_post_id(post_id: UUID4, session: AsyncSession):
+    res = await session.execute(
+        select(Post)
+        .join(Post.user, isouter=True)
+        .options(contains_eager(Post.user).load_only(User.id, User.username, User.profile_image_url))
+        .where(Post.id == post_id)
+    )
 
+    return res.scalar_one().user_id
+
+@Transactional()
+async def get_author_by_comment_id(comment_id: UUID4, session: AsyncSession):
+    res = await session.execute(
+        select(Comment)
+        .join(Comment.user, isouter=True)
+        .options(contains_eager(Comment.user).load_only(User.id, User.username, User.profile_image_url))
+        .where(Comment.id == comment_id)
+    )
+
+    return res.scalar_one().user_id
 
 @Transactional()
 async def create(post: dict, session: AsyncSession):
@@ -156,7 +172,7 @@ async def create_image(image: dict, session: AsyncSession):
 async def update_by_id(id: UUID4, post_data: dict, session: AsyncSession) -> Post:
     stmt = update(Post).where(Post.id == id).values(**post_data)
     await session.execute(stmt)
-    res = await get_with_like_cnt_by_id(id, session=session)
+    res = await get_with_like_cnt_comment_cnt_by_id(id, session=session)
     return res
 
 
@@ -168,18 +184,30 @@ async def delete_by_id(id: UUID4, session: AsyncSession):
 
 
 @Transactional()
-async def get_with_like_cnt_by_id(id: UUID4, session: AsyncSession, user_id: UUID4 | None = None):
+async def get_with_like_cnt_comment_cnt_by_id(id: UUID4, session: AsyncSession, user_id: UUID4 | None = None):
     stmt = (
         select(Post)
         .join(Post.user, isouter=True)
         .options(contains_eager(Post.user).load_only(User.id, User.username, User.profile_image_url))
         .join_from(Post, PostLike, isouter=True, onclause=Post.id == PostLike.post_id)
+        .join_from(Post, Comment, isouter=True, onclause=Post.id == Comment.post_id)
         .options(
             with_expression(
                 Post.like_cnt,
                 func.count(
                     case(
                         (PostLike.is_liked == 1, PostLike.id),
+                        else_=None,
+                    ).distinct()
+                ),
+            )
+        )
+        .options(
+            with_expression(
+                Post.comment_cnt,
+                func.count(
+                    case(
+                        (Comment.id != None, Comment.id),
                         else_=None,
                     ).distinct()
                 ),
@@ -216,17 +244,14 @@ async def get_like_by_post_id_and_user_id(p_id: UUID4, u_id: UUID4, session: Asy
 
 
 @Transactional()
-async def create_or_update_like(post_id: UUID4, user_id: UUID4, like: int, session: AsyncSession):
-    post_like = await get_like_by_post_id_and_user_id(post_id, user_id, session=session)
-
+async def create_or_update_like(post_id: UUID4, user_id: UUID4, session: AsyncSession) -> PostLike:
+    post_like: PostLike = await get_like_by_post_id_and_user_id(post_id, user_id, session=session)
+    
     if post_like is None:
-        # FIXME: mypy
-        post_like = PostLike(post_id=post_id, user_id=user_id, is_liked=like)  # type: ignore
+        post_like = PostLike(post_id=post_id, user_id=user_id, is_liked=True)
         session.add(post_like)
     else:
-        if post_like.is_liked == like:
-            return post_like
-        post_like.is_liked = like
+        post_like.is_liked = not post_like.is_liked
 
     await session.commit()
     await session.refresh(post_like)

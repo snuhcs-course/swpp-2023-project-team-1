@@ -12,7 +12,6 @@ from app.repository import user
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from app.core.exceptions.base import (
     BadRequestException,
-    ForbiddenException,
     NotFoundException,
 )
 from app.utils.ecs_log import logger
@@ -190,3 +189,14 @@ def upload_profile_image_to_s3(file: UploadFile, user_id: UUID4) -> str:
         logger.error(e)
         raise e
     return img_url
+
+
+async def check_username_by_id(
+    username: str,
+    user_id: UUID4,
+    session: AsyncSession,
+) -> bool:
+    result = await session.execute(select(User.id).where(User.username == username).where(User.id != user_id)
+)
+    id: UUID4 | None = result.scalars().first()
+    return id is not None

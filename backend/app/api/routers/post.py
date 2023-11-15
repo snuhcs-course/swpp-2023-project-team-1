@@ -20,11 +20,15 @@ from app.services.post_service import PostService
 from app.utils.json_decoder import normalize_post
 from app.utils.user import get_user_id_from_request
 from app.utils.pagination import limit_offset_query
+from app.services.notification_service import NotificationService
+from app.models.user import User
+from app.schemas.notification import NotificationBase, NotificationType
+from app.models.post import CommentLike, PostLike
 
 post_router = APIRouter()
 
 @post_router.get(
-    "/",
+    "",
     status_code=200,
     response_model=GetPostsResponse,
     summary="Get posts with pagination",
@@ -75,7 +79,7 @@ async def get_my_posts(
 
 
 @post_router.get(
-    "/{user_id}",
+    "/user/{user_id}",
     status_code=200,
     response_model=GetPostsResponse,
     summary="Get other user posts with pagination",
@@ -120,7 +124,7 @@ async def create_post(
         post_data=post,
     )
 
-    image_url = await post_svc.create_image(
+    image_url, origin_image_url, mask_image_url = await post_svc.create_image(
         user_id=user_id,
         post_id=_post.id,
         image_data=image
@@ -131,7 +135,9 @@ async def create_post(
         user_id=user_id,
         post_data=PostUpdate(
             content=_post.content,
-            image_url=image_url
+            image_url=image_url,
+            origin_image_url=origin_image_url,
+            mask_image_url=mask_image_url
         )
     )
 
@@ -198,13 +204,29 @@ async def delete_post(
     description="Toggle post like",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))]
 )
-async def toggle_post_like(post_id: UUID4, req: Request):
+async def toggle_post_like(
+    post_id: UUID4,     
+    user_id: UUID4 = Depends(get_user_id_from_request),
+):
     post_svc = PostService()
-    post_like = await post_svc.toggle_post_like(post_id=post_id, user_id=req.user.id)
+    notification_svc = NotificationService()
 
-    return {
-        "message": f"User {post_like.user_id} toggled like Post {post_like.post_id} successfully"
-    }
+    post_like: PostLike = await post_svc.toggle_post_like(post_id=post_id, user_id=user_id)
+
+    post_author_id = await post_svc.get_post_author_by_id(post_id)
+
+    if post_author_id != user_id and post_like.is_liked:
+        await notification_svc.create_or_update_notification(
+            notification_data=NotificationBase(
+                notification_type=NotificationType.NEW_POST_LIKE,
+                read_at=None,
+            ),
+            sender_id=user_id,
+            recipient_id=post_author_id,
+            post_id=post_id,
+        )
+
+    return post_like
 
 
 @post_router.get(
@@ -240,11 +262,28 @@ async def create_comment(
     user_id: UUID4 = Depends(get_user_id_from_request),
 ):
     post_svc = PostService()
-    return await post_svc.create_comment(
+    notification_svc = NotificationService()
+    
+    new_comment = await post_svc.create_comment(
         post_id,
         comment,
         user_id
     )
+
+    post_author_id = await post_svc.get_post_author_by_id(post_id)
+
+    if post_author_id != user_id:
+        await notification_svc.create_or_update_notification(
+            notification_data=NotificationBase(
+                notification_type=NotificationType.NEW_COMMENT,
+                read_at=None,
+            ),
+            sender_id=user_id,
+            recipient_id=post_author_id,
+            post_id=post_id,
+        )
+
+    return new_comment
 
 @post_router.patch(
     "/comment/{comment_id}",
@@ -271,7 +310,6 @@ async def update_comment_by_id(
     description="Delete Comment",
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
 )
-
 async def delete_comment(
     req: Request,
     comment_id: UUID4
@@ -282,3 +320,34 @@ async def delete_comment(
         request_user_id = req.user.id
     )
     return {"message": f"Comment {comment_id} deleted successfully"}
+
+@post_router.post(
+    "/comment/{comment_id}/like",
+    summary="Toggle Comment Like",
+    description="Toggle comment like",
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))]
+)
+async def toggle_comment_like(
+    post_id: UUID4,
+    comment_id: UUID4,
+    user_id: UUID4 = Depends(get_user_id_from_request),
+):
+    post_svc = PostService()
+    notification_svc = NotificationService()
+
+    comment_like: CommentLike = await post_svc.toggle_comment_like(comment_id=comment_id, user_id=user_id)
+
+    comment_author_id = await post_svc.get_comment_author_by_id(comment_id)
+
+    if comment_author_id != user_id and comment_like.is_liked:
+        await notification_svc.create_or_update_notification(
+            notification_data=NotificationBase(
+                notification_type=NotificationType.NEW_COMMENT_LIKE,
+                read_at=None,
+            ),
+            sender_id=user_id,
+            recipient_id=comment_author_id,
+            post_id=post_id,
+        )
+    
+    return comment_like

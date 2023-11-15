@@ -2,6 +2,7 @@ import time
 from fastapi.encoders import jsonable_encoder
 import ujson
 from app.models.post import Post
+from app.models.notification import Notification
 
 
 def load_posts_json_fields(
@@ -16,6 +17,16 @@ def load_posts_json_fields(
 
 
 def normalize_post(item: list[Post] | Post) -> dict:
+    if type(item) == list:
+        d = jsonable_encoder(item)
+        load_posts_json_fields(d)
+        return d
+    else:
+        d = jsonable_encoder(item)
+        load_posts_json_fields([d])
+        return d
+
+def normalize_notification(item: list[Notification] | Notification) -> dict:
     if type(item) == list:
         d = jsonable_encoder(item)
         load_posts_json_fields(d)
