@@ -24,6 +24,7 @@ from app.services.notification_service import NotificationService
 from app.models.user import User
 from app.schemas.notification import NotificationBase, NotificationType
 from app.models.post import CommentLike, PostLike
+from app.core.exceptions.post import InvalidPostImageException
 
 post_router = APIRouter()
 
@@ -119,29 +120,34 @@ async def create_post(
     ):
     post_svc = PostService()
 
-    _post = await post_svc.create_post(
-        user_id=user_id,
-        post_data=post,
-    )
-
-    image_url, origin_image_url, mask_image_url = await post_svc.create_image(
-        user_id=user_id,
-        post_id=_post.id,
-        image_data=image
-    )
-
-    new_post = await post_svc.update_post_by_id(
-        id=_post.id,
-        user_id=user_id,
-        post_data=PostUpdate(
-            content=_post.content,
-            image_url=image_url,
-            origin_image_url=origin_image_url,
-            mask_image_url=mask_image_url
+    try:
+        _post = await post_svc.create_post(
+            user_id=user_id,
+            post_data=post,
         )
-    )
 
-    return normalize_post(new_post)
+        image_url, origin_image_url, mask_image_url = await post_svc.create_image(
+            user_id=user_id,
+            post_id=_post.id,
+            image_data=image
+        )
+
+        new_post = await post_svc.update_post_by_id(
+            id=_post.id,
+            user_id=user_id,
+            post_data=PostUpdate(
+                content=_post.content,
+                image_url=image_url,
+                origin_image_url=origin_image_url,
+                mask_image_url=mask_image_url
+            )
+        )
+
+        return normalize_post(new_post)
+    
+    except Exception as e:
+        await post_svc.delete_post_by_id(_post.id, user_id)
+        raise InvalidPostImageException
 
 
 @post_router.get(
