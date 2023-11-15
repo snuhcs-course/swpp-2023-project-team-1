@@ -2,7 +2,7 @@ from fastapi import BackgroundTasks
 from fastapi.responses import JSONResponse
 from jinja2 import Environment, PackageLoader, select_autoescape
 from pydantic import UUID4
-from sqlalchemy import or_, select, and_
+from sqlalchemy import or_, select, and_, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.exceptions.user import (
     DuplicateEmailOrUsernameException,
@@ -103,10 +103,8 @@ class AuthService:
 
 
 async def check_user_email(email: str, session: AsyncSession):
-    print("email", email)
     result = await session.execute(select(User.id).where(User.email == email))
     id: UUID4 | None = result.scalars().first()
-    print("id", id)
     return id is not None
 
 
@@ -123,7 +121,6 @@ env = Environment(
     loader=PackageLoader("app", "templates"),
     autoescape=select_autoescape(["html", "xml"]),
 )
-
 
 conf = ConnectionConfig(
     MAIL_USERNAME=settings.MAIL_USERNAME,
@@ -169,3 +166,34 @@ async def send_email_in_background(
     background_tasks.add_task(fm.send_message, message)
 
     return JSONResponse(status_code=200, content={"message": "email has been sent"})
+
+
+async def verify_password_by_id(user_id: UUID4, password: str, session: AsyncSession) -> bool:
+    
+    result = await session.execute(select(User.hashed_password).where(User.id == user_id))
+
+    hashed_password: str | None = result.scalars().first()
+
+    if not hashed_password:
+        raise UserNotFoundException("User not found")
+
+    return PasswordHelper.verify_password(password, hashed_password)
+
+async def change_password_by_id(user_id: UUID4, password: str, session: AsyncSession) -> None:
+
+    try:
+        hashed_password = PasswordHelper.get_hashed_password(password)
+        
+        await session.execute(
+            update(User).where(User.id == user_id).values(hashed_password=hashed_password)
+        )
+
+        await session.commit()
+
+    except Exception as e:
+        print(f"An error occurred while changing the password: {str(e)}")
+        await session.rollback()
+        raise
+    
+    return
+

@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import binascii
 from datetime import datetime
 import io
 from app.utils.ecs_log import logger
@@ -7,9 +8,9 @@ from pydantic import UUID4
 from sqlalchemy import select, and_
 from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.post import Post
+from app.models.post import CommentLike, Post
 from app.schemas.post import ImageCreate, PostCreate, PostUpdate, CommentCreate, CommentUpdate
-from app.core.exceptions.post import PostNotFoundException, CommentNotFoundException, UserNotOwnerException
+from app.core.exceptions.post import InvalidPostImageException, PostNotFoundException, CommentNotFoundException, UserNotOwnerException
 from app.models.post import Comment, PostLike
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from app.core.exceptions.base import (
@@ -17,10 +18,11 @@ from app.core.exceptions.base import (
     ForbiddenException,
     NotFoundException,
 )
-from sqlalchemy import and_, delete, select, func, case, update
+from sqlalchemy import and_, select
 from app.repository import post
 from app.repository import comment
 from app.utils.aws import s3_client, bucket_name
+from app.models.user import User
 
 class PostService:
     @Transactional()
@@ -77,9 +79,18 @@ class PostService:
         image_data: ImageCreate,
         session: AsyncSession,
         **kwargs
-    ) -> Post:
+    ) -> tuple[str , str | None, str | None]:
         
-        img_url = upload_post_image_to_s3(post_id, image_data.modified_image)
+        img_url = upload_post_image_to_s3(post_id, image_data.modified_image, "modified")
+
+        origin_img_url = None
+        mask_img_url = None
+
+        if image_data.origin_image:
+            origin_img_url = upload_post_image_to_s3(post_id, image_data.origin_image, "origin")
+
+        if image_data.mask_image:
+            mask_img_url = upload_post_image_to_s3(post_id, image_data.mask_image, "mask")
 
         image_dict = image_data.create_dict(user_id, post_id)
 
@@ -89,13 +100,13 @@ class PostService:
         except IntegrityError as e:
             raise BadRequestException(str(e.orig)) from e
 
-        return img_url
+        return img_url, origin_img_url, mask_img_url
     
     @Transactional()
     async def get_post_by_id(self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs) -> Post:
 
         try:
-            return await post.get_with_like_cnt_by_id(id=post_id, user_id=user_id)
+            return await post.get_with_like_cnt_comment_cnt_by_id(id=post_id, user_id=user_id)
         
         except NoResultFound as e:
             raise PostNotFoundException from e
@@ -115,7 +126,7 @@ class PostService:
             raise PostNotFoundException from e
         
         if post_obj.user_id != user_id:
-            raise ForbiddenException("You are not authorized to delete this post")
+            raise UserNotOwnerException("You are not authorized to update this post")
         
         post_dict = post_data.create_dict()
 
@@ -134,7 +145,7 @@ class PostService:
             raise PostNotFoundException from e
         
         if post_obj.user_id != request_user_id:
-                raise ForbiddenException("You are not authorized to delete this post")
+                raise UserNotOwnerException("You are not authorized to delete this post")
 
         await post.delete_by_id(post_id)
 
@@ -142,33 +153,13 @@ class PostService:
     async def toggle_post_like(
         self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs
     ) -> PostLike:
-        result = await session.execute(
-            select(PostLike).where(
-                and_(PostLike.post_id == post_id, PostLike.user_id == user_id)
-            )
-        )
-    async def toggle_post_like(
-        self, post_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs
-    ) -> PostLike:
-        result = await session.execute(
-            select(PostLike).where(
-                and_(PostLike.post_id == post_id, PostLike.user_id == user_id)
-            )
-        )
-
-        post_like: PostLike | None = result.scalars().first()
-
-        if post_like is None:
-            post_like = PostLike(post_id=post_id, user_id=user_id, is_liked=True)
-            session.add(post_like)
-            await session.commit()
-            return post_like
-
-        else:
-            post_like.is_liked = not (post_like.is_liked)
-            post_like.is_liked = not (post_like.is_liked)
-            await session.commit()
-            return post_like
+        try:
+            post_like_obj = await post.create_or_update_like(post_id, user_id)
+            
+            return post_like_obj
+        except IntegrityError as e:
+            raise BadRequestException(str(e.orig)) from e
+        
 
     @Transactional()
     async def get_comments_by_post_id(self, post_id: UUID4, user_id: UUID4 | None, limit: int, offset: int, session: AsyncSession):
@@ -179,7 +170,7 @@ class PostService:
             )
 
         except NoResultFound as e:
-            raise NotFoundException("Post not found") from e
+            raise PostNotFoundException("Post not found") from e
 
         next_cursor = offset + len(comments) if total and total > offset + len(comments) else None
         return total, comments, next_cursor
@@ -218,7 +209,7 @@ class PostService:
             raise CommentNotFoundException from e
         
         if comment_obj.user_id != user_id:
-            raise ForbiddenException("You are not authorized to delete this comment")
+            raise UserNotOwnerException("You are not authorized to delete this comment")
         
         comment_dict = comment_data.dict()
 
@@ -246,17 +237,51 @@ class PostService:
         await session.commit()
         return comment
 
+    @Transactional()
+    async def toggle_comment_like(
+        self, comment_id: UUID4, user_id: UUID4, session: AsyncSession, **kwargs
+    ) -> CommentLike:
+        try:
+            comment_like_obj = await comment.create_or_update_like(comment_id, user_id)
+            return comment_like_obj
+        except IntegrityError as e:
+            raise BadRequestException(str(e.orig)) from e
+        
 
+    @Transactional()
+    async def get_post_author_by_id(self, post_id: UUID4, session: AsyncSession):
+        try:
+            return await post.get_author_by_post_id(post_id)
+        except NoResultFound as e:
+            raise NotFoundException("Post not found") from e
+        
+    @Transactional()
+    async def get_comment_author_by_id(self, comment_id: UUID4, session: AsyncSession):
+        try:
+            return await post.get_author_by_comment_id(comment_id)
+        except NoResultFound as e:
+            raise CommentNotFoundException("Comment not found") from e
+    
+        
 def upload_post_image_to_s3(
     post_id: UUID4,
     image_base64: str,
+    image_type: str,
     file_extension: str = "png",
     ):
     img_url = None
-    try:
-        image_bytes = base64.b64decode(image_base64)
 
-        image_key = f"post_image/{post_id}/{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}"
+    try:
+        # Attempt to decode the base64 string
+        image_bytes = base64.b64decode(image_base64)
+    except binascii.Error as e:
+        # Handle the case where image_base64 is not a valid base64 string
+        logger.error(f"Invalid base64 format: {e}")
+        raise InvalidPostImageException("Invalid base64 format") from e
+
+    try:
+
+        image_key = f"post_image/{post_id}/{image_type}/{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}"
 
         with io.BytesIO(image_bytes) as image_file:
         # Upload the image to the S3 bucket

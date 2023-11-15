@@ -15,13 +15,14 @@ class AuthorRead(BaseModel):
 class PostBase(BaseModel):
     content: str = Field(..., description="Post Content")
     image_url: str | None = Field(None, description="Post Image Url")
+    origin_image_url: str | None = Field(None, description="Post Origin Image Url")
+    mask_image_url: str | None = Field(None, description="Post Mask Image Url")
 
 class ImageBase(BaseModel):
     modified_image: str = Field(..., description="Modified Image Base64")
 
-class PostCreate(PostBase):
+class PostCreate(BaseModel):
     content: Annotated[str, Form(min_length=1, max_length=1000)]
-    image_url: str | None = Field(None, description="Post Image Url")
 
     def create_dict(self, user_id: UUID4) -> dict:
         d = self.model_dump(exclude_unset=True)
@@ -30,8 +31,8 @@ class PostCreate(PostBase):
         return d
 
 class ImageCreate(ImageBase):
-    origin_image: str = Field(..., description="Original Image Base64")
-    mask_image: str = Field(..., description="Mask Image Base64")
+    origin_image: str | None = Field(None, description="Original Image Base64")
+    mask_image: str | None = Field(None, description="Mask Image Base64")
     modified_image: str = Field(..., description="Modified Image Base64")
     prompt: str | None = Field(None, description="Prompt")
 
@@ -45,6 +46,8 @@ class ImageCreate(ImageBase):
 class PostUpdate(BaseModel):
     content: str | None = Field(None, min_length=1, max_length=1000)
     image_url: str | None = Field(None, description="Post Image Url")
+    origin_image_url: str | None = Field(None, description="Post Origin Image Url")
+    mask_image_url: str | None = Field(None, description="Post Mask Image Url")
 
     def create_dict(self) -> dict:
         d = self.model_dump(exclude_unset=True)
@@ -65,7 +68,6 @@ class PostResponse(PostRead):
     like_cnt: int | None = 0
     comment_cnt: int | None = 0
     is_liked: int = -1
-
 
 
 class CommentBase(BaseModel):
@@ -90,7 +92,6 @@ class CommentRead(CommentBase):
 
 class CommentResponse(CommentRead):
     like_cnt: int | None = 0
-    comment_cnt: int | None = 0
     is_liked: int | None = -1
 
 class GetCommentsResponse(BaseModel):

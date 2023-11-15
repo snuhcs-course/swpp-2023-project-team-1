@@ -8,10 +8,6 @@ from app.core.fastapi.dependency.permission import (
     AllowAll
 )
 from app.schemas.user import (
-    CheckUserInfoResponse,
-    LoginRequest,
-    LoginResponse,
-    UserCreate,
     UserRead,
     UserUpdate,
     GetUsersResponse,
@@ -23,6 +19,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.user_service import UserService, get_my_info_by_id, update_my_info_by_id, upload_profile_image_to_s3
 from app.utils.pagination import limit_offset_query
 from app.utils.user import get_user_id_from_request
+from app.services.user_service import check_username_by_id
+from app.core.exceptions.user import DuplicateEmailOrUsernameException
 
 
 user_router = APIRouter()
@@ -61,6 +59,12 @@ async def patch_my_info(
         user_update.profile_image_url = img_url
     else:
         del user_update.profile_image_url
+
+    if user_update.username is not None:
+        username_exists = await check_username_by_id(user_update.username, user_id, session)
+        if username_exists:
+            raise DuplicateEmailOrUsernameException("Username already exists")
+
 
     user = await update_my_info_by_id(user_id, user_update, session)
     return user
