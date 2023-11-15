@@ -170,7 +170,7 @@ class PostService:
             )
 
         except NoResultFound as e:
-            raise NotFoundException("Post not found") from e
+            raise PostNotFoundException("Post not found") from e
 
         next_cursor = offset + len(comments) if total and total > offset + len(comments) else None
         return total, comments, next_cursor
@@ -209,7 +209,7 @@ class PostService:
             raise CommentNotFoundException from e
         
         if comment_obj.user_id != user_id:
-            raise ForbiddenException("You are not authorized to delete this comment")
+            raise UserNotOwnerException("You are not authorized to delete this comment")
         
         comment_dict = comment_data.dict()
 
@@ -260,7 +260,7 @@ class PostService:
         try:
             return await post.get_author_by_comment_id(comment_id)
         except NoResultFound as e:
-            raise NotFoundException("Post not found") from e
+            raise CommentNotFoundException("Comment not found") from e
     
         
 def upload_post_image_to_s3(

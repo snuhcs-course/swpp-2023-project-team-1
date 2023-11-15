@@ -11,6 +11,7 @@ from app.repository import notification
 from app.models.notification import Notification
 from app.schemas.notification import NotificationBase
 from sqlalchemy.exc import IntegrityError, NoResultFound
+from app.core.exceptions.notification import NotificationNotFoundException
 
 class NotificationService:
     @Transactional()
@@ -22,7 +23,7 @@ class NotificationService:
                 notification.get_list_by_user_id(limit, offset, user_id),
             )
         except NoResultFound as e:
-            raise NotFoundException("Notifications not found") from e
+            raise NotificationNotFoundException("Notifications not found") from e
 
         next_cursor = offset + len(notifications) if total and total > offset + len(notifications) else None
 
