@@ -1,9 +1,9 @@
-from sqlalchemy import or_, select, and_
+from sqlalchemy import or_, select, and_, update
 from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.code import Code
 from app.core.exceptions import DuplicateEmailOrUsernameException, CodeNotFoundException
-
+from app.repository import code
 
 class CodeService:
     @Transactional()
@@ -17,15 +17,17 @@ class CodeService:
 
 
             if is_exist:
-                raise DuplicateEmailOrUsernameException
+                return await self.patch_code(email=email, _code=code)
+            
+            else:
+                new_code = Code(email=email, code=code)
 
-            new_code = Code(email=email, code=code)
-            session.add(new_code)
-            await session.commit()
+                session.add(new_code)
 
-            await session.refresh(new_code)
+                await session.commit()
+                await session.refresh(new_code)
 
-            return new_code
+                return new_code
 
         except Exception as e:
             await session.rollback()
@@ -51,3 +53,7 @@ class CodeService:
         await session.commit()
 
         return _code
+
+    @Transactional()
+    async def patch_code(self, email: str, _code: int, session: AsyncSession) -> Code:
+        return await code.update_code_by_email(email=email, code=_code, session=session)
