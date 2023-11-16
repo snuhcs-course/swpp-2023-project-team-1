@@ -1076,35 +1076,35 @@ async def test_create_post_only_with_prompt_correct():
     assert response_data['is_liked'] == -1
     post_2['is_liked'] = response_data['is_liked']
 
-# @pytest.mark.asyncio
-# async def test_create_post_invlaid_post_image_wrong():
-#     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
-#         headers = {
-#             'Authorization': 'Bearer {}'.format(access_token_1)
-#         }
+@pytest.mark.asyncio
+async def test_create_post_invlaid_post_image_wrong():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
 
-#         response = await ac.post(
-#             "/api/post",
-#             headers=headers, 
-#             content=json.dumps(
-#                 {
-#                     "post": {
-#                         "content": "test",
-#                         "image_url": "test"
-#                     },
-#                     "image": {
-#                         "modified_image": "string",
-#                         "origin_image": "string",
-#                         "mask_image": "string",
-#                         "prompt": "test"
-#                     }
-#                 }
-#             ),
-#         )
+        response = await ac.post(
+            "/api/post",
+            headers=headers, 
+            content=json.dumps(
+                {
+                    "post": {
+                        "content": "test",
+                        "image_url": "test"
+                    },
+                    "image": {
+                        "modified_image": "string",
+                        "origin_image": "string",
+                        "mask_image": "string",
+                        "prompt": "test"
+                    }
+                }
+            ),
+        )
 
-#     assert response.status_code == 400
-#     response_data = response.json()
-#     assert response_data['message'] == "INVALID__POST__IMAGE" # bug
+    assert response.status_code == 400
+    response_data = response.json()
+    assert response_data['message'] == "INVALID__POST__IMAGE" # bug
 
 @pytest.mark.asyncio
 async def test_get_post_correct():
@@ -1188,22 +1188,23 @@ async def test_get_other_user_posts_correct():
     assert isinstance(response_data['items'], list)
     assert response_data['next_cursor'] == None
 
-@pytest.mark.asyncio
-async def test_get_other_user_posts_not_found_wrong():
-    global post_1
-    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
-        headers = {
-            'Authorization': 'Bearer {}'.format(access_token_1)
-        }
+# # unnecssary
+# @pytest.mark.asyncio
+# async def test_get_other_user_posts_not_found_wrong():
+#     global post_1
+#     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+#         headers = {
+#             'Authorization': 'Bearer {}'.format(access_token_1)
+#         }
 
-        response = await ac.get(
-            "/api/post/user/" + fake_uuid4,
-            headers=headers
-        )
+#         response = await ac.get(
+#             "/api/post/user/" + fake_uuid4,
+#             headers=headers
+#         )
 
-    assert response.status_code == 404
-    response_data = response.json()
-    assert response_data['message'] == "USER__NOT_FOUND" # bug
+#     assert response.status_code == 404
+#     response_data = response.json()
+#     assert response_data['message'] == "USER__NOT_FOUND"
 
 @pytest.mark.asyncio
 async def test_get_posts_correct():
@@ -1391,23 +1392,24 @@ async def test_like_comment_toggle_correct():
     response_data = response.json()
     print(response_data)
 
-@pytest.mark.asyncio
-async def test_like_comment_not_found_wrong():
-    global comment_id
-    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
-        headers = {
-            'Authorization': 'Bearer {}'.format(access_token_2)
-        }
+# # unnecssary
+# @pytest.mark.asyncio
+# async def test_like_comment_not_found_wrong():
+#     global comment_id
+#     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+#         headers = {
+#             'Authorization': 'Bearer {}'.format(access_token_2)
+#         }
 
-        response = await ac.post(
-            "/api/post/comment/" + fake_uuid4 + "/like",
-            headers=headers, 
-            params={"post_id": post_1['id']}
-        )
+#         response = await ac.post(
+#             "/api/post/comment/" + fake_uuid4 + "/like",
+#             headers=headers, 
+#             params={"post_id": post_1['id']}
+#         )
 
-    assert response.status_code == 404
-    response_data = response.json()
-    assert response_data['message'] == "COMMENT__NOT_FOUND"
+#     assert response.status_code == 404
+#     response_data = response.json()
+#     assert response_data['message'] == "COMMENT__NOT_FOUND"
 
 @pytest.mark.asyncio
 async def test_get_comments_correct():
@@ -1428,22 +1430,23 @@ async def test_get_comments_correct():
     assert isinstance(response_data['items'], list)
     assert response_data['next_cursor'] == None
 
-@pytest.mark.asyncio
-async def test_get_comments_not_found_wrong():
-    global comment_id
-    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
-        headers = {
-            'Authorization': 'Bearer {}'.format(access_token_1)
-        }
+# # unnecssary
+# @pytest.mark.asyncio
+# async def test_get_comments_not_found_wrong():
+#     global comment_id
+#     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+#         headers = {
+#             'Authorization': 'Bearer {}'.format(access_token_1)
+#         }
 
-        response = await ac.get(
-            "/api/post/" + fake_uuid4 + "/comment",
-            headers=headers
-        )
+#         response = await ac.get(
+#             "/api/post/" + fake_uuid4 + "/comment",
+#             headers=headers
+#         )
 
-    assert response.status_code == 404
-    response_data = response.json()
-    assert response_data['message'] == "POST__NOT_FOUND"
+#     assert response.status_code == 404
+#     response_data = response.json()
+#     assert response_data['message'] == "POST__NOT_FOUND"
 
 @pytest.mark.asyncio
 async def test_get_notifications_correct():
