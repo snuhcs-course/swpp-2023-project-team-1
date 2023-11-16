@@ -47,12 +47,14 @@ class InferenceViewModel(
     private val _inferenceResult = MutableLiveData<ArrayList<Bitmap>?>().apply { value = null }
     private val _previousInference = MutableLiveData<Inference?>().apply { value = null }
     private val _inferenceError = MutableLiveData<Boolean>().apply { value = false }
-    private val _postResult = MutableLiveData<PostResponse?>().apply { value = null }
+    private val _postResult = MutableLiveData<Post?>().apply { value = null }
+    private val _postError = MutableLiveData<Boolean>().apply { value = false }
 
     val inferenceResult: LiveData<ArrayList<Bitmap>?> get() = _inferenceResult
     val previousInference: LiveData<Inference?> get() = _previousInference
     val inferenceError: LiveData<Boolean> get() = _inferenceError
-    val postResult: LiveData<PostResponse?> get() = _postResult
+    val postResult: LiveData<Post?> get() = _postResult
+    val postError: LiveData<Boolean> get() = _postError
 
     fun reset() {
         _inferenceResult.value = null
@@ -162,7 +164,7 @@ class InferenceViewModel(
 
             if (response.isSuccessful) {
                 // Post upload success
-                val result = response.body() as PostSuccess
+                val result = response.body() as Post
                 Log.d("InferenceViewModel", "Post upload success: ${result.postId}")
                 _postResult.postValue(result)
             } else {
@@ -172,7 +174,7 @@ class InferenceViewModel(
                     "InferenceViewModel",
                     "Post upload failed with error: ${response.code()} ${response.message()}"
                 )
-                _postResult.postValue(result)
+                _postError.postValue(true)
             }
         }
     }
