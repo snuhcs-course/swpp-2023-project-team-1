@@ -34,11 +34,11 @@ api_router.include_router(
     tags=["post"],
 )
 
-# api_router.include_router(
-#     image_router,
-#     prefix="/image",
-#     tags=["image"],
-# )
+api_router.include_router(
+    image_router,
+    prefix="/image",
+    tags=["image"],
+)
 
 api_router.include_router(
     search_router,
