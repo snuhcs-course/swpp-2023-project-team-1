@@ -1,8 +1,9 @@
+from datetime import datetime, timedelta, timezone
 from sqlalchemy import or_, select, and_, update
 from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.code import Code
-from app.core.exceptions import DuplicateEmailOrUsernameException, CodeNotFoundException
+from app.core.exceptions import CodeNotFoundException, CodeExpiredException
 from app.repository import code
 
 class CodeService:
@@ -40,15 +41,18 @@ class CodeService:
         result = await session.execute(
             select(Code).where(and_(Code.email == email, Code.code == code))
         )
-        result = await session.execute(
-            select(Code).where(and_(Code.email == email, Code.code == code))
-        )
 
         _code: Code | None = result.scalars().first()
 
         if not _code:
             raise CodeNotFoundException("Code not found")
 
+        current_time = datetime.now(timezone.utc)
+
+        time_difference = current_time - _code.updated_at
+
+        if time_difference > timedelta(minutes=3):
+            raise CodeExpiredException("Code has expired")
 
         await session.commit()
 
