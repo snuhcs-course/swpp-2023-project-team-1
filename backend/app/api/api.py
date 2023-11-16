@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from app.api.routers.user import user_router
 from app.api.routers.auth import auth_router
 from app.api.routers.post import post_router
-# from app.api.routers.image import image_router
+from app.api.routers.image import image_router
 from app.api.routers.search import search_router
 from app.api.routers.notification import notification_router
 
