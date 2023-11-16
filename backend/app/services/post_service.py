@@ -219,23 +219,17 @@ class PostService:
         return new_comment_obj
 
     @Transactional()
-    async def delete_comment_by_id(self, comment_id: UUID4, request_user_id: UUID4, session: AsyncSession) -> Comment:
-        result = await session.execute(select(Comment).where(and_(Comment.id == comment_id)))
+    async def delete_comment_by_id(self, comment_id: UUID4, request_user_id: UUID4, session: AsyncSession):
 
-        comment: Comment | None = result.scalars().first()
-
-        if not comment:
-            raise CommentNotFoundException("Comment not found")
+        try:
+            comment_obj = await comment.get_by_id(comment_id)
+        except NoResultFound as e:
+            raise CommentNotFoundException from e
         
-        if comment.user_id != request_user_id:
-            raise UserNotOwnerException("user is not the owver")
-        
-        if comment.user_id != request_user_id:
+        if comment_obj.user_id != request_user_id:
             raise UserNotOwnerException("user is not the owver")
 
-        await session.delete(comment)
-        await session.commit()
-        return comment
+        await comment.delete_by_id(comment_id)
 
     @Transactional()
     async def toggle_comment_like(
