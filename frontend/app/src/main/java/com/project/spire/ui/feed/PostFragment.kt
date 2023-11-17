@@ -1,12 +1,15 @@
 package com.project.spire.ui.feed
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -15,6 +18,7 @@ import com.example.spire.R
 import com.example.spire.databinding.FragmentPostBinding
 import com.project.spire.models.Comment
 import com.project.spire.models.Post
+import com.project.spire.ui.profile.ProfileFragment
 import com.project.spire.utils.DateUtils
 
 class PostFragment : Fragment() {
@@ -34,12 +38,14 @@ class PostFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         postViewModel = ViewModelProvider(this)[PostViewModel::class.java]
 
         val postView = binding.post
         val backButton = binding.backButton
         val commentButton = binding.commentWriteBtn
+        val originalImageBtn = binding.post.originalImageBtn
 
         postView.postFooter.visibility = View.INVISIBLE
         recyclerView = binding.recyclerViewComments
@@ -66,6 +72,14 @@ class PostFragment : Fragment() {
             }
         }
 
+        postView.profileImage.setOnClickListener {
+            showProfile(postViewModel.post.value!!.user.id)
+        }
+
+        postView.username.setOnClickListener {
+            showProfile(postViewModel.post.value!!.user.id)
+        }
+
         commentButton.setOnClickListener {
             commentButton.visibility = View.GONE
             binding.commentWriteProgressBar.visibility = View.VISIBLE
@@ -75,6 +89,20 @@ class PostFragment : Fragment() {
 
         backButton.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        originalImageBtn.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    postView.originalImage.visibility = View.VISIBLE
+                    postView.postImage.visibility = View.INVISIBLE
+                }
+                MotionEvent.ACTION_UP -> {
+                    postView.originalImage.visibility = View.INVISIBLE
+                    postView.postImage.visibility = View.VISIBLE
+                }
+            }
+            true
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -96,7 +124,12 @@ class PostFragment : Fragment() {
                 transformations(CircleCropTransformation())
             }
         }
+
+        if (post.originalImageUrl != null) {
+            postView.originalImageBtn.visibility = View.VISIBLE
+        }
         postView.postImage.load(post.imageUrl)
+        postView.originalImage.load(post.originalImageUrl)
         postView.username.text = post.user.userName
         postView.content.text = post.content
         postView.updatedAt.text = DateUtils.formatTime(post.updatedAt)
@@ -119,5 +152,14 @@ class PostFragment : Fragment() {
         recyclerView.visibility = View.VISIBLE
         binding.shimmerViewContainerComment.stopShimmer()
         binding.shimmerViewContainerComment.visibility = View.GONE
+    }
+
+    private fun showProfile(userId: String) {
+        val bundle = Bundle()
+        bundle.putString("userId", userId)
+        findNavController().navigate(
+            R.id.action_post_to_profile,
+            bundle
+        )
     }
 }

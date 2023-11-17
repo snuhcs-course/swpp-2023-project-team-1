@@ -31,9 +31,14 @@ class CommentAdapter(
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         val comment = commentList[position]
 
-        holder.profileImage.load(comment.user.profileImage){
-            transformations(CircleCropTransformation())
-            placeholder(R.drawable.logo_black)
+        if (comment.user.profileImage == null) {
+            holder.profileImage.load(R.drawable.default_profile_img) {
+                transformations(CircleCropTransformation())
+            }
+        } else {
+            holder.profileImage.load(comment.user.profileImage) {
+                transformations(CircleCropTransformation())
+            }
         }
         holder.username.text = comment.user.userName
         holder.content.text = comment.content
