@@ -27,6 +27,7 @@ class RetrofitClient {
         val authAPI: AuthAPI = retrofit.create(AuthAPI::class.java)
         val postAPI: PostAPI = retrofit.create(PostAPI::class.java)
         val userAPI: UserAPI = retrofit.create(UserAPI::class.java)
+        val searchAPI: SearchAPI = retrofit.create(SearchAPI::class.java)
 
     }
 }

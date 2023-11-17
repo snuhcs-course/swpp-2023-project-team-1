@@ -6,7 +6,7 @@ class SearchUser(
     @SerializedName("id")
     val userId: String,
     @SerializedName("username")
-    val userName: String,
+    val username: String,
     @SerializedName("profile_image_url")
     val profileImageUrl: String,
     @SerializedName("is_following")

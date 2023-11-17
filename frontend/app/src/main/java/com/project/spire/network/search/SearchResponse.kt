@@ -6,7 +6,7 @@ import com.project.spire.models.SearchUser
 interface SearchResponse {
 }
 
-data class SearchResponseSuccess(
+data class SearchSuccess(
 
     @SerializedName("total")
     val total: Int,
@@ -14,10 +14,11 @@ data class SearchResponseSuccess(
     val items: List<SearchUser>,
     @SerializedName("next_cursor")
     val nextCursor: Int
+
 ) : SearchResponse
 
 
-data class SearchResponseError(
+data class SearchError(
 
     @SerializedName("message")
     val message: String

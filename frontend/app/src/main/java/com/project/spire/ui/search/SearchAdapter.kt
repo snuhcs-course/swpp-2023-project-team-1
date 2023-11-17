@@ -30,7 +30,7 @@ class SearchAdapter(
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
         val search = searchList[position]
 
-        holder.profileImage.load(search.profileImage){
+        holder.profileImage.load(search.profileImageUrl){
             transformations(CircleCropTransformation())
             placeholder(R.drawable.logo_black)
         }
