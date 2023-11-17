@@ -10,6 +10,7 @@ import com.project.spire.models.Post
 import com.project.spire.models.User
 import com.project.spire.network.RetrofitClient
 import com.project.spire.network.post.request.NewCommentRequest
+import com.project.spire.network.post.request.UpdatePostRequest
 import com.project.spire.network.user.response.UserSuccess
 import com.project.spire.utils.AuthProvider
 import kotlinx.coroutines.launch
@@ -22,11 +23,17 @@ class PostViewModel: ViewModel() {
     private val _comments = MutableLiveData<List<Comment>>()
     private val _fetchError = MutableLiveData<Boolean>()
     private val _myProfileImage = MutableLiveData<String?>()
+    private val _myUserId = MutableLiveData<String?>()
 
     val post: MutableLiveData<Post> get() = _post
     val comments: MutableLiveData<List<Comment>> get() = _comments
     val fetchError: MutableLiveData<Boolean> get() = _fetchError
     val myProfileImage: MutableLiveData<String?> get() = _myProfileImage
+    val myUserId: MutableLiveData<String?> get() = _myUserId
+
+    init {
+        loadMyInfo()
+    }
 
     fun loadPost(postId: String) {
         viewModelScope.launch {
@@ -73,7 +80,7 @@ class PostViewModel: ViewModel() {
         }
     }
 
-    fun loadMyProfileImage() {
+    fun loadMyInfo() {
         viewModelScope.launch {
             val accessToken = AuthProvider.getAccessToken()
             val response = RetrofitClient.userAPI.getMyInfo("Bearer $accessToken")
@@ -81,6 +88,7 @@ class PostViewModel: ViewModel() {
             if (response.code() == 200 && response.isSuccessful && response.body() != null) {
                 val body = response.body() as UserSuccess
                 _myProfileImage.value = body.profileImageUrl
+                _myUserId.value = body.id
             } else {
                 Log.e("PostViewModel", "Error fetching my info with ${response.code()} ${response.message()}")
             }
@@ -111,11 +119,32 @@ class PostViewModel: ViewModel() {
     }
 
     fun deletePost() {
-        // TODO
+        viewModelScope.launch {
+            val accessToken = AuthProvider.getAccessToken()
+            val response = RetrofitClient.postAPI.deletePost("Bearer $accessToken", _post.value?.postId!!)
+
+            if (response.code() == 200 && response.isSuccessful) {
+                Log.d("PostViewModel", "Post deleted")
+            } else {
+                Log.e("PostViewModel", "Error deleting post with ${response.code()} ${response.message()}")
+                Toast.makeText(null, "Error deleting post", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
-    fun editPost() {
-        // TODO
+    fun editPost(content: String) {
+        viewModelScope.launch {
+            val accessToken = AuthProvider.getAccessToken()
+            val request = UpdatePostRequest(content, _post.value?.imageUrl!!, _post.value?.originalImageUrl, _post.value?.maskImageUrl)
+            val response = RetrofitClient.postAPI.updatePost("Bearer $accessToken", _post.value?.postId!!, request)
+
+            if (response.code() == 200 && response.isSuccessful) {
+                Log.d("PostViewModel", "Post edited")
+            } else {
+                Log.e("PostViewModel", "Error editing post with ${response.code()} ${response.message()}")
+                Toast.makeText(null, "Error editing post", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     fun likeComment() {

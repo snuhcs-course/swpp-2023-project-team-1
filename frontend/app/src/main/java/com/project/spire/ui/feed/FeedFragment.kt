@@ -84,10 +84,6 @@ class FeedFragment : Fragment() {
         })
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
     private val onChildAttachStateChangeListener = object : RecyclerView.OnChildAttachStateChangeListener {
         override fun onChildViewAttachedToWindow(view: View) {
             // Asynchronously update the RecyclerView's visibility once all child views are attached

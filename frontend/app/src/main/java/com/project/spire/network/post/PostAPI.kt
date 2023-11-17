@@ -50,10 +50,17 @@ interface PostAPI {
     ): Response<Post>
 
     @PATCH("post/{post_id}")
-    suspend fun updatePost(@Body updatePostRequest: UpdatePostRequest): Response<UpdatePostSuccess>
+    suspend fun updatePost(
+        @Header("Authorization") accessToken: String,
+        @Path("post_id") postId: String,
+        @Body updatePostRequest: UpdatePostRequest
+    ): Response<Post>
 
     @DELETE("post/{post_id}")
-    suspend fun deletePost(): Response<Void>
+    suspend fun deletePost(
+        @Header("Authorization") accessToken: String,
+        @Path("post_id") postId: String
+    ): Response<Void>
 
     @POST("post/{post_id}/like")
     suspend fun likePost(

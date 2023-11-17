@@ -1,7 +1,9 @@
 package com.project.spire.ui.feed
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -26,6 +28,7 @@ class PostFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var postViewModel: PostViewModel
 
+    private var onEdit: Boolean = false
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -57,7 +60,7 @@ class PostFragment : Fragment() {
         recyclerView.layoutManager = linearLayoutManager
 
         postViewModel.loadPost(arguments?.getString("postId")!!)
-        postViewModel.loadMyProfileImage()
+        postViewModel.loadMyInfo()
 
         postViewModel.post.observe(viewLifecycleOwner) {
             // Post loaded
@@ -96,6 +99,24 @@ class PostFragment : Fragment() {
 
         postView.postImageLikeBtn.setOnClickListener {
             postViewModel.likePost()
+        }
+
+        postView.editPostBtn.setOnClickListener {
+            onEdit = if (onEdit) {
+                cancelEditPost()
+                false
+            } else {
+                onEditPost()
+                true
+            }
+        }
+
+        postView.deletePostBtn.setOnClickListener {
+            onDeletePost()
+        }
+
+        postView.postEditSaveBtn.setOnClickListener {
+            onSavePost()
         }
 
         commentButton.setOnClickListener {
@@ -152,6 +173,12 @@ class PostFragment : Fragment() {
         } else {
             postView.postImageLikeBtn.setImageResource(R.drawable.like)
         }
+
+        if (post.user.id == postViewModel.myUserId.value) {
+            postView.editPostBtn.visibility = View.VISIBLE
+            postView.deletePostBtn.visibility = View.VISIBLE
+        }
+
         postView.postImage.load(post.imageUrl)
         postView.originalImage.load(post.originalImageUrl)
         postView.username.text = post.user.userName
@@ -176,6 +203,61 @@ class PostFragment : Fragment() {
         recyclerView.visibility = View.VISIBLE
         binding.shimmerViewContainerComment.stopShimmer()
         binding.shimmerViewContainerComment.visibility = View.GONE
+    }
+
+    private fun onEditPost() {
+        val postView = binding.post
+        postView.editContentLayout.visibility = View.VISIBLE
+        postView.content.visibility = View.GONE
+        postView.editContentLayout.editText?.setText(postView.content.text)
+        postView.editPostBtn.setImageResource(R.drawable.ic_cancel)
+        postView.postEditSaveBtn.visibility = View.VISIBLE
+    }
+
+    private fun cancelEditPost() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Cancel Edit")
+            .setMessage("Your changes will not be saved.")
+            .setPositiveButton("Yes") { _, _ ->
+                val postView = binding.post
+                postView.editContentLayout.visibility = View.GONE
+                postView.content.visibility = View.VISIBLE
+                postView.editPostBtn.setImageResource(R.drawable.ic_edit_post)
+                postView.postEditSaveBtn.visibility = View.GONE
+            }
+            .setNegativeButton("No") { _, _ -> }
+            .show()
+    }
+
+    private fun onSavePost() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Save Post")
+            .setMessage("Are you sure you want to save this post?")
+            .setPositiveButton("Yes") { _, _ ->
+                val postView = binding.post
+                val content = postView.editContentLayout.editText?.text.toString()
+                postViewModel.editPost(content)
+                popToFeed()
+            }
+            .setNegativeButton("No") { _, _ -> }
+            .show()
+    }
+
+    private fun onDeletePost() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Post")
+            .setMessage("Are you sure you want to delete this post?")
+            .setPositiveButton("Yes") { _, _ ->
+                postViewModel.deletePost()
+                popToFeed()
+            }
+            .setNegativeButton("No") { _, _ -> }
+            .show()
+    }
+
+    private fun popToFeed() {
+        findNavController().popBackStack(R.id.tab_feed, false)
+        findNavController().navigate(R.id.tab_feed)
     }
 
     private fun showProfile(userId: String) {
