@@ -56,7 +56,10 @@ interface PostAPI {
     suspend fun deletePost(): Response<Void>
 
     @POST("post/{post_id}/like")
-    suspend fun likePost(): Response<Void>
+    suspend fun likePost(
+        @Header("Authorization") accessToken: String,
+        @Path("post_id") postId: String
+    ): Response<Void>
 
     @GET("post/{post_id}/comment")
     suspend fun getComments(

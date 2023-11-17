@@ -88,8 +88,26 @@ class PostViewModel: ViewModel() {
     }
 
     fun likePost() {
-        // TODO
+        viewModelScope.launch {
+            val accessToken = AuthProvider.getAccessToken()
+            val response = RetrofitClient.postAPI.likePost("Bearer $accessToken", _post.value?.postId!!)
 
+            if (response.code() == 200 && response.isSuccessful) {
+                Log.d("PostViewModel", "Post liked")
+                val isLiked = when (_post.value?.isLiked) {
+                    1 -> 0
+                    else -> 1
+                }
+                val likeCount = when (_post.value?.isLiked) {
+                    1 -> _post.value!!.likeCount - 1
+                    else -> _post.value!!.likeCount + 1
+                }
+                _post.postValue(_post.value?.copy(isLiked = isLiked, likeCount = likeCount))
+            } else {
+                Log.e("PostViewModel", "Error liking post with ${response.code()} ${response.message()}")
+                Toast.makeText(null, "Error liking post", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     fun deletePost() {

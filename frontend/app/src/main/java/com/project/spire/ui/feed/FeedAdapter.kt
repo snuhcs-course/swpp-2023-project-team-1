@@ -22,7 +22,8 @@ import com.project.spire.utils.DateUtils
 
 class FeedAdapter(
     private var postList: List<Post>,
-    private val navController: NavController
+    private val navController: NavController,
+    private val feedViewModel: FeedViewModel
 ) : RecyclerView.Adapter<FeedAdapter.PostViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -37,69 +38,28 @@ class FeedAdapter(
         return postList.size
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = postList[position]
-        if (post.user.profileImage == null) {
-            holder.profileImage.load(R.drawable.default_profile_img) {
-                transformations(CircleCropTransformation())
-            }
-        } else {
-            holder.profileImage.load(post.user.profileImage) {
-                transformations(CircleCropTransformation())
-            }
-        }
-
-        holder.postImage.load(post.imageUrl)
-        holder.originalImage.load(post.originalImageUrl)
-        holder.username.text = post.user.userName
-        holder.content.text = post.content
-        holder.updatedAt.text = DateUtils.formatTime(post.updatedAt)
-        holder.likeCount.text = post.likeCount.toString()
-        holder.commentCount.text = post.commentCount.toString()
-
-        if (post.originalImageUrl != null) {
-            holder.originalImageButton.visibility = View.VISIBLE
-        }
-
-        holder.originalImageButton.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    holder.originalImage.visibility = View.VISIBLE
-                    holder.postImage.visibility = View.INVISIBLE
-                }
-                MotionEvent.ACTION_UP -> {
-                    holder.originalImage.visibility = View.INVISIBLE
-                    holder.postImage.visibility = View.VISIBLE
-                }
-            }
-            true
-        }
+        handleUI(holder, post)
 
         holder.profileImage.setOnClickListener {
             showProfile(post.user.id)
         }
-
         holder.username.setOnClickListener {
             showProfile(post.user.id)
         }
-
         holder.content.setOnClickListener {
             showPost(post.postId)
         }
-
         holder.comments.setOnClickListener {
             showPost(post.postId)
         }
-
         holder.commentCount.setOnClickListener {
             showPost(post.postId)
         }
-
         holder.likes.setOnClickListener {
-            // TODO: Like post
+            feedViewModel.likePost(position)
         }
-
         holder.likeCount.setOnClickListener {
             // TODO: Show who liked the post
         }
@@ -140,5 +100,51 @@ class FeedAdapter(
     fun updateList(newList: List<Post>) {
         postList = newList
         notifyItemInserted(postList.size - 1)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun handleUI(holder: PostViewHolder, post: Post) {
+        if (post.user.profileImage == null) {
+            holder.profileImage.load(R.drawable.default_profile_img) {
+                transformations(CircleCropTransformation())
+            }
+        } else {
+            holder.profileImage.load(post.user.profileImage) {
+                transformations(CircleCropTransformation())
+            }
+        }
+
+        if (post.isLiked == 1) {
+            holder.likes.setImageResource(R.drawable.like_filled)
+        } else {
+            holder.likes.setImageResource(R.drawable.like)
+        }
+
+        holder.postImage.load(post.imageUrl)
+        holder.originalImage.load(post.originalImageUrl)
+        holder.username.text = post.user.userName
+        holder.content.text = post.content
+        holder.updatedAt.text = DateUtils.formatTime(post.updatedAt)
+        holder.likeCount.text = post.likeCount.toString()
+        holder.commentCount.text = post.commentCount.toString()
+
+        if (post.originalImageUrl != null) {
+            holder.originalImageButton.visibility = View.VISIBLE
+        }
+
+        holder.originalImageButton.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    holder.originalImage.visibility = View.VISIBLE
+                    holder.postImage.visibility = View.INVISIBLE
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    holder.originalImage.visibility = View.INVISIBLE
+                    holder.postImage.visibility = View.VISIBLE
+                }
+            }
+            true
+        }
     }
 }

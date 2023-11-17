@@ -94,6 +94,10 @@ class PostFragment : Fragment() {
             showProfile(postViewModel.post.value!!.user.id)
         }
 
+        postView.postImageLikeBtn.setOnClickListener {
+            postViewModel.likePost()
+        }
+
         commentButton.setOnClickListener {
             commentButton.visibility = View.GONE
             binding.commentWriteProgressBar.visibility = View.VISIBLE
@@ -141,6 +145,12 @@ class PostFragment : Fragment() {
 
         if (post.originalImageUrl != null) {
             postView.originalImageBtn.visibility = View.VISIBLE
+        }
+
+        if (post.isLiked == 1) {
+            postView.postImageLikeBtn.setImageResource(R.drawable.like_filled)
+        } else {
+            postView.postImageLikeBtn.setImageResource(R.drawable.like)
         }
         postView.postImage.load(post.imageUrl)
         postView.originalImage.load(post.originalImageUrl)

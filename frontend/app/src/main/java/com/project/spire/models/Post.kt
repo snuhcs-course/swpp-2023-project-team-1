@@ -40,4 +40,20 @@ class Post(
     override fun toString(): String {
         return "Post(postId='$postId', content='$content', imageUrl='$imageUrl', originalImage='$originalImageUrl', createdAt='$createdAt', updatedAt='$updatedAt', user=$user, likeCount=$likeCount, commentCount=$commentCount, isLiked=$isLiked)"
     }
+
+    fun copy(
+        postId: String = this.postId,
+        content: String = this.content,
+        imageUrl: String = this.imageUrl,
+        originalImageUrl: String? = this.originalImageUrl,
+        maskImageUrl: String? = this.maskImageUrl,
+        createdAt: String = this.createdAt,
+        updatedAt: String = this.updatedAt,
+        user: User = this.user,
+        likeCount: Int = this.likeCount,
+        commentCount: Int = this.commentCount,
+        isLiked: Int = this.isLiked
+    ): Post {
+        return Post(postId, content, imageUrl, originalImageUrl, maskImageUrl, createdAt, updatedAt, user, likeCount, commentCount, isLiked)
+    }
 }

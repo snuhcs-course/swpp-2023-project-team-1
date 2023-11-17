@@ -47,16 +47,23 @@ class FeedFragment : Fragment() {
 
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.addOnChildAttachStateChangeListener(onChildAttachStateChangeListener)
-        var adapter = FeedAdapter(emptyList(), findNavController())
+        val adapter = FeedAdapter(emptyList(), findNavController(), feedViewModel)
         recyclerView.adapter = adapter
 
         feedViewModel.posts.observe(viewLifecycleOwner) {
+            Log.i("FeedFragment", "Posts updated: ${it.size}")
             if (it.isNotEmpty()) {
                 recyclerView.run {
                     adapter.updateList(it)
                     binding.shimmerViewContainer.stopShimmer()
                     binding.shimmerViewContainer.visibility = View.GONE
                 }
+            }
+        }
+
+        feedViewModel.postLiked.observe(viewLifecycleOwner) {
+            if (it != null) {
+                adapter.notifyItemChanged(it)
             }
         }
 
