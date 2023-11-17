@@ -1,11 +1,16 @@
 package com.project.spire.ui.feed
 
+import android.annotation.SuppressLint
+import android.app.Notification.Action
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
@@ -33,6 +38,7 @@ class FeedAdapter(
         return postList.size
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = postList[position]
         if (post.user.profileImage == null) {
@@ -44,12 +50,32 @@ class FeedAdapter(
                 transformations(CircleCropTransformation())
             }
         }
+
         holder.postImage.load(post.imageUrl)
+        holder.originalImage.load(post.originalImageUrl)
         holder.username.text = post.user.userName
         holder.content.text = post.content
         holder.updatedAt.text = DateUtils.formatTime(post.updatedAt)
         holder.likeCount.text = post.likeCount.toString()
         holder.commentCount.text = post.commentCount.toString()
+
+        if (post.originalImageUrl != null) {
+            holder.originalImageButton.visibility = View.VISIBLE
+        }
+
+        holder.originalImageButton.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    holder.originalImage.visibility = View.VISIBLE
+                    holder.postImage.visibility = View.INVISIBLE
+                }
+                MotionEvent.ACTION_UP -> {
+                    holder.originalImage.visibility = View.INVISIBLE
+                    holder.postImage.visibility = View.VISIBLE
+                }
+            }
+            true
+        }
 
         holder.profileImage.setOnClickListener {
             showProfile(post.user.id)
@@ -83,6 +109,8 @@ class FeedAdapter(
     inner class PostViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val profileImage: ImageView = view.findViewById(R.id.profile_Image)
         val postImage: ImageView = view.findViewById(R.id.post_image)
+        val originalImage: ImageView = view.findViewById(R.id.original_image)
+        val originalImageButton: LinearLayout = view.findViewById(R.id.original_image_btn)
         val username: TextView = view.findViewById(R.id.username)
         val likes: ImageView = view.findViewById(R.id.post_image_like_btn)
         val comments: ImageView = view.findViewById(R.id.post_image_comment_btn)

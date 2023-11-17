@@ -13,6 +13,12 @@ class Post(
     @SerializedName("image_url")
     val imageUrl: String,
 
+    @SerializedName("origin_image_url")
+    val originalImageUrl: String?,
+
+    @SerializedName("mask_image_url")
+    val maskImageUrl: String?,
+
     @SerializedName("created_at")
     val createdAt: String,
 
@@ -32,6 +38,6 @@ class Post(
     val isLiked: Int
 ) {
     override fun toString(): String {
-        return "Post(postId='$postId', content='$content', imageUrl='$imageUrl', createdAt='$createdAt', updatedAt='$updatedAt', user=$user, likeCount=$likeCount, commentCount=$commentCount, isLiked=$isLiked)"
+        return "Post(postId='$postId', content='$content', imageUrl='$imageUrl', originalImage='$originalImageUrl', createdAt='$createdAt', updatedAt='$updatedAt', user=$user, likeCount=$likeCount, commentCount=$commentCount, isLiked=$isLiked)"
     }
 }

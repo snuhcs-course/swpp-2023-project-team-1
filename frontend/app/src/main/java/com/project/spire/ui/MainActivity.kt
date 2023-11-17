@@ -71,15 +71,8 @@ class MainActivity : AppCompatActivity() {
         navView.setOnItemReselectedListener {
             Log.i("MainActivity", "Reselected item: ${it.title}")
             // Resets back stack when re-selecting the same tab
-            if (it.itemId == R.id.tab_feed) {
-                try {
-                    findViewById<RecyclerView>(R.id.recycler_view_feed).smoothScrollToPosition(0)
-                } catch (e: NullPointerException) {
-                    Log.e("MainActivity", "RecyclerView not found")
-                }
-            }
-            val pop = navController.popBackStack(it.itemId, false)
-            Log.i("MainActivity", "popBackStack: $pop")
+            navController.popBackStack(it.itemId, false)
+            navController.navigate(it.itemId)
         }
 
         // New Post Button
