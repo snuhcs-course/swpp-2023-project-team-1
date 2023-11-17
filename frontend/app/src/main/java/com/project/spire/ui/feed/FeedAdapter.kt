@@ -21,8 +21,7 @@ import com.project.spire.models.Post
 import com.project.spire.utils.DateUtils
 
 class FeedAdapter(
-    private val postList: List<Post>,
-    private val context: Context,
+    private var postList: List<Post>,
     private val navController: NavController
 ) : RecyclerView.Adapter<FeedAdapter.PostViewHolder>() {
 
@@ -136,5 +135,10 @@ class FeedAdapter(
             R.id.action_feed_to_profile,
             bundle
         )
+    }
+
+    fun updateList(newList: List<Post>) {
+        postList = newList
+        notifyItemInserted(postList.size - 1)
     }
 }

@@ -46,6 +46,7 @@ class PostFragment : Fragment() {
         val backButton = binding.backButton
         val commentButton = binding.commentWriteBtn
         val originalImageBtn = binding.post.originalImageBtn
+        val myProfileImage = binding.commentWriteProfileImage
 
         postView.postFooter.visibility = View.INVISIBLE
         recyclerView = binding.recyclerViewComments
@@ -56,6 +57,7 @@ class PostFragment : Fragment() {
         recyclerView.layoutManager = linearLayoutManager
 
         postViewModel.loadPost(arguments?.getString("postId")!!)
+        postViewModel.loadMyProfileImage()
 
         postViewModel.post.observe(viewLifecycleOwner) {
             // Post loaded
@@ -70,6 +72,18 @@ class PostFragment : Fragment() {
             if (it != null) {
                 onCommentsLoaded(it)
             }
+        }
+
+        postViewModel.myProfileImage.observe(viewLifecycleOwner) {
+            if (it != null) {
+                myProfileImage.load(it) {
+                    transformations(CircleCropTransformation())
+                }
+            }
+        }
+
+        myProfileImage.load(R.drawable.default_profile_img) {
+            transformations(CircleCropTransformation())
         }
 
         postView.profileImage.setOnClickListener {
@@ -147,7 +161,7 @@ class PostFragment : Fragment() {
         binding.commentWriteBtn.visibility = View.VISIBLE
         binding.commentWriteProgressBar.visibility = View.GONE
         binding.commentWriteEditText.text?.clear()
-        val commentAdapter = CommentAdapter(comments)
+        val commentAdapter = CommentAdapter(comments, findNavController())
         recyclerView.adapter = commentAdapter
         recyclerView.visibility = View.VISIBLE
         binding.shimmerViewContainerComment.stopShimmer()

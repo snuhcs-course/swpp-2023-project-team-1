@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.spire.models.Comment
 import com.project.spire.models.Post
+import com.project.spire.models.User
 import com.project.spire.network.RetrofitClient
 import com.project.spire.network.post.request.NewCommentRequest
+import com.project.spire.network.user.response.UserSuccess
 import com.project.spire.utils.AuthProvider
 import kotlinx.coroutines.launch
 
@@ -19,12 +21,12 @@ class PostViewModel: ViewModel() {
     private val _post = MutableLiveData<Post>()
     private val _comments = MutableLiveData<List<Comment>>()
     private val _fetchError = MutableLiveData<Boolean>()
-    private val _myProfileImage = MutableLiveData<String>()
+    private val _myProfileImage = MutableLiveData<String?>()
 
     val post: MutableLiveData<Post> get() = _post
     val comments: MutableLiveData<List<Comment>> get() = _comments
     val fetchError: MutableLiveData<Boolean> get() = _fetchError
-    val myProfileImage: MutableLiveData<String> get() = _myProfileImage
+    val myProfileImage: MutableLiveData<String?> get() = _myProfileImage
 
     fun loadPost(postId: String) {
         viewModelScope.launch {
@@ -67,6 +69,20 @@ class PostViewModel: ViewModel() {
                 _comments.value = _comments.value?.plus(response.body()!!)
             } else {
                 Log.e("PostViewModel", "Error commenting with ${response.code()} ${response.message()}")
+            }
+        }
+    }
+
+    fun loadMyProfileImage() {
+        viewModelScope.launch {
+            val accessToken = AuthProvider.getAccessToken()
+            val response = RetrofitClient.userAPI.getMyInfo("Bearer $accessToken")
+
+            if (response.code() == 200 && response.isSuccessful && response.body() != null) {
+                val body = response.body() as UserSuccess
+                _myProfileImage.value = body.profileImageUrl
+            } else {
+                Log.e("PostViewModel", "Error fetching my info with ${response.code()} ${response.message()}")
             }
         }
     }

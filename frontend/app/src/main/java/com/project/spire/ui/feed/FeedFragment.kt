@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.databinding.FragmentFeedBinding
@@ -46,11 +47,13 @@ class FeedFragment : Fragment() {
 
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.addOnChildAttachStateChangeListener(onChildAttachStateChangeListener)
+        var adapter = FeedAdapter(emptyList(), findNavController())
+        recyclerView.adapter = adapter
 
         feedViewModel.posts.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 recyclerView.run {
-                    adapter = FeedAdapter(it, context, findNavController())
+                    adapter.updateList(it)
                     binding.shimmerViewContainer.stopShimmer()
                     binding.shimmerViewContainer.visibility = View.GONE
                 }
@@ -62,6 +65,16 @@ class FeedFragment : Fragment() {
             feedViewModel.getInitialPosts()
             binding.swipeRefreshLayout.isRefreshing = false
         }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                // Loads more posts when the user scrolls to the bottom of the list
+                if (feedViewModel.nextCursor.value != null && !recyclerView.canScrollVertically(1)) {
+                    feedViewModel.getMorePosts()
+                }
+            }
+        })
     }
 
     override fun onDestroyView() {

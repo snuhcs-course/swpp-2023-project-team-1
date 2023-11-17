@@ -18,29 +18,28 @@ const val FETCH_SIZE = 10
 
 class FeedViewModel : ViewModel() {
 
-    private val postMutableList = mutableListOf<Post>()
     private val _posts = MutableLiveData<List<Post>>().apply {
         value = emptyList()
     }
     private val _totalPosts = MutableLiveData<Int>().apply {
         value = 0
     }
-    private val _nextCursor = MutableLiveData<Int>().apply {
-        value = 0
+    private val _nextCursor = MutableLiveData<Int?>().apply {
+        value = null
     }
 
     val posts: LiveData<List<Post>> = _posts
+    val totalPosts: LiveData<Int> = _totalPosts
+    val nextCursor: LiveData<Int?> = _nextCursor
 
     fun getInitialPosts() {
         viewModelScope.launch {
             val accessToken = AuthProvider.getAccessToken()
-
-            // FIXME: Should be changed to getFeedPosts
             val response = RetrofitClient.postAPI.getFeedPosts("Bearer $accessToken", FETCH_SIZE, 0)
 
-            if (response.isSuccessful) {
+            if (response.isSuccessful && response.code() == 200) {
                 // Feed fetch success
-                Log.d("FeedViewModel", "Fetch feed success")
+                Log.d("FeedViewModel", "Fetch feed success with total ${response.body()?.total} and nextCursor ${response.body()?.nextCursor}")
                 val body = response.body()
                 if (body != null) {
                     _posts.value = body.items
@@ -59,31 +58,26 @@ class FeedViewModel : ViewModel() {
 
     fun getMorePosts() {
         // TODO implement this
-
-    }
-
-    fun fetchDummyPosts() {
-        // TODO implement this
-        // fetch posts from backend
         viewModelScope.launch {
-            // FIXME: Remove this dummy delay
-            delay(2000)
+            val accessToken = AuthProvider.getAccessToken()
+            val response = RetrofitClient.postAPI.getFeedPosts("Bearer $accessToken", FETCH_SIZE, _nextCursor.value!!)
 
-            // FIXME: Remove this dummy data
-            for (i in 1..10) {
-                val userId = "345"
-                val username = "donghaahn"
-                val profileImage = "https://i.pravatar.cc/1000"
-                val user = User(userId, username, profileImage)
-                val postId = "123"
-                val content = "This is a post"
-                val imageUrl = "https://i.pravatar.cc/1000"
-                val likedUsers = ArrayList<User>()
-                val comments = ArrayList<Comment>()
-                val createdAt = "1 hours ago"
-                val updatedAt = "1 hours ago"
-
-                _posts.value = postMutableList
+            if (response.isSuccessful && response.code() == 200) {
+                // Feed fetch success
+                Log.d("FeedViewModel", "Fetch feed success with total ${response.body()?.total} and nextCursor ${response.body()?.nextCursor}")
+                val body = response.body()
+                if (body != null) {
+                    _posts.value = _posts.value!! + body.items
+                    _totalPosts.value = body.total
+                    _nextCursor.value = body.nextCursor
+                }
+            }
+            else {
+                // Feed fetch failed
+                Log.e(
+                    "FeedViewModel",
+                    "Fetch feed failed with error code ${response.code()} ${response.message()}"
+                )
             }
         }
     }
