@@ -13,6 +13,7 @@ import android.widget.Button
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.spire.R
@@ -21,6 +22,7 @@ import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
 import com.project.spire.core.user.UserRepository
 import com.project.spire.ui.auth.LoginActivity
+import com.project.spire.ui.create.CarouselAdapter
 
 class ProfileFragment : Fragment() {
 
@@ -113,6 +115,15 @@ class ProfileFragment : Fragment() {
                         largeButton.setTextColor(resources.getColor(R.color.grey_600, null))
                     }
                 }
+            }
+        }
+
+        profileViewModel.posts.observe(viewLifecycleOwner) { it ->
+            if (it != null) {
+                val postAdapter = PostAdapter(it)
+                binding.profilePostRecyclerView.adapter = postAdapter
+                binding.profilePostRecyclerView.layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
         }
 

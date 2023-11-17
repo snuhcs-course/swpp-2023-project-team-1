@@ -2,6 +2,7 @@ package com.project.spire.ui.profile
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.user.UserRepository
 import com.project.spire.models.Post
+import com.project.spire.network.RetrofitClient.Companion.postAPI
 import com.project.spire.utils.AuthProvider
 import kotlinx.coroutines.launch
 
@@ -75,7 +77,9 @@ class ProfileViewModel(
             // _posts.postValue(myInfo?.posts)
             _followingState.postValue(-1)
             _isMyProfile.postValue(true)
+            getMyPosts()
         }
+
     }
 
     fun getUserInfo(userId: String) {
@@ -132,6 +136,25 @@ class ProfileViewModel(
                 // unfollow
                 val unfollowRequest = userRepository.unfollow(accessToken, followUserId)
                 if (unfollowRequest) _followingState.postValue(-1)
+            }
+        }
+    }
+
+    fun getMyPosts() {
+        if (_isMyProfile.value!!) {
+            return
+        }
+        viewModelScope.launch {
+            val accessToken = AuthProvider.getAccessToken()
+            val response = postAPI.getMyPosts(accessToken, 30, 0)
+            // TODO: implement pagination
+            if (response.isSuccessful) {
+                val successBody = response.body()
+                Log.d("ProfileViewModel", "Get my posts response: ${successBody?.total}")
+                _posts.postValue(successBody?.items)
+            } else {
+                val errorBody = response.errorBody()
+                Log.e("ProfileViewModel", "Get my posts error: ${errorBody?.string()!!}")
             }
         }
     }
