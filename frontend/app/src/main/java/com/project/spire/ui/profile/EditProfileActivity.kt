@@ -106,15 +106,19 @@ class EditProfileActivity : AppCompatActivity() {
         profileViewModel.bio.observe(this) {
             binding.editProfileBioInput.editText?.setText(it)
         }
+
         profileViewModel.profileImageUrl.observe(this) {
             binding.editProfileImage.load(it) {
                 crossfade(true)
                 transformations(CircleCropTransformation())
             }
         }
+
         profileViewModel.logoutSuccess.observe(this) {
             if (it) {
-                startActivity(Intent(this, LoginActivity::class.java))
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)
                 finish()
             }
         }
@@ -152,8 +156,7 @@ class EditProfileActivity : AppCompatActivity() {
             .setMessage(getString(R.string.delete_account_dialog_text))
             .setPositiveButton("Delete") { dialog, _ ->
                 // TODO: Delete the user's account
-
-                dialog.dismiss()
+                profileViewModel.unregister()
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()

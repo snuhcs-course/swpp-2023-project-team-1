@@ -158,6 +158,16 @@ class ProfileViewModel(
             }
         }
     }
+
+    fun unregister() {
+        viewModelScope.launch {
+            val accessToken = AuthProvider.getAccessToken()
+            val unregister = authRepository.unregister(accessToken)
+            if (unregister) {
+                _logoutSuccess.postValue(true)
+            }
+        }
+    }
 }
 
 class ProfileViewModelFactory(
