@@ -88,14 +88,19 @@ class WriteTextActivity : AppCompatActivity() {
             }
         }
 
-        // Post upload result received
+        // Post upload success
         inferenceViewModel.postResult.observe(this) {
-            if (it is PostSuccess) {
+            if (it != null) {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
                 finish()
-            } else if (it is PostError) {
+            }
+        }
+
+        // Post upload failed
+        inferenceViewModel.postError.observe(this) {
+            if (it == true) {
                 Toast.makeText(this, "Post upload failed", Toast.LENGTH_SHORT).show()
                 binding.postUploadProgressBar.visibility = View.GONE
             }

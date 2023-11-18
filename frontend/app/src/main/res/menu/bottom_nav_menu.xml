@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_feed"
+        android:id="@+id/tab_feed"
         android:icon="@drawable/ic_nav_feed"
         android:title="@string/title_feed" />
 
     <item
-        android:id="@+id/navigation_search"
+        android:id="@+id/tab_search"
         android:icon="@drawable/ic_nav_search"
         android:title="@string/title_search" />
 
@@ -18,12 +18,12 @@
         android:title="" />
 
     <item
-        android:id="@+id/navigation_notification"
+        android:id="@+id/tab_notification"
         android:icon="@drawable/ic_nav_notification"
         android:title="@string/title_notification" />
 
     <item
-        android:id="@+id/navigation_profile"
+        android:id="@+id/tab_profile"
         android:icon="@drawable/ic_nav_profile"
         android:title="@string/title_profile" />
 

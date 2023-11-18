@@ -124,8 +124,5 @@ class ImageEditActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
-
-        // TODO: implement toolbar buttons
     }
 }
