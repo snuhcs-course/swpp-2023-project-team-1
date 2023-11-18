@@ -10,8 +10,7 @@ from app.core.fastapi.dependency.permission import (
 from app.schemas.user import (
     UserRead,
     UserUpdate,
-    GetUsersResponse,
-    UserSearchResponse, 
+    GetUsersResponse, 
     GetFollowInfoResponse
 )
 from app.session import get_db_transactional_session
@@ -215,12 +214,13 @@ async def get_follow_info(
     response_model=GetUsersResponse,
 )
 async def get_followers(
+    req: Request,
     user_id: UUID4,
     pagination: dict = Depends(limit_offset_query)
 ):
     user_svc = UserService()
     total, items, next_cursor = await user_svc.get_followers(
-        user_id=user_id, **pagination
+        user_id=user_id, current_user_id=req.user.id, **pagination
     )
     return {"total": total, "items": items, "next_cursor": next_cursor}
 
@@ -232,11 +232,12 @@ async def get_followers(
     response_model=GetUsersResponse,
 )
 async def get_followings(
+    req: Request,
     user_id: UUID4,
     pagination: dict = Depends(limit_offset_query)
 ):
     user_svc = UserService()
     total, items, next_cursor = await user_svc.get_followings(
-        user_id=user_id, **pagination
+        user_id=user_id, current_user_id=req.user.id, **pagination
     )
     return {"total": total, "items": items, "next_cursor": next_cursor}

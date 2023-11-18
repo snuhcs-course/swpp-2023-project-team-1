@@ -57,17 +57,10 @@ class UserInfo(BaseModel):
     id: UUID4 = Field(..., description="User Id")
     username: str = Field(..., description="Username")
     profile_image_url: str | None= Field(None, description="Profile Image Url")
+    is_following: bool = Field(..., description="Following Status")
+    is_follower: bool = Field(..., description="Follower Status")
 
 class GetUsersResponse(BaseModel):
     total: int
     items: list[UserInfo]
-    next_cursor: int | None
-
-class UserSearch(UserInfo):
-    is_following: bool = Field(..., description="Following Status")
-    is_follower: bool = Field(..., description="Follower Status")
-
-class UserSearchResponse(BaseModel):
-    total: int
-    items: list[UserSearch]
     next_cursor: int | None
