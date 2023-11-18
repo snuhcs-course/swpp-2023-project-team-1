@@ -1,19 +1,14 @@
 package com.project.spire.ui.profile
 
-import android.app.Activity
 import android.content.Intent
-import android.os.Build
+import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.Button
-import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.spire.R
@@ -21,8 +16,7 @@ import com.example.spire.databinding.FragmentProfileBinding
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
 import com.project.spire.core.user.UserRepository
-import com.project.spire.ui.auth.LoginActivity
-import com.project.spire.ui.create.CarouselAdapter
+import com.project.spire.utils.GridSpaceItemDecoration
 
 class ProfileFragment : Fragment() {
 
@@ -33,6 +27,9 @@ class ProfileFragment : Fragment() {
     private lateinit var profileViewModel: ProfileViewModel
 
     private var TEST_USER_ID = "d2fcfe21-82fa-4008-835d-16c39eca26d7" //"92142569-d579-44e7-bf06-102770db6eb4"
+
+    private val spanCount = 2
+    private val space = 10f
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -123,7 +120,8 @@ class ProfileFragment : Fragment() {
                 val postAdapter = PostAdapter(it)
                 binding.profilePostRecyclerView.adapter = postAdapter
                 binding.profilePostRecyclerView.layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    GridLayoutManager(requireContext(), spanCount)
+                binding.profilePostRecyclerView.addItemDecoration(GridSpaceItemDecoration(spanCount, (space * Resources.getSystem().displayMetrics.density).toInt()))
             }
         }
 
