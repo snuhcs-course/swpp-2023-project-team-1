@@ -41,7 +41,6 @@ class NotificationRead(NotificationBase):
         from_attributes=True,
     )
 
-
 class NotificationListResponse(BaseModel):
     total: int | None
     items: list[NotificationRead]
