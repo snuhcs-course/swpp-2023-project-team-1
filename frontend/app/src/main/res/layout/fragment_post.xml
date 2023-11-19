@@ -55,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/app_bar" >
+        app:layout_constraintTop_toBottomOf="@+id/app_bar">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -81,22 +81,22 @@
                     android:visibility="invisible"
                     app:layout_constraintTop_toBottomOf="@id/post">
 
-                    <!--                <androidx.appcompat.widget.AppCompatImageView-->
-                    <!--                    android:id="@+id/comment_write_profile_image"-->
-                    <!--                    android:layout_width="@dimen/post_profile_image_width"-->
-                    <!--                    android:layout_height="@dimen/post_profile_image_height"-->
-                    <!--                    android:scaleType="centerInside"-->
-                    <!--                    android:layout_weight="0" />-->
-
-                    <ImageButton
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/comment_write_profile_image"
                         android:layout_width="@dimen/post_profile_image_width"
                         android:layout_height="@dimen/post_profile_image_height"
                         android:layout_weight="0"
-                        android:adjustViewBounds="true"
-                        android:background="@null"
-                        android:padding="@dimen/comment_write_btn_padding"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/comment" />
+                        android:scaleType="centerInside" />
+
+                    <!--                    <ImageButton-->
+                    <!--                        android:layout_width="@dimen/post_profile_image_width"-->
+                    <!--                        android:layout_height="@dimen/post_profile_image_height"-->
+                    <!--                        android:layout_weight="0"-->
+                    <!--                        android:adjustViewBounds="true"-->
+                    <!--                        android:background="@null"-->
+                    <!--                        android:padding="@dimen/comment_write_btn_padding"-->
+                    <!--                        android:scaleType="centerCrop"-->
+                    <!--                        android:src="@drawable/comment" />-->
 
                     <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/comment_write_edit_text"
@@ -132,8 +132,8 @@
                     android:id="@+id/recycler_view_comments"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingBottom="@dimen/nav_bar_total_height"
                     android:clipToPadding="false"
+                    android:paddingBottom="@dimen/nav_bar_total_height"
                     android:visibility="invisible" />
 
                 <com.facebook.shimmer.ShimmerFrameLayout
