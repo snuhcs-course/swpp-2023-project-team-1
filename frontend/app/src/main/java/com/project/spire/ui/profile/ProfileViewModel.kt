@@ -24,7 +24,7 @@ class ProfileViewModel(
     private val _email = MutableLiveData<String>().apply { value = "" }
     private val _username = MutableLiveData<String>().apply { value = "" }
     private val _bio = MutableLiveData<String>().apply { value = "" }
-    private val _profileImageUrl = MutableLiveData<String>().apply { value = "" }
+    private val _profileImageUrl = MutableLiveData<String?>()
     private val _followers = MutableLiveData<Int>().apply { value = 0 }
     private val _following = MutableLiveData<Int>().apply { value = 0 }
     private val _posts = MutableLiveData<List<Post>>().apply { value = emptyList() }
@@ -37,7 +37,7 @@ class ProfileViewModel(
     val email: LiveData<String> = _email
     val username: LiveData<String> = _username
     val bio: LiveData<String> = _bio
-    val profileImageUrl: LiveData<String> = _profileImageUrl
+    val profileImageUrl: LiveData<String?> = _profileImageUrl
     val followers: LiveData<Int> = _followers
     val following: LiveData<Int> = _following
     val posts: LiveData<List<Post>> = _posts

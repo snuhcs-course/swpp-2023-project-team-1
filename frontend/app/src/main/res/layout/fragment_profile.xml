@@ -102,6 +102,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:nestedScrollingEnabled="false"
         android:paddingBottom="@dimen/nav_bar_total_height"
         android:clipToPadding="false"/>
 

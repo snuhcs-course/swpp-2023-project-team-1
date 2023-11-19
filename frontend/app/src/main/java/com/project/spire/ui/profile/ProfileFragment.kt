@@ -30,7 +30,7 @@ class ProfileFragment : Fragment() {
     private var TEST_USER_ID = "d2fcfe21-82fa-4008-835d-16c39eca26d7" //"92142569-d579-44e7-bf06-102770db6eb4"
 
     private val spanCount = 2
-    private val space = 10f
+    private val space = 8f
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +48,27 @@ class ProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        profileViewModel.username.observe(viewLifecycleOwner) {
+            val username = "@$it"
+            binding.profileUsername.text = username
+        }
+
+        profileViewModel.bio.observe(viewLifecycleOwner) {
+            binding.profileBio.text = it
+        }
+
+        profileViewModel.profileImageUrl.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.profileImage.load(it) {
+                    transformations(CircleCropTransformation())
+                }
+            }
+            else {
+                binding.profileImage.load(R.drawable.default_profile_img) {
+                    transformations(CircleCropTransformation())
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -72,8 +93,15 @@ class ProfileFragment : Fragment() {
         }
 
         profileViewModel.profileImageUrl.observe(viewLifecycleOwner) {
-            binding.profileImage.load(it) {
-                transformations(CircleCropTransformation())
+            if (it != null) {
+                binding.profileImage.load(it) {
+                    transformations(CircleCropTransformation())
+                }
+            }
+            else {
+                binding.profileImage.load(R.drawable.default_profile_img) {
+                    transformations(CircleCropTransformation())
+                }
             }
         }
 

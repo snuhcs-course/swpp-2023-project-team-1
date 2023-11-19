@@ -19,6 +19,7 @@ import com.example.spire.databinding.ActivityEditProfileBinding
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
 import com.project.spire.core.user.UserRepository
+import com.project.spire.ui.MainActivity
 import com.project.spire.ui.auth.LoginActivity
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -91,6 +92,11 @@ class EditProfileActivity : AppCompatActivity() {
             if (username.isEmpty()) username = profileViewModel.username.value!!
             if (bio.isEmpty()) bio = profileViewModel.bio.value!!
             profileViewModel.updateProfile(username, bio, profileViewModel.photoPickerUri.value, applicationContext)
+
+            val intent = Intent(this, MainActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            intent.putExtra("fragment", "profile")
+            startActivity(intent)
             finish()
         }
     }
@@ -108,9 +114,17 @@ class EditProfileActivity : AppCompatActivity() {
         }
 
         profileViewModel.profileImageUrl.observe(this) {
-            binding.editProfileImage.load(it) {
-                crossfade(true)
-                transformations(CircleCropTransformation())
+            if (it != null) {
+                binding.editProfileImage.load(it) {
+                    crossfade(true)
+                    transformations(CircleCropTransformation())
+                }
+            }
+            else {
+                binding.editProfileImage.load(R.drawable.default_profile_img) {
+                    crossfade(true)
+                    transformations(CircleCropTransformation())
+                }
             }
         }
 

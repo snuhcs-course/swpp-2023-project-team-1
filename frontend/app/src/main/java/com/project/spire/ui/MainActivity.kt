@@ -53,6 +53,10 @@ class MainActivity : AppCompatActivity() {
             supportActionBar!!.hide()
         }
 
+        if (intent.getStringExtra("fragment").equals("profile")) {
+            replaceFragment(ProfileFragment(), true)
+        }
+
         // Navigation
         val navView: BottomNavigationView = binding.bottomNavigationView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
