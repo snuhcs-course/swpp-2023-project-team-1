@@ -1,11 +1,15 @@
 package com.project.spire.ui.feed
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -15,9 +19,11 @@ import com.project.spire.models.Comment
 import com.project.spire.utils.DateUtils
 
 class CommentAdapter(
-    private val commentList: List<Comment>,
-    private val navController: NavController
-): RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
+    private val commentList: MutableList<Comment>,
+    private val navController: NavController,
+    private val context: Context,
+    private val postViewModel: PostViewModel
+) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val layout = LayoutInflater
@@ -33,7 +39,6 @@ class CommentAdapter(
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         val comment = commentList[position]
-
         if (comment.user.profileImage == null) {
             holder.profileImage.load(R.drawable.default_profile_img) {
                 transformations(CircleCropTransformation())
@@ -47,20 +52,31 @@ class CommentAdapter(
         holder.content.text = comment.content
         holder.updatedAt.text = DateUtils.formatTime(comment.updatedAt)
 
-        holder.profileImage.setOnClickListener {
-            showProfile(comment.user.id)
-        }
-
-        holder.username.setOnClickListener {
-            showProfile(comment.user.id)
+        if (comment.user.id == postViewModel.myUserId.value) {
+            holder.deleteBtn.visibility = View.VISIBLE
         }
     }
 
     inner class CommentViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        var profileImage: ImageView = view.findViewById(R.id.comment_profile_image)
-        var username: TextView = view.findViewById(R.id.comment_username)
-        var content: TextView = view.findViewById(R.id.comment_content)
-        var updatedAt: TextView = view.findViewById(R.id.comment_updated_at)
+        val profileImage: ImageView = view.findViewById(R.id.comment_profile_image)
+        val username: TextView = view.findViewById(R.id.comment_username)
+        val content: TextView = view.findViewById(R.id.comment_content)
+        val updatedAt: TextView = view.findViewById(R.id.comment_updated_at)
+        val deleteBtn: ImageView = view.findViewById(R.id.comment_delete_btn)
+
+        init {
+            val position = adapterPosition
+            val commentId = commentList[adapterPosition].id
+            deleteBtn.setOnClickListener {
+                deleteComment(position)
+            }
+            profileImage.setOnClickListener {
+                showProfile(commentId)
+            }
+            username.setOnClickListener {
+                showProfile(commentId)
+            }
+        }
     }
 
     private fun showProfile(userId: String) {
@@ -70,5 +86,20 @@ class CommentAdapter(
             R.id.action_post_to_profile,
             bundle
         )
+    }
+
+    private fun deleteComment(position: Int) {
+        val commentId = commentList[position].id
+        AlertDialog.Builder(context)
+            .setTitle("Delete Comment")
+            .setMessage("Are you sure you want to delete this comment?")
+            .setPositiveButton("Yes") { _, _ ->
+                Log.d("CommentAdapter", "Deleting comment[$position]")
+                commentList.removeAt(position)
+                notifyItemRemoved(position)
+                postViewModel.deleteComment(commentId)
+            }
+            .setNegativeButton("No") { _, _ -> }
+            .show()
     }
 }

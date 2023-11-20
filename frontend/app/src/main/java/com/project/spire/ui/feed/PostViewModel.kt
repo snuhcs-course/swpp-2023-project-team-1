@@ -151,8 +151,17 @@ class PostViewModel: ViewModel() {
         // TODO
     }
 
-    fun deleteComment() {
-        // TODO
+    fun deleteComment(commentId: String) {
+        viewModelScope.launch {
+            val accessToken = AuthProvider.getAccessToken()
+            val response = RetrofitClient.postAPI.deleteComment("Bearer $accessToken", commentId)
+
+            if (response.code() == 200 && response.isSuccessful) {
+                Log.d("PostViewModel", "Comment deleted")
+            } else {
+                Log.e("PostViewModel", "Error deleting comment with ${response.code()} ${response.message()}")
+            }
+        }
     }
 
     fun editComment() {
