@@ -9,10 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.spire.R
+import com.project.spire.models.Post
 import com.project.spire.models.SearchUser
 
 class SearchAdapter(
-    private val searchList: List<SearchUser>
+    private var searchList: List<SearchUser>
 ): RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
@@ -30,9 +31,16 @@ class SearchAdapter(
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
         val search = searchList[position]
 
-        holder.profileImage.load(search.profileImageUrl){
-            transformations(CircleCropTransformation())
-            placeholder(R.drawable.logo_black)
+        if (search.profileImageUrl == null) {
+            holder.profileImage.load(R.drawable.default_profile_img) {
+                transformations(CircleCropTransformation())
+            }
+        }
+        else {
+            holder.profileImage.load(search.profileImageUrl){
+                transformations(CircleCropTransformation())
+                placeholder(R.drawable.default_profile_img)
+            }
         }
         holder.username.text = search.username
         if (search.isFollowing) {
@@ -40,6 +48,11 @@ class SearchAdapter(
         } else {
             holder.followingStatus.text = "not following"
         }
+    }
+
+    fun updateList(newList: List<SearchUser>) {
+        searchList = newList
+        notifyItemInserted(searchList.size - 1)
     }
 
     inner class SearchViewHolder(val view: View) : RecyclerView.ViewHolder(view) {

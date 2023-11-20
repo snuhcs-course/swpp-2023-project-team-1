@@ -2,6 +2,7 @@ package com.project.spire.network
 
 import com.project.spire.network.auth.AuthAPI
 import com.project.spire.network.post.PostAPI
+import com.project.spire.network.search.SearchAPI
 import com.project.spire.network.user.UserAPI
 
 import okhttp3.OkHttpClient

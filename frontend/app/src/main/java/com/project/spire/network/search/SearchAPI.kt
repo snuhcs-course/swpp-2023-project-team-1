@@ -12,7 +12,7 @@ interface SearchAPI {
         @Header("Authorization") token: String,
         @Path("search_string") searchString: String,
         @Query("limit") limit: Int,
-        @Query("Offset") offset: Int
+        @Query("offset") offset: Int
     ): Response<SearchSuccess>
 
 }

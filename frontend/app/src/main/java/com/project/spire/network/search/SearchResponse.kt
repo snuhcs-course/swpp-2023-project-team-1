@@ -13,7 +13,7 @@ data class SearchSuccess(
     @SerializedName("items")
     val items: List<SearchUser>,
     @SerializedName("next_cursor")
-    val nextCursor: Int
+    val nextCursor: Int?
 
 ) : SearchResponse
 
