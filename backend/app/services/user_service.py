@@ -109,11 +109,11 @@ class UserService:
         return {"follower_cnt":follower_cnt, "following_cnt":folllowing_cnt, "follower_status": follower_status, "following_status":following_status}
 
     @Transactional()
-    async def get_followers(self, user_id: UUID4, limit: int, offset: int, session: AsyncSession):
+    async def get_followers(self, user_id: UUID4, current_user_id: UUID4, limit: int, offset: int, session: AsyncSession):
         try:
             total, users = await asyncio.gather(
                 user.count_followers(user_id),
-                user.get_followers(user_id, limit, offset)
+                user.get_followers(user_id, current_user_id, limit, offset)
             )
 
         except NoResultFound as e:
@@ -123,11 +123,11 @@ class UserService:
         return total, users, next_cursor
     
     @Transactional()
-    async def get_followings(self, user_id: UUID4, limit: int, offset: int, session: AsyncSession):
+    async def get_followings(self, user_id: UUID4, current_user_id: UUID4, limit: int, offset: int, session: AsyncSession):
         try:
             total, users = await asyncio.gather(
                 user.count_followings(user_id),
-                user.get_followings(user_id, limit, offset)
+                user.get_followings(user_id, current_user_id, limit, offset)
             )
 
         except NoResultFound as e:

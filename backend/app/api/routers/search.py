@@ -27,7 +27,7 @@ search_router = APIRouter()
     summary="Search user by username",
     description="Search user by username", 
     dependencies=[Depends(PermissionDependency([AllowAll]))],
-    # response_model=GetUsersResponse,
+    response_model=GetUsersResponse,
 )
 async def search_user(
     req: Request,

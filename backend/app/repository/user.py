@@ -92,7 +92,7 @@ async def count_followers(user_id: UUID4, session: AsyncSession):
     return res.scalar_one()
 
 @Transactional()
-async def get_followers(user_id: UUID4, limit: int, offset: int, session: AsyncSession):
+async def get_followers(user_id: UUID4, current_user_id: UUID4, limit: int, offset: int, session: AsyncSession):
     try:
         await get_user_by_user_id(user_id, session=session)
     except NoResultFound as e:
@@ -110,8 +110,24 @@ async def get_followers(user_id: UUID4, limit: int, offset: int, session: AsyncS
     res = await session.execute(stmt)
 
     follower_list = []
-    for follower in res.scalars().all():
-        follower_list.append({"id": follower.following_user.id, "username": follower.following_user.username, "profile_image_url": follower.following_user.profile_image_url})
+    for follower_user in res.scalars().all():
+        stmt_following = select(Follow).where(Follow.following_user_id == current_user_id, Follow.followed_user_id == follower_user.following_user.id, Follow.accept_status == 1)
+        res_following = await session.execute(stmt_following)
+        following = res_following.scalar_one_or_none()
+        if following is None:
+            following = False
+        else:
+            following = True
+
+        stmt_follwer = select(Follow).where(Follow.following_user_id == follower_user.following_user.id, Follow.followed_user_id == current_user_id, Follow.accept_status == 1)
+        res_follower = await session.execute(stmt_follwer)
+        follower = res_follower.scalar_one_or_none()
+        if follower is None:
+            follower = False
+        else:
+            follower = True
+
+        follower_list.append({"id": follower_user.following_user.id, "username": follower_user.following_user.username, "profile_image_url": follower_user.following_user.profile_image_url, "is_following": following, "is_follower": follower})
 
     return follower_list
 
@@ -139,7 +155,7 @@ async def count_followings(user_id: UUID4, session: AsyncSession):
     return res.scalar_one()
 
 @Transactional()
-async def get_followings(user_id: UUID4, limit: int, offset: int, session: AsyncSession):
+async def get_followings(user_id: UUID4, current_user_id: UUID4, limit: int, offset: int, session: AsyncSession):
     try:
         await get_user_by_user_id(user_id, session=session)
     except NoResultFound as e:
@@ -157,8 +173,23 @@ async def get_followings(user_id: UUID4, limit: int, offset: int, session: Async
     res = await session.execute(stmt)
     
     following_list = []
-    for following in res.scalars().all():
-        following_list.append({"id": following.followed_user.id, "username": following.followed_user.username, "profile_image_url": following.followed_user.profile_image_url})
+    for following_user in res.scalars().all():
+        stmt_following = select(Follow).where(Follow.following_user_id == current_user_id, Follow.followed_user_id == following_user.followed_user.id, Follow.accept_status == 1)
+        res_following = await session.execute(stmt_following)
+        following = res_following.scalar_one_or_none()
+        if following is None:
+            following = False
+        else:
+            following = True
+
+        stmt_follwer = select(Follow).where(Follow.following_user_id == following_user.followed_user.id, Follow.followed_user_id == current_user_id, Follow.accept_status == 1)
+        res_follower = await session.execute(stmt_follwer)
+        follower = res_follower.scalar_one_or_none()
+        if follower is None:
+            follower = False
+        else:
+            follower = True
+        following_list.append({"id": following_user.followed_user.id, "username": following_user.followed_user.username, "profile_image_url": following_user.followed_user.profile_image_url, "is_following": following, "is_follower": follower})
 
     return following_list
 

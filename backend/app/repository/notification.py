@@ -13,6 +13,24 @@ async def count_by_user_id(user_id: UUID4, session: AsyncSession):
     return res.scalar_one()
 
 @Transactional()
+async def get_notification_by_user_ids(
+    sender_id: UUID4,
+    recipient_id: UUID4,
+    notification_type: str,
+    session: AsyncSession,
+):
+    stmt = (
+        select(Notification)
+        .where(Notification.sender_id == sender_id)
+        .where(Notification.recipient_id == recipient_id)
+        .where(Notification.notification_type == notification_type)
+    )
+
+    res = await session.execute(stmt)
+
+    return res.scalar_one_or_none()
+
+@Transactional()
 async def get_notification_by_post_id_and_user_ids(
     post_id: UUID4,
     sender_id: UUID4,
@@ -54,6 +72,21 @@ async def create_or_update(notification_dict: dict, session: AsyncSession):
     await session.commit()
     await session.refresh(notification)
     return notification
+
+
+@Transactional()
+async def delete_notification(notification_dict: dict, session: AsyncSession):
+
+    stmt = (
+        delete(Notification)
+        .where(Notification.post_id == notification_dict["post_id"])
+        .where(Notification.sender_id == notification_dict["sender_id"])
+        .where(Notification.recipient_id == notification_dict["recipient_id"])
+        .where(Notification.notification_type == notification_dict["notification_type"])
+    )
+
+    await session.execute(stmt)
+    return
 
 @Transactional()
 async def get_list_by_user_id(

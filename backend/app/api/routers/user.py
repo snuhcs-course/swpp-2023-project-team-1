@@ -10,8 +10,7 @@ from app.core.fastapi.dependency.permission import (
 from app.schemas.user import (
     UserRead,
     UserUpdate,
-    GetUsersResponse,
-    UserSearchResponse, 
+    GetUsersResponse, 
     GetFollowInfoResponse
 )
 from app.session import get_db_transactional_session
@@ -20,6 +19,8 @@ from app.services.user_service import UserService, get_my_info_by_id, update_my_
 from app.utils.pagination import limit_offset_query
 from app.utils.user import get_user_id_from_request
 from app.services.user_service import check_username_by_id
+from app.services.notification_service import NotificationService
+from app.schemas.notification import NotificationBase, NotificationType
 from app.core.exceptions.user import DuplicateEmailOrUsernameException
 
 
@@ -99,6 +100,19 @@ async def request_follow(
         followed_user_id=user_id, 
         following_user_id = req.user.id
     )
+
+    notification_svc = NotificationService()
+
+    await notification_svc.create_or_update_notification(
+        notification_data=NotificationBase(
+            notification_type=NotificationType.FOLLOW_REQUEST,
+            read_at=None,
+        ),
+        sender_id=req.user.id,
+        recipient_id=user_id, 
+        post_id=None
+    )
+
     return {"message": f"Requested user {user_id} follow"}
 
 @user_router.delete(
@@ -117,6 +131,19 @@ async def cancel_follow_request(
         following_user_id=req.user.id, 
         accept_status=0
     )
+
+    notification_svc = NotificationService()
+
+    await notification_svc.delete_notification(
+        notification_data=NotificationBase(
+            notification_type=NotificationType.FOLLOW_REQUEST,
+            read_at=None,
+        ),
+        sender_id=req.user.id,
+        recipient_id=user_id, 
+        post_id=None
+    )
+
     return {"message": f"Canceled user {user_id} follow request"}
 
 @user_router.post(
@@ -133,6 +160,28 @@ async def accept_follow_request(
     follow = await user_svc.accept_follow_request(
         followed_user_id=req.user.id,
         following_user_id=user_id
+    )
+
+    notification_svc = NotificationService()
+
+    await notification_svc.create_or_update_notification(
+        notification_data=NotificationBase(
+            notification_type=NotificationType.FOLLOW_ACCEPT,
+            read_at=None,
+        ),
+        sender_id=req.user.id,
+        recipient_id=user_id, 
+        post_id=None
+    )
+
+    await notification_svc.delete_notification(
+        notification_data=NotificationBase(
+            notification_type=NotificationType.FOLLOW_REQUEST,
+            read_at=None,
+        ),
+        sender_id=user_id,
+        recipient_id=req.user.id, 
+        post_id=None
     )
     return {"message": f"Accepted user {user_id} follow request"}
 
@@ -152,6 +201,19 @@ async def reject_follow_request(
         following_user_id=user_id,
         accept_status=0
     )
+
+    notification_svc = NotificationService()
+
+    await notification_svc.delete_notification(
+        notification_data=NotificationBase(
+            notification_type=NotificationType.FOLLOW_REQUEST,
+            read_at=None,
+        ),
+        sender_id=user_id,
+        recipient_id=req.user.id, 
+        post_id=None
+    )
+
     return {"message": f"Rejected user {user_id} follow request"}
 
 @user_router.delete(
@@ -215,12 +277,13 @@ async def get_follow_info(
     response_model=GetUsersResponse,
 )
 async def get_followers(
+    req: Request,
     user_id: UUID4,
     pagination: dict = Depends(limit_offset_query)
 ):
     user_svc = UserService()
     total, items, next_cursor = await user_svc.get_followers(
-        user_id=user_id, **pagination
+        user_id=user_id, current_user_id=req.user.id, **pagination
     )
     return {"total": total, "items": items, "next_cursor": next_cursor}
 
@@ -232,11 +295,12 @@ async def get_followers(
     response_model=GetUsersResponse,
 )
 async def get_followings(
+    req: Request,
     user_id: UUID4,
     pagination: dict = Depends(limit_offset_query)
 ):
     user_svc = UserService()
     total, items, next_cursor = await user_svc.get_followings(
-        user_id=user_id, **pagination
+        user_id=user_id, current_user_id=req.user.id, **pagination
     )
     return {"total": total, "items": items, "next_cursor": next_cursor}
