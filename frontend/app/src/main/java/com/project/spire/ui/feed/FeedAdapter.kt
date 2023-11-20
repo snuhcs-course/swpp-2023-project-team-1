@@ -89,12 +89,18 @@ class FeedAdapter(
     }
 
     private fun showProfile(userId: String) {
-        val bundle = Bundle()
-        bundle.putString("userId", userId)
-        navController.navigate(
-            R.id.action_feed_to_profile,
-            bundle
-        )
+        if (feedViewModel.myUserId.value!! == userId) {
+            navController.navigate(
+                R.id.action_feed_to_profile
+            )
+        } else {
+            val bundle = Bundle()
+            bundle.putString("userId", userId)
+            navController.navigate(
+                R.id.action_feed_to_profile,
+                bundle
+            )
+        }
     }
 
     fun updateList(newList: List<Post>) {

@@ -16,7 +16,8 @@ import com.project.spire.utils.DateUtils
 
 class CommentAdapter(
     private val commentList: List<Comment>,
-    private val navController: NavController
+    private val navController: NavController,
+    private val postViewModel: PostViewModel
 ): RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -64,11 +65,17 @@ class CommentAdapter(
     }
 
     private fun showProfile(userId: String) {
-        val bundle = Bundle()
-        bundle.putString("userId", userId)
-        navController.navigate(
-            R.id.action_post_to_profile,
-            bundle
-        )
+        if (postViewModel.myUserId.value == userId) {
+            navController.navigate(
+                R.id.action_post_to_profile,
+            )
+        } else {
+            val bundle = Bundle()
+            bundle.putString("userId", userId)
+            navController.navigate(
+                R.id.action_post_to_profile,
+                bundle
+            )
+        }
     }
 }

@@ -29,12 +29,14 @@ object AuthPreferenceKeys {
     val ACCESS_TOKEN = stringPreferencesKey("access_token")
     val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
     val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
+    val USER_ID = stringPreferencesKey("user_id")
 }
 
 class AuthRepository (private val authDataStore: DataStore<Preferences>) {
 
     val accessTokenFlow = authDataStore.data.map { it[AuthPreferenceKeys.ACCESS_TOKEN] ?: "" }
     val refreshTokenFlow = authDataStore.data.map { it[AuthPreferenceKeys.REFRESH_TOKEN] ?: "" }
+    val userIdFlow = authDataStore.data.map { it[AuthPreferenceKeys.USER_ID] ?: "" }
     val isLoggedInFlow = authDataStore.data.map { it[AuthPreferenceKeys.IS_LOGGED_IN] ?: false }
 
     /**
@@ -52,6 +54,7 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
             authDataStore.edit {
                 it[AuthPreferenceKeys.ACCESS_TOKEN] = successBody.accessToken!!
                 it[AuthPreferenceKeys.REFRESH_TOKEN] = successBody.refreshToken!!
+                it[AuthPreferenceKeys.USER_ID] = successBody.userId!!
                 it[AuthPreferenceKeys.IS_LOGGED_IN] = true
             }
             successBody
@@ -123,8 +126,9 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
 
             // Save tokens to datastore
             authDataStore.edit {
-                it[AuthPreferenceKeys.ACCESS_TOKEN] = successBody.accessToken!!
-                it[AuthPreferenceKeys.REFRESH_TOKEN] = successBody.refreshToken!!
+                it[AuthPreferenceKeys.ACCESS_TOKEN] = successBody.accessToken
+                it[AuthPreferenceKeys.REFRESH_TOKEN] = successBody.refreshToken
+                it[AuthPreferenceKeys.USER_ID] = successBody.userId
                 it[AuthPreferenceKeys.IS_LOGGED_IN] = true
             }
             successBody
@@ -190,6 +194,7 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
         authDataStore.edit {
             it[AuthPreferenceKeys.ACCESS_TOKEN] = ""
             it[AuthPreferenceKeys.REFRESH_TOKEN] = ""
+            it[AuthPreferenceKeys.USER_ID] = ""
             it[AuthPreferenceKeys.IS_LOGGED_IN] = false
         }
     }
