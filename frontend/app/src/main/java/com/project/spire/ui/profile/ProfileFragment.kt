@@ -3,6 +3,7 @@ package com.project.spire.ui.profile
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,10 +77,12 @@ class ProfileFragment : Fragment() {
 
         // If bundle is null, fetch my profile
         // Else, fetch other user's profile using bundle's user id
-        if (savedInstanceState?.getString("userId") == null) {
+        if (arguments?.getString("userId") == null) {
+            Log.i("ProfileFragment", "userId is null")
             profileViewModel.getMyInfo()
         } else {
-            val userId = savedInstanceState.getString("userId")
+            Log.i("ProfileFragment", "userId: ${arguments?.getString("userId")}")
+            val userId = arguments?.getString("userId")
             profileViewModel.getUserInfo(userId!!)
         }
 
