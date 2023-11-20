@@ -198,7 +198,7 @@ class PostFragment : Fragment() {
         binding.commentWriteBtn.visibility = View.VISIBLE
         binding.commentWriteProgressBar.visibility = View.GONE
         binding.commentWriteEditText.text?.clear()
-        val commentAdapter = CommentAdapter(comments, findNavController())
+        val commentAdapter = CommentAdapter(comments, findNavController(), postViewModel)
         recyclerView.adapter = commentAdapter
         recyclerView.visibility = View.VISIBLE
         binding.shimmerViewContainerComment.stopShimmer()
@@ -261,11 +261,17 @@ class PostFragment : Fragment() {
     }
 
     private fun showProfile(userId: String) {
-        val bundle = Bundle()
-        bundle.putString("userId", userId)
-        findNavController().navigate(
-            R.id.action_post_to_profile,
-            bundle
-        )
+        if (postViewModel.myUserId.value == userId) {
+            findNavController().navigate(
+                R.id.action_post_to_profile
+            )
+        } else {
+            val bundle = Bundle()
+            bundle.putString("userId", userId)
+            findNavController().navigate(
+                R.id.action_post_to_profile,
+                bundle
+            )
+        }
     }
 }
