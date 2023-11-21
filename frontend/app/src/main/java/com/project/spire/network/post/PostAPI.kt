@@ -83,9 +83,12 @@ interface PostAPI {
         @Body request: NewCommentRequest
     ): Response<Comment>
 
-    @PATCH("post/{post_id}/comment/{comment_id}") // TODO
+    @PATCH("post/comment/{comment_id}") // TODO
     suspend fun updateComment(): Response<Void>
 
-    @DELETE("post/{post_id}/comment/{comment_id}") // TODO
-    suspend fun deleteComment(): Response<Void>
+    @DELETE("post/comment/{comment_id}")
+    suspend fun deleteComment(
+        @Header("Authorization") accessToken: String,
+        @Path("comment_id") commentId: String
+    ): Response<Void>
 }
