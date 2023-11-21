@@ -28,8 +28,6 @@ class ProfileFragment : Fragment() {
 
     private lateinit var profileViewModel: ProfileViewModel
 
-    private var TEST_USER_ID = "d2fcfe21-82fa-4008-835d-16c39eca26d7" //"92142569-d579-44e7-bf06-102770db6eb4"
-
     private val spanCount = 2
     private val space = 8f
 
@@ -49,26 +47,15 @@ class ProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        profileViewModel.username.observe(viewLifecycleOwner) {
-            val username = "@$it"
-            binding.profileUsername.text = username
-        }
+        Log.d("ProfileFragment", "onResume")
 
-        profileViewModel.bio.observe(viewLifecycleOwner) {
-            binding.profileBio.text = it
-        }
-
-        profileViewModel.profileImageUrl.observe(viewLifecycleOwner) {
-            if (it != null) {
-                binding.profileImage.load(it) {
-                    transformations(CircleCropTransformation())
-                }
-            }
-            else {
-                binding.profileImage.load(R.drawable.default_profile_img) {
-                    transformations(CircleCropTransformation())
-                }
-            }
+        if (arguments?.getString("userId") == null) {
+            Log.i("ProfileFragment", "userId is null")
+            profileViewModel.getMyInfo()
+        } else {
+            Log.i("ProfileFragment", "userId: ${arguments?.getString("userId")}")
+            val userId = arguments?.getString("userId")
+            profileViewModel.getUserInfo(userId!!)
         }
     }
 
@@ -166,19 +153,11 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        binding.testButton.setOnClickListener {
-            if (profileViewModel.isMyProfile.value == true) {
-                profileViewModel.getUserInfo(TEST_USER_ID)
-                binding.testButton.text = "My Profile"
-            } else {
-                profileViewModel.getMyInfo()
-                binding.testButton.text = "Test Profile"
-            }
-        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 }

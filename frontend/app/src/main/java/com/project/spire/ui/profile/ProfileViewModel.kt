@@ -32,6 +32,7 @@ class ProfileViewModel(
     // -1: Not follow, 0: Requested, 1: Accepted
     private val _isMyProfile = MutableLiveData<Boolean>().apply { value = false }
     private val _photoPickerUri = MutableLiveData<Uri?>().apply { value = null }
+    private val _editProfileSuccess = MutableLiveData<Boolean>().apply { value = false }
 
     val userId: LiveData<String> = _userId
     val email: LiveData<String> = _email
@@ -44,6 +45,7 @@ class ProfileViewModel(
     val followingState: LiveData<Int> = _followingState
     val isMyProfile: LiveData<Boolean> = _isMyProfile
     val photoPickerUri: LiveData<Uri?> = _photoPickerUri
+    val editProfileSuccess: LiveData<Boolean> = _editProfileSuccess
 
 
     private val _logoutSuccess = MutableLiveData<Boolean>()
@@ -105,10 +107,15 @@ class ProfileViewModel(
         viewModelScope.launch {
             val accessToken = AuthProvider.getAccessToken()
             val updateProfile = userRepository.updateMyInfo(accessToken, username, bio, profileImage, context)
+            if (updateProfile != null) {
+                _username.postValue(updateProfile?.username)
+                _bio.postValue(updateProfile?.bio)
+                _profileImageUrl.postValue(updateProfile?.profileImageUrl)
+                _editProfileSuccess.postValue(true)
+            } else {
+                Log.e("ProfileViewModel", "Update profile error")
+            }
 
-            _username.postValue(updateProfile?.username)
-            _bio.postValue(updateProfile?.bio)
-            _profileImageUrl.postValue(updateProfile?.profileImageUrl)
         }
     }
 

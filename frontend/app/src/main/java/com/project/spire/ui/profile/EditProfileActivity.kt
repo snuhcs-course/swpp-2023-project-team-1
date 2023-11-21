@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.compose.runtime.rememberCompositionContext
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.spire.R
@@ -21,6 +22,10 @@ import com.project.spire.core.auth.authDataStore
 import com.project.spire.core.user.UserRepository
 import com.project.spire.ui.MainActivity
 import com.project.spire.ui.auth.LoginActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -92,12 +97,12 @@ class EditProfileActivity : AppCompatActivity() {
             if (username.isEmpty()) username = profileViewModel.username.value!!
             if (bio.isEmpty()) bio = profileViewModel.bio.value!!
             profileViewModel.updateProfile(username, bio, profileViewModel.photoPickerUri.value, applicationContext)
+        }
 
-            val intent = Intent(this, MainActivity::class.java)
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            intent.putExtra("fragment", "profile")
-            startActivity(intent)
-            finish()
+        profileViewModel.editProfileSuccess.observe(this) {
+            if (it) {
+                finish()
+            }
         }
     }
 
