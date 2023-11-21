@@ -68,6 +68,7 @@
 
     <!-- feed, post and comment -->
     <string name="comment_write_hint">Write your comment here</string>
+    <string name="post_edit_save_btn">Save</string>
 
 
     <!-- Profile -->
@@ -95,5 +96,6 @@
 
     <!-- Notifications -->
     <string name="notifications_title">Notifications</string>
+
 
 </resources>

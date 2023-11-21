@@ -50,13 +50,23 @@ interface PostAPI {
     ): Response<Post>
 
     @PATCH("post/{post_id}")
-    suspend fun updatePost(@Body updatePostRequest: UpdatePostRequest): Response<UpdatePostSuccess>
+    suspend fun updatePost(
+        @Header("Authorization") accessToken: String,
+        @Path("post_id") postId: String,
+        @Body updatePostRequest: UpdatePostRequest
+    ): Response<Post>
 
     @DELETE("post/{post_id}")
-    suspend fun deletePost(): Response<Void>
+    suspend fun deletePost(
+        @Header("Authorization") accessToken: String,
+        @Path("post_id") postId: String
+    ): Response<Void>
 
     @POST("post/{post_id}/like")
-    suspend fun likePost(): Response<Void>
+    suspend fun likePost(
+        @Header("Authorization") accessToken: String,
+        @Path("post_id") postId: String
+    ): Response<Void>
 
     @GET("post/{post_id}/comment")
     suspend fun getComments(
@@ -73,9 +83,12 @@ interface PostAPI {
         @Body request: NewCommentRequest
     ): Response<Comment>
 
-    @PATCH("post/{post_id}/comment/{comment_id}") // TODO
+    @PATCH("post/comment/{comment_id}") // TODO
     suspend fun updateComment(): Response<Void>
 
-    @DELETE("post/{post_id}/comment/{comment_id}") // TODO
-    suspend fun deleteComment(): Response<Void>
+    @DELETE("post/comment/{comment_id}")
+    suspend fun deleteComment(
+        @Header("Authorization") accessToken: String,
+        @Path("comment_id") commentId: String
+    ): Response<Void>
 }

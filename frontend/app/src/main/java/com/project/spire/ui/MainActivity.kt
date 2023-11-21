@@ -18,6 +18,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.R
 import com.example.spire.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -30,6 +31,7 @@ import com.project.spire.ui.feed.FeedFragment
 import com.project.spire.ui.notifications.NotificationsFragment
 import com.project.spire.ui.profile.ProfileFragment
 import com.project.spire.ui.search.SearchFragment
+import java.lang.NullPointerException
 
 class MainActivity : AppCompatActivity() {
 
@@ -56,24 +58,32 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
+        val appBarConfiguration = AppBarConfiguration.Builder(
             setOf(
-                R.id.navigation_feed,
-                R.id.navigation_search,
-                R.id.navigation_notification,
-                R.id.navigation_profile
+                R.id.tab_feed,
+                R.id.tab_search,
+                R.id.tab_notification,
+                R.id.tab_profile
             )
-        )
+        ).build()
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        navView.setOnItemReselectedListener {
+            Log.i("MainActivity", "Reselected item: ${it.title}")
+            // Resets back stack when re-selecting the same tab
+            navController.popBackStack(it.itemId, false)
+            navController.navigate(it.itemId)
+        }
 
         // New Post Button
         val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet_image_source, null)
         val bottomSheetDialog = BottomSheetDialog(this)
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.hide()
-        val bottomSheetCamera = bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_1)
-        val bottomSheetGallery = bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_2)
+        val bottomSheetCamera =
+            bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_1)
+        val bottomSheetGallery =
+            bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_2)
         val bottomSheetNew = bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_3)
         val createPostBtn: FloatingActionButton = binding.fab
 
@@ -116,14 +126,15 @@ class MainActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
             )
         }
-        if(Build.VERSION.SDK_INT >= 30) {	// API 30 에 적용
+        if (Build.VERSION.SDK_INT >= 30) {    // API 30 에 적용
             WindowCompat.setDecorFitsSystemWindows(window, false)
         }
     }
+
     fun replaceFragment(fragment: Fragment, addToBackStack: Boolean = true) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.nav_host_fragment_activity_main, fragment)
-        if (addToBackStack)  {
+        if (addToBackStack) {
             transaction.addToBackStack(null)
         }
         transaction.commit()
