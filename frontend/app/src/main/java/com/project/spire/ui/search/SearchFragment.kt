@@ -1,5 +1,6 @@
 package com.project.spire.ui.search
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,7 +20,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.spire.R
 import com.example.spire.databinding.FragmentSearchBinding
+import com.google.android.material.textfield.TextInputEditText
 import com.project.spire.core.search.SearchRepository
 import com.project.spire.ui.feed.FeedAdapter
 import com.project.spire.ui.profile.ProfileViewModelFactory
@@ -32,7 +35,7 @@ class SearchFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     private lateinit var recyclerView: RecyclerView
-    private lateinit var text: TextView
+    private lateinit var text: TextInputEditText
     private lateinit var searchViewModel: SearchViewModel
 
     override fun onCreateView(
@@ -63,7 +66,7 @@ class SearchFragment : Fragment() {
 
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.addOnChildAttachStateChangeListener(onChildAttachStateChangeListener)
-        val adapter = SearchAdapter(emptyList())
+        val adapter = SearchAdapter(emptyList(), findNavController())
         recyclerView.adapter = adapter
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -81,6 +84,14 @@ class SearchFragment : Fragment() {
                 }
             }
         })
+
+        text.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                text.hint = ""
+            } else {
+                text.hint = R.string.search_bar_hint.toString()
+            }
+        }
 
         text.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {

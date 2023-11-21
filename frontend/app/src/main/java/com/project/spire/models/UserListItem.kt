@@ -2,7 +2,7 @@ package com.project.spire.models
 
 import com.google.gson.annotations.SerializedName
 
-class SearchUser(
+class UserListItem(
     @SerializedName("id")
     val userId: String,
     @SerializedName("username")

@@ -23,6 +23,7 @@
             android:maxLines="1"
             android:inputType="text"
             android:paddingStart="@dimen/search_bar_text_padding"
+            android:gravity="center_vertical"
             android:textSize="@dimen/search_bar_text_size"
             android:hint="@string/search_bar_hint" />
 

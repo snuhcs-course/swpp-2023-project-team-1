@@ -6,11 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.search.SearchRepository
-import com.project.spire.core.user.UserRepository
-import com.project.spire.models.SearchUser
-import com.project.spire.ui.profile.ProfileViewModel
+import com.project.spire.models.UserListItem
 import com.project.spire.utils.AuthProvider
 import kotlinx.coroutines.launch
 
@@ -19,7 +16,7 @@ class SearchViewModel(
 ) : ViewModel() {
 
 
-    private val _users = MutableLiveData<List<SearchUser>>().apply {
+    private val _users = MutableLiveData<List<UserListItem>>().apply {
         value = emptyList()
     }
     private val _totalUsers = MutableLiveData<Int>().apply {
@@ -33,7 +30,7 @@ class SearchViewModel(
     }
 
 
-    val users: LiveData<List<SearchUser>> = _users
+    val users: LiveData<List<UserListItem>> = _users
     val totalUsers: LiveData<Int?> = _totalUsers
     val nextCursor: LiveData<Int?> = _nextCursor
     val searchString: LiveData<String?> = _searchString
