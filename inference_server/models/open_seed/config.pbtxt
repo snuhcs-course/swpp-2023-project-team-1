@@ -1,4 +1,4 @@
-name: "grounded_sam"
+name: "open_seed"
 backend: "python"
 max_batch_size: 0
 
@@ -7,24 +7,7 @@ input [
         name: "INPUT_IMAGE"
         data_type: TYPE_STRING
         dims: [1]
-    },
-    {
-        name: "BOX_THRESHOLD"
-        data_type: TYPE_FP32
-        dims: [1]
-    },
-    {
-        name: "TEXT_THRESHOLD"
-        data_type: TYPE_FP32
-        dims: [1]
-    
-    },
-    {
-        name: "IOU_THRESHOLD"
-        data_type: TYPE_FP32
-        dims: [1]
     }
-
 ]
 
 output [
@@ -34,7 +17,7 @@ output [
         dims: [-1]
     },
     {
-        name: "OUTPUT_IMAGES"
+        name: "OUTPUT_MASKS"
         data_type: TYPE_STRING
         dims: [-1]
     },
