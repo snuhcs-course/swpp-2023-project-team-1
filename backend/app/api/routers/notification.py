@@ -39,3 +39,27 @@ async def get_notifications(
         "items": notifications,
         "next_cursor": next_cursor,
     }
+
+@notification_router.delete(
+    "/me",
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
+)
+async def delete_all_notifications(
+    user_id: UUID4 | None = Depends(get_user_id_from_request)
+):
+    notification_svc = NotificationService()
+    await notification_svc.delete_my_all_notifications(user_id)
+
+    return {"message": "Deleted all notifications successfully"}
+
+@notification_router.delete(
+    "/{notification_id}",
+    dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
+)
+async def delete_notification_by_id(
+    notification_id: UUID4
+):
+    notification_svc = NotificationService()
+    await notification_svc.delete_notification_by_id(notification_id)
+
+    return {"message": f"Deleted notification {notification_id} successfully"}

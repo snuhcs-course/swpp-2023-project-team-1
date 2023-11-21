@@ -134,7 +134,7 @@ async def cancel_follow_request(
 
     notification_svc = NotificationService()
 
-    await notification_svc.delete_notification(
+    await notification_svc.delete_notification_by_details(
         notification_data=NotificationBase(
             notification_type=NotificationType.FOLLOW_REQUEST,
             read_at=None,
@@ -174,7 +174,7 @@ async def accept_follow_request(
         post_id=None
     )
 
-    await notification_svc.delete_notification(
+    await notification_svc.delete_notification_by_details(
         notification_data=NotificationBase(
             notification_type=NotificationType.FOLLOW_REQUEST,
             read_at=None,
@@ -204,7 +204,7 @@ async def reject_follow_request(
 
     notification_svc = NotificationService()
 
-    await notification_svc.delete_notification(
+    await notification_svc.delete_notification_by_details(
         notification_data=NotificationBase(
             notification_type=NotificationType.FOLLOW_REQUEST,
             read_at=None,

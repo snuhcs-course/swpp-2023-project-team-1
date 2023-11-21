@@ -13,22 +13,29 @@ async def count_by_user_id(user_id: UUID4, session: AsyncSession):
     return res.scalar_one()
 
 @Transactional()
-async def get_notification_by_user_ids(
-    sender_id: UUID4,
-    recipient_id: UUID4,
-    notification_type: str,
+async def get_list_by_user_id(
+    limit: int,
+    offset: int,
+    user_id: UUID4 | None,
     session: AsyncSession,
 ):
     stmt = (
         select(Notification)
-        .where(Notification.sender_id == sender_id)
-        .where(Notification.recipient_id == recipient_id)
-        .where(Notification.notification_type == notification_type)
+        .join_from(Notification, User, isouter=True, onclause=Notification.sender_id == User.id)
+        .options(selectinload(Notification.sender).load_only(User.id, User.username, User.profile_image_url))
+        .options(selectinload(Notification.recipient).load_only(User.id, User.username, User.profile_image_url))
+        .order_by(Notification.created_at.desc())
     )
+
+    if user_id:
+        stmt = stmt.where(Notification.recipient_id == user_id)
+
+    stmt = stmt.limit(limit).offset(offset)
 
     res = await session.execute(stmt)
 
-    return res.scalar_one_or_none()
+    return res.scalars().all()
+
 
 @Transactional()
 async def get_notification_by_post_id_and_user_ids(
@@ -73,9 +80,19 @@ async def create_or_update(notification_dict: dict, session: AsyncSession):
     await session.refresh(notification)
     return notification
 
+@Transactional()
+async def delete_notification_by_id(notification_id: UUID4, session: AsyncSession):
+
+    stmt = (
+        delete(Notification)
+        .where(Notification.id == notification_id)
+    )
+
+    await session.execute(stmt)
+    return
 
 @Transactional()
-async def delete_notification(notification_dict: dict, session: AsyncSession):
+async def delete_notification_by_details(notification_dict: dict, session: AsyncSession):
 
     stmt = (
         delete(Notification)
@@ -89,25 +106,12 @@ async def delete_notification(notification_dict: dict, session: AsyncSession):
     return
 
 @Transactional()
-async def get_list_by_user_id(
-    limit: int,
-    offset: int,
-    user_id: UUID4 | None,
-    session: AsyncSession,
-):
+async def delete_notifications_by_user_id(user_id: UUID4, session: AsyncSession):
+
     stmt = (
-        select(Notification)
-        .join_from(Notification, User, isouter=True, onclause=Notification.sender_id == User.id)
-        .options(selectinload(Notification.sender).load_only(User.id, User.username, User.profile_image_url))
-        .options(selectinload(Notification.recipient).load_only(User.id, User.username, User.profile_image_url))
-        .order_by(Notification.created_at.desc())
+        delete(Notification)
+        .where(Notification.recipient_id == user_id)
     )
 
-    if user_id:
-        stmt = stmt.where(Notification.recipient_id == user_id)
-
-    stmt = stmt.limit(limit).offset(offset)
-
-    res = await session.execute(stmt)
-
-    return res.scalars().all()
+    await session.execute(stmt)
+    return

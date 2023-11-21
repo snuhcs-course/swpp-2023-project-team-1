@@ -49,7 +49,7 @@ class NotificationService:
             raise BadRequestException(str(e.orig)) from e
         
     @Transactional()
-    async def delete_notification(
+    async def delete_notification_by_details(
         self,
         notification_data: NotificationBase,
         sender_id: UUID4,
@@ -62,7 +62,31 @@ class NotificationService:
         notification_dict = notification_data.create_dict(sender_id, recipient_id, post_id)
 
         try:
-            await notification.delete_notification(notification_dict)
+            await notification.delete_notification_by_details(notification_dict)
+        
+        except IntegrityError as e:
+            raise BadRequestException(str(e.orig)) from e
+        
+        except NoResultFound as e:
+            raise NotificationNotFoundException("Notification not found") from e
+        
+    @Transactional()
+    async def delete_my_all_notifications(self, user_id: UUID4, session: AsyncSession):
+
+        try:
+            await notification.delete_notifications_by_user_id(user_id)
+        
+        except IntegrityError as e:
+            raise BadRequestException(str(e.orig)) from e
+        
+        except NoResultFound as e:
+            raise NotificationNotFoundException("Notification not found") from e
+        
+    @Transactional()
+    async def delete_notification_by_id(self, notification_id: UUID4, session: AsyncSession):
+
+        try:
+            await notification.delete_notification_by_id(notification_id)
         
         except IntegrityError as e:
             raise BadRequestException(str(e.orig)) from e

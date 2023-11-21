@@ -56,6 +56,7 @@ post_2 = {
 }
 
 comment_id = None
+notification_id = None
 
 html = """
 <!DOCTYPE html>
@@ -1234,7 +1235,7 @@ async def test_like_post_correct():
         }
 
         response = await ac.post(
-            "/api/post/" + post_1['id'] + "/like",
+            "/api/post/" + post_2['id'] + "/like",
             headers=headers
         )
 
@@ -1242,7 +1243,7 @@ async def test_like_post_correct():
     response_data = response.json()
     assert response_data['user_id'] == user_id_1
     assert response_data['is_liked'] == 1
-    assert response_data['post_id'] == post_1['id']
+    assert response_data['post_id'] == post_2['id']
     assert isinstance(response_data['created_at'], str)
     assert isinstance(response_data['updated_at'], str)
 
@@ -1255,7 +1256,7 @@ async def test_like_post_toggle_correct():
         }
 
         response = await ac.post(
-            "/api/post/" + post_1['id'] + "/like",
+            "/api/post/" + post_2['id'] + "/like",
             headers=headers
         )
 
@@ -1263,7 +1264,7 @@ async def test_like_post_toggle_correct():
     response_data = response.json()
     assert response_data['user_id'] == user_id_1
     assert response_data['is_liked'] == 0
-    assert response_data['post_id'] == post_1['id']
+    assert response_data['post_id'] == post_2['id']
     assert isinstance(response_data['created_at'], str)
     assert isinstance(response_data['updated_at'], str)
 
@@ -1464,8 +1465,57 @@ async def test_get_notifications_correct():
     response_data = response.json()
     assert isinstance(response_data['total'], int)
     assert isinstance(response_data['items'], list)
+    global notification_id
+    notification_id = response_data['items'][0]['id']
     assert response_data['next_cursor'] == None
 
+@pytest.mark.asyncio
+async def test_delete_one_notification():
+    global notification_id
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        response = await ac.delete(
+            "/api/notification/" + notification_id,
+            headers=headers
+        )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['message'] == f"Deleted notification {notification_id} successfully"
+
+@pytest.mark.asyncio
+async def test_delete_all_notifications():
+    global comment_id
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        response = await ac.delete(
+            "/api/notification/me",
+            headers=headers
+        )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['message'] == f"Deleted all notifications successfully"
+
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        response = await ac.get(
+            "/api/notification/me",
+            headers=headers
+        )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['total'] == 0
 
 @pytest.mark.asyncio
 async def test_delete_comment_forbidden_wrong():
