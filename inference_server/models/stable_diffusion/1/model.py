@@ -22,7 +22,7 @@ class TritonPythonModel:
             torch_dtype=torch.float16,
             variant="fp16",
             use_safetensors=True,
-            cache_dir="/opt/tritonserver/pretrained_model"
+            cache_dir="pretrained_model"
             ).to("cuda")
         self.pipe.scheduler = EulerDiscreteScheduler.from_config(self.pipe.scheduler.config,use_karras_sigmas=True)
         
@@ -36,7 +36,7 @@ class TritonPythonModel:
             torch_dtype=torch.float16,
             use_safetensors=True,
             variant="fp16",
-            cache_dir="/opt/tritonserver/pretrained_model"
+            cache_dir="pretrained_model"
             ).to("cuda") 
         self.refiner_pipe.scheduler = EulerDiscreteScheduler.from_config(self.refiner_pipe.scheduler.config,use_karras_sigmas=True)
 
@@ -47,7 +47,7 @@ class TritonPythonModel:
             torch_dtype=torch.float16,
             use_safetensors=True,
             variant="fp16",
-            cache_dir="/opt/tritonserver/pretrained_model"
+            cache_dir="pretrained_model"
             ).to("cuda")
         self.inpainting_refiner_pipe.scheduler = EulerDiscreteScheduler.from_config(self.inpainting_refiner_pipe.scheduler.config,use_karras_sigmas=True)
         
