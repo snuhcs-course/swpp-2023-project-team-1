@@ -89,7 +89,7 @@ class TritonPythonModel:
             )["data_type"]
         )
         
-        args_temp = "evaluate --conf_files /opt/tritonserver/models/open_seed/1/configs/openseed/openseed_swint_lang.yaml --overrides WEIGHT /opt/tritonserver/pretrained_model/model_state_dict_swint_51.2ap.pt".split()
+        args_temp = "evaluate --conf_files models/open_seed/1/configs/openseed/openseed_swint_lang.yaml --overrides WEIGHT pretrained_model/model_state_dict_swint_51.2ap.pt".split()
         
         opt, cmdline_args = load_opt_command(args_temp)
         if cmdline_args.user_dir:
