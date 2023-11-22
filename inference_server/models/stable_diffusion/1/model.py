@@ -3,7 +3,6 @@ import numpy as np
 import torch
 import triton_python_backend_utils as pb_utils
 
-from huggingface_hub import login
 from diffusers import AutoPipelineForText2Image, AutoPipelineForImage2Image, AutoPipelineForInpainting, EulerDiscreteScheduler
 
 from io import BytesIO
@@ -17,9 +16,7 @@ class TritonPythonModel:
                 json.loads(args["model_config"]), "OUTPUT_IMAGES"
             )["data_type"]
         )
-        
-        login("ADD YOUR HF TOKEN HERE")
-        
+                
         self.pipe = AutoPipelineForText2Image.from_pretrained(
             "stabilityai/stable-diffusion-xl-base-1.0",
             torch_dtype=torch.float16,
