@@ -207,7 +207,7 @@ class _PanopticPrediction:
         assert (
             len(empty_ids) == 1
         ), ">1 ids corresponds to no labels. This is currently not supported"
-        return (self._seg != empty_ids[0]).numpy().astype(np.bool)
+        return (self._seg != empty_ids[0]).numpy().astype(bool)
 
     def semantic_masks(self):
         for sid in self._seg_ids:
@@ -215,14 +215,14 @@ class _PanopticPrediction:
             if sinfo is None or sinfo["isthing"]:
                 # Some pixels (e.g. id 0 in PanopticFPN) have no instance or semantic predictions.
                 continue
-            yield (self._seg == sid).numpy().astype(np.bool), sinfo
+            yield (self._seg == sid).numpy().astype(bool), sinfo
 
     def instance_masks(self):
         for sid in self._seg_ids:
             sinfo = self._sinfo.get(sid)
             if sinfo is None or not sinfo["isthing"]:
                 continue
-            mask = (self._seg == sid).numpy().astype(np.bool)
+            mask = (self._seg == sid).numpy().astype(bool)
             if mask.sum() > 0:
                 yield mask, sinfo
 
@@ -327,6 +327,24 @@ class VisImage:
         rgb, alpha = np.split(img_rgba, [3], axis=2)
         return rgb.astype("uint8")
 
+    def get_image_rgba(self):
+        """
+        Returns:
+            ndarray:
+                the visualized image of shape (H, W, 3) (RGB) in uint8 type.
+                The shape is scaled w.r.t the input image using the given `scale` argument.
+        """
+        canvas = self.canvas
+        s, (width, height) = canvas.print_to_buffer()
+        # buf = io.BytesIO()  # works for cairo backend
+        # canvas.print_rgba(buf)
+        # width, height = self.width, self.height
+        # s = buf.getvalue()
+
+        buffer = np.frombuffer(s, dtype="uint8")
+
+        img_rgba = buffer.reshape(height, width, 4)
+        return img_rgba.astype("uint8")
 
 class Visualizer:
     """
@@ -380,105 +398,6 @@ class Visualizer:
         self._default_font_size = 18
         self._instance_mode = instance_mode
         self.keypoint_threshold = _KEYPOINT_THRESHOLD
-
-    def draw_instance_predictions(self, predictions, threshold=0.1):
-        """
-        Draw instance-level prediction results on an image.
-
-        Args:
-            predictions (Instances): the output of an instance detection/segmentation
-                model. Following fields will be used to draw:
-                "pred_boxes", "pred_classes", "scores", "pred_masks" (or "pred_masks_rle").
-
-        Returns:
-            output (VisImage): image object with visualizations.
-        """
-        boxes = predictions.pred_boxes if predictions.has("pred_boxes") else None
-        scores = predictions.scores if predictions.has("scores") else None
-        classes = predictions.pred_classes.tolist() if predictions.has("pred_classes") else None
-        labels = _create_text_labels(classes, scores, self.metadata.get("thing_classes", None))
-        keypoints = predictions.pred_keypoints if predictions.has("pred_keypoints") else None
-
-        keep = (scores > threshold).cpu()
-        boxes = boxes[keep]
-        scores = scores[keep]
-        classes = np.array(classes)
-        classes = classes[np.array(keep)]
-        labels = np.array(labels)
-        labels = labels[np.array(keep)]
-
-        if predictions.has("pred_masks"):
-            masks = np.asarray(predictions.pred_masks)
-            masks = masks[np.array(keep)]
-            masks = [GenericMask(x, self.output.height, self.output.width) for x in masks]
-        else:
-            masks = None
-
-        if self._instance_mode == ColorMode.SEGMENTATION and self.metadata.get("thing_colors"):
-        # if self.metadata.get("thing_colors"):
-            colors = [
-                self._jitter([x / 255 for x in self.metadata.thing_colors[c]]) for c in classes
-            ]
-            alpha = 0.4
-        else:
-            colors = None
-            alpha = 0.4
-
-        if self._instance_mode == ColorMode.IMAGE_BW:
-            self.output.reset_image(
-                self._create_grayscale_image(
-                    (predictions.pred_masks.any(dim=0) > 0).numpy()
-                    if predictions.has("pred_masks")
-                    else None
-                )
-            )
-            alpha = 0.3
-        
-        self.overlay_instances(
-            masks=masks,
-            boxes=boxes,
-            labels=labels,
-            keypoints=keypoints,
-            assigned_colors=colors,
-            alpha=alpha,
-        )
-        return self.output
-
-    def draw_sem_seg(self, sem_seg, area_threshold=None, alpha=0.7):
-        """
-        Draw semantic segmentation predictions/labels.
-
-        Args:
-            sem_seg (Tensor or ndarray): the segmentation of shape (H, W).
-                Each value is the integer label of the pixel.
-            area_threshold (int): segments with less than `area_threshold` are not drawn.
-            alpha (float): the larger it is, the more opaque the segmentations are.
-
-        Returns:
-            output (VisImage): image object with visualizations.
-        """
-        if isinstance(sem_seg, torch.Tensor):
-            sem_seg = sem_seg.numpy()
-        labels, areas = np.unique(sem_seg, return_counts=True)
-        sorted_idxs = np.argsort(-areas).tolist()
-        labels = labels[sorted_idxs]
-        for label in filter(lambda l: l < len(self.metadata.stuff_classes), labels):
-            try:
-                mask_color = [x / 255 for x in self.metadata.stuff_colors[label]]
-            except (AttributeError, IndexError):
-                mask_color = None
-
-            binary_mask = (sem_seg == label).astype(np.uint8)
-            text = self.metadata.stuff_classes[label]
-            self.draw_binary_mask(
-                binary_mask,
-                color=mask_color,
-                edge_color=_OFF_WHITE,
-                text=text,
-                alpha=alpha,
-                area_threshold=area_threshold,
-            )
-        return self.output
 
     def draw_panoptic_seg(self, panoptic_seg, segments_info, area_threshold=None, alpha=0.7):
         """
@@ -542,7 +461,22 @@ class Visualizer:
             colors = None
         self.overlay_instances(masks=masks, labels=labels, assigned_colors=colors, alpha=alpha)
 
-        return self.output
+        # draw mask for all instances second
+        all_stuffs = list(pred.semantic_masks())
+        if len(all_stuffs) == 0:
+            return self.output, masks, labels
+        
+        masks_stuff, sinfo_stuff = list(zip(*all_stuffs))
+        category_ids_stuff = [x["category_id"] for x in sinfo_stuff]
+        try:
+            scores_stuff = [x["score"] for x in sinfo_stuff]
+        except KeyError:
+            scores_stuff = None
+        labels_stuff = _create_text_labels(
+            category_ids_stuff, scores_stuff, self.metadata.stuff_classes, [x.get("iscrowd", 0) for x in sinfo_stuff]
+        )
+
+        return self.output, np.concatenate((masks,masks_stuff),axis=0), labels + labels_stuff
 
     draw_panoptic_seg_predictions = draw_panoptic_seg  # backward compatibility
 
@@ -742,6 +676,7 @@ class Visualizer:
                     * 0.5
                     * self._default_font_size
                 )
+                """
                 self.draw_text(
                     labels[i],
                     text_pos,
@@ -749,7 +684,7 @@ class Visualizer:
                     horizontal_alignment=horiz_align,
                     font_size=font_size,
                 )
-
+                """
         # draw keypoints
         if keypoints is not None:
             for keypoints_per_instance in keypoints:
@@ -795,65 +730,6 @@ class Visualizer:
 
         return self.output
 
-    def draw_and_connect_keypoints(self, keypoints):
-        """
-        Draws keypoints of an instance and follows the rules for keypoint connections
-        to draw lines between appropriate keypoints. This follows color heuristics for
-        line color.
-
-        Args:
-            keypoints (Tensor): a tensor of shape (K, 3), where K is the number of keypoints
-                and the last dimension corresponds to (x, y, probability).
-
-        Returns:
-            output (VisImage): image object with visualizations.
-        """
-        visible = {}
-        keypoint_names = self.metadata.get("keypoint_names")
-        for idx, keypoint in enumerate(keypoints):
-
-            # draw keypoint
-            x, y, prob = keypoint
-            if prob > self.keypoint_threshold:
-                self.draw_circle((x, y), color=_RED)
-                if keypoint_names:
-                    keypoint_name = keypoint_names[idx]
-                    visible[keypoint_name] = (x, y)
-
-        if self.metadata.get("keypoint_connection_rules"):
-            for kp0, kp1, color in self.metadata.keypoint_connection_rules:
-                if kp0 in visible and kp1 in visible:
-                    x0, y0 = visible[kp0]
-                    x1, y1 = visible[kp1]
-                    color = tuple(x / 255.0 for x in color)
-                    self.draw_line([x0, x1], [y0, y1], color=color)
-
-        # draw lines from nose to mid-shoulder and mid-shoulder to mid-hip
-        # Note that this strategy is specific to person keypoints.
-        # For other keypoints, it should just do nothing
-        try:
-            ls_x, ls_y = visible["left_shoulder"]
-            rs_x, rs_y = visible["right_shoulder"]
-            mid_shoulder_x, mid_shoulder_y = (ls_x + rs_x) / 2, (ls_y + rs_y) / 2
-        except KeyError:
-            pass
-        else:
-            # draw line from nose to mid-shoulder
-            nose_x, nose_y = visible.get("nose", (None, None))
-            if nose_x is not None:
-                self.draw_line([nose_x, mid_shoulder_x], [nose_y, mid_shoulder_y], color=_RED)
-
-            try:
-                # draw line from mid-shoulder to mid-hip
-                lh_x, lh_y = visible["left_hip"]
-                rh_x, rh_y = visible["right_hip"]
-            except KeyError:
-                pass
-            else:
-                mid_hip_x, mid_hip_y = (lh_x + rh_x) / 2, (lh_y + rh_y) / 2
-                self.draw_line([mid_hip_x, mid_shoulder_x], [mid_hip_y, mid_shoulder_y], color=_RED)
-        return self.output
-
     """
     Primitive drawing functions:
     """
@@ -864,7 +740,7 @@ class Visualizer:
         position,
         *,
         font_size=None,
-        color="g",
+        color=None,
         horizontal_alignment="center",
         rotation=0,
     ):
@@ -886,6 +762,8 @@ class Visualizer:
             font_size = self._default_font_size
 
         # since the text background is dark, we don't want the text to be dark
+        
+        color = np.asarray([1.,1.,1.])
         color = np.maximum(list(mplc.to_rgb(color)), 0.2)
         color[np.argmax(color)] = max(0.8, np.max(color))
 
@@ -990,8 +868,10 @@ class Visualizer:
             font_size = (
                 np.clip((height_ratio - 0.02) / 0.08 + 1, 1.2, 2) * 0.5 * self._default_font_size
             )
+            
+            """
             self.draw_text(label, text_pos, color=label_color, font_size=font_size, rotation=angle)
-
+            """
         return self.output
 
     def draw_circle(self, circle_coord, color, radius=3):
@@ -1091,7 +971,9 @@ class Visualizer:
 
         if text is not None and has_valid_segment:
             lighter_color = self._change_color_brightness(color, brightness_factor=0.7)
+            """
             self._draw_text_in_mask(binary_mask, text, lighter_color)
+            """
         return self.output
 
     def draw_soft_mask(self, soft_mask, color=None, *, text=None, alpha=0.5):
@@ -1119,7 +1001,9 @@ class Visualizer:
         if text is not None:
             lighter_color = self._change_color_brightness(color, brightness_factor=0.7)
             binary_mask = (soft_mask > 0.5).astype("uint8")
+            """
             self._draw_text_in_mask(binary_mask, text, lighter_color)
+            """
         return self.output
 
     def draw_polygon(self, segment, color, edge_color=None, alpha=0.5):
@@ -1262,6 +1146,7 @@ class Visualizer:
                 # median is more stable than centroid
                 # center = centroids[largest_component_id]
                 center = np.median((cc_labels == cid).nonzero(), axis=1)[::-1]
+                
                 self.draw_text(text, center, color=color)
 
     def _convert_keypoints(self, keypoints):
