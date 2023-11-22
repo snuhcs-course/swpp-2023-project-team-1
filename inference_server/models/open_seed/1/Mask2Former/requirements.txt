@@ -5,3 +5,4 @@ timm
 h5py
 submitit
 scikit-image
+pillow==9.5.0
