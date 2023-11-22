@@ -122,7 +122,7 @@ class TritonPythonModel:
                 )
             else:
                 inference_response = pb_utils.InferenceResponse(
-                    error=pb_utils.TritonError("Must all image, mask and base strength be given or none of them",pb_utils.TritonError.INVALID_ARG)
+                    error=pb_utils.TritonError("Must all image, mask and base strength be given or none of them")
                 )
                           
             responses.append(inference_response)
