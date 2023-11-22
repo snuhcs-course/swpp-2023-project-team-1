@@ -1,5 +1,6 @@
 package com.project.spire.network.user
 
+import androidx.compose.ui.geometry.Offset
 import com.project.spire.network.user.request.UserRequest
 import com.project.spire.network.user.response.FollowInfoSuccess
 import com.project.spire.network.user.response.FollowListSuccess
@@ -14,6 +15,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface UserAPI {
 
@@ -44,13 +46,17 @@ interface UserAPI {
     @GET("user/{user_id}/followers")
     suspend fun getFollowers(
         @Header("Authorization") token: String,
-        @Path("user_id") userId: String
+        @Path("user_id") userId: String,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int
     ): Response<FollowListSuccess>
 
     @GET("user/{user_id}/followings")
     suspend fun getFollowings(
         @Header("Authorization") token: String,
-        @Path("user_id") userId: String
+        @Path("user_id") userId: String,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int
     ): Response<FollowListSuccess>
 
     @POST("user/{user_id}/follow_request")

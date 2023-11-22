@@ -8,6 +8,7 @@
     <string name="title_notification">Notifications</string>
     <string name="title_profile">Profile</string>
     <string name="title_post">Post</string>
+    <string name="title_relationship">Followers &amp; Followings</string>
 
     <!-- Prompt Dialog -->
     <string name="prompt_dialog_hint">✨What are you inspired with?</string>
@@ -90,6 +91,10 @@
     <string name="edit_profile_delete_account_btn">Delete Account</string>
     <string name="logout_dialog_text">Do you really want to log out?</string>
     <string name="delete_account_dialog_text">Are you sure you want to delete your account?\nThis job cannot be undone.</string>
+
+    <!-- Followers & Following -->
+    <string name="relationship_followers">Followers</string>
+    <string name="relationship_following">Following</string>
 
     <!-- Search -->
     <string name="search_bar_hint">Search People by Username</string>

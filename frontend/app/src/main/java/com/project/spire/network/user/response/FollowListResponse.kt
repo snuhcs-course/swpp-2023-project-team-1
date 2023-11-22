@@ -1,6 +1,8 @@
 package com.project.spire.network.user.response
 
 import com.google.gson.annotations.SerializedName
+import com.project.spire.models.RelatedUser
+import com.project.spire.models.User
 
 interface FollowListResponse {
 }
@@ -9,9 +11,9 @@ data class FollowListSuccess (
     @SerializedName("total")
     val total: Int,
     @SerializedName("items")
-    val items: List<FollowItems>,
+    val items: List<User>,
     @SerializedName("next_cursor")
-    val nextCursor: Int
+    val nextCursor: Int?
 ): FollowListResponse
 
 data class FollowListError (

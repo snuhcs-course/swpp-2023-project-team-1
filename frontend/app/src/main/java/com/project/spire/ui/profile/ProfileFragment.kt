@@ -153,6 +153,19 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        binding.followerButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("type", "followers")
+            bundle.putString("userId", profileViewModel.userId.value)
+            findNavController().navigate(R.id.action_profile_to_relationship, bundle)
+        }
+
+        binding.followingButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("type", "following")
+            bundle.putString("userId", profileViewModel.userId.value)
+            findNavController().navigate(R.id.action_profile_to_relationship, bundle)
+        }
     }
 
     override fun onDestroyView() {
