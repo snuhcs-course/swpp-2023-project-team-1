@@ -299,7 +299,7 @@ kubectl apply -f pod.yaml
 
 Again, if everything is okay and ready, it should be something like this.
 
-<img width="1795" alt="스크린샷 2023-10-26 오후 12 00 33" src="https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/722dab90-4c49-48ae-aaa9-1597c613a43a">
+<img width="1679" alt="스크린샷 2023-11-24 오전 5 26 43" src="https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/0ba32dc8-556e-4aab-a177-d07e3191adbe">
 
 Delete the pod before moving on.
 
