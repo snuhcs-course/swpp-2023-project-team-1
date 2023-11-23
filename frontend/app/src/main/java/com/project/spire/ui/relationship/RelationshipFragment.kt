@@ -1,13 +1,18 @@
 package com.project.spire.ui.relationship
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.R
 import com.example.spire.databinding.FragmentRelationshipBinding
+import com.project.spire.network.user.response.FollowItems
 
 class RelationshipFragment : Fragment() {
 
@@ -35,6 +40,7 @@ class RelationshipFragment : Fragment() {
             "followers" -> {
                 binding.relationshipToolbarTitle.text = getString(R.string.relationship_followers)
             }
+
             "following" -> {
                 binding.relationshipToolbarTitle.text = getString(R.string.relationship_following)
             }
@@ -43,5 +49,33 @@ class RelationshipFragment : Fragment() {
         binding.backButton.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
+
+        val recyclerView = binding.relationshipRecyclerView
+        val linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.reverseLayout = false
+        linearLayoutManager.stackFromEnd = false
+
+        recyclerView.layoutManager = linearLayoutManager
+        val adapter = RelationshipAdapter(mutableListOf(), findNavController())
+        recyclerView.adapter = adapter
+
+        relationshipViewModel.users.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                binding.relationshipEmptyText.visibility = View.GONE
+                recyclerView.run {
+                    adapter.updateList(it)
+                }
+            }
+        }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                // Loads more users when the user scrolls to the bottom of the list
+                if (!recyclerView.canScrollVertically(1)) {
+                    relationshipViewModel.getRelationship(userId, type)
+                }
+            }
+        })
     }
 }

@@ -95,6 +95,7 @@
     <!-- Followers & Following -->
     <string name="relationship_followers">Followers</string>
     <string name="relationship_following">Following</string>
+    <string name="relationship_empty_text">Nothing to show</string>
 
     <!-- Search -->
     <string name="search_bar_hint">Search People by Username</string>

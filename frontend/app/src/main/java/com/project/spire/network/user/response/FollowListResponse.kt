@@ -11,7 +11,7 @@ data class FollowListSuccess (
     @SerializedName("total")
     val total: Int,
     @SerializedName("items")
-    val items: List<User>,
+    val items: List<FollowItems>,
     @SerializedName("next_cursor")
     val nextCursor: Int?
 ): FollowListResponse
@@ -22,14 +22,18 @@ data class FollowListError (
 ): FollowListResponse
 
 data class FollowItems (
-    @SerializedName("email")
-    val email: String,
     @SerializedName("id")
     val id: String,
+
     @SerializedName("username")
     val username: String,
-    @SerializedName("bio")
-    val bio: String,
+
     @SerializedName("profile_image_url")
-    val profileImageUrl: String
+    val profileImageUrl: String?,
+
+    @SerializedName("is_following")
+    val isFollowing: Boolean,
+
+    @SerializedName("is_follower")
+    val isFollower: Boolean,
 )

@@ -55,6 +55,7 @@
 
     <!-- Followers & Following -->
     <dimen name="relationship_toolbar_height">60dp</dimen>
+    <dimen name="follow_item_profile_image_size">70dp</dimen>
 
 
     <!-- image edit -->

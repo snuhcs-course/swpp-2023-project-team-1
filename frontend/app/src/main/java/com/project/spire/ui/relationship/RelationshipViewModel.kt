@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.project.spire.models.RelatedUser
 import com.project.spire.models.User
 import com.project.spire.network.RetrofitClient
+import com.project.spire.network.user.response.FollowItems
 import com.project.spire.network.user.response.FollowListSuccess
 import com.project.spire.utils.AuthProvider
 import kotlinx.coroutines.launch
@@ -16,11 +17,11 @@ const val LIMIT = 10
 
 class RelationshipViewModel : ViewModel() {
     private val _users =
-        MutableLiveData<MutableList<User>>().apply { value = mutableListOf() }
+        MutableLiveData<MutableList<FollowItems>>().apply { value = mutableListOf() }
     private var _total = 0
     private var _nextCursor: Int? = 0
 
-    val users: LiveData<MutableList<User>> = _users
+    val users: LiveData<MutableList<FollowItems>> = _users
 
     fun getRelationship(userId: String, type: String) {
         if (_nextCursor != null) {
