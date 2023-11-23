@@ -442,10 +442,8 @@ class Visualizer:
 
         # draw mask for all instances second
         all_instances = list(pred.instance_masks())
-        masks = []
-        masks_stuff = []
+        masks = None
         labels = []
-        labels_stuff = []
         
         if len(all_instances) != 0:
             masks, sinfo = list(zip(*all_instances))
@@ -480,8 +478,17 @@ class Visualizer:
             labels_stuff = _create_text_labels(
                 category_ids_stuff, scores_stuff, self.metadata.stuff_classes, [x.get("iscrowd", 0) for x in sinfo_stuff]
             )
-
-        return self.output, np.concatenate((masks,masks_stuff),axis=0), labels + labels_stuff
+            if masks is None:
+                masks = np.asarray(masks_stuff)
+            else:
+                masks = np.concatenate((masks,masks_stuff),axis=0)
+                
+            labels = labels + labels_stuff
+        else:
+            if masks is not None:
+                masks = np.asarray(masks) 
+           
+        return self.output, masks, labels
 
     draw_panoptic_seg_predictions = draw_panoptic_seg  # backward compatibility
 

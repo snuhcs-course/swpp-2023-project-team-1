@@ -36,6 +36,8 @@ from Mask2Former.mask2former.data.datasets.register_ade20k_panoptic import ADE20
 from .utils.visualizer import Visualizer
 from .utils.arguments import load_opt_command
 
+from .constants import *
+
 class TritonPythonModel:
     def get_openseg_labels(self, dataset, prompt_engineered=False):
         """get the labels in double list format,
@@ -107,53 +109,12 @@ class TritonPythonModel:
         t.append(transforms.Resize(512, interpolation=Image.BICUBIC))
         self.transform = transforms.Compose(t)
 
-        COCO_THING_CLASSES = [
-            label
-            for idx, label in enumerate(self.get_openseg_labels("coco_panoptic", True))
-            if COCO_CATEGORIES[idx]["isthing"] == 1
-        ]
-        COCO_THING_COLORS = [c["color"] for c in COCO_CATEGORIES if c["isthing"] == 1]
-        COCO_STUFF_CLASSES = [
-            label
-            for idx, label in enumerate(self.get_openseg_labels("coco_panoptic", True))
-            if COCO_CATEGORIES[idx]["isthing"] == 0
-        ]
-        COCO_STUFF_COLORS = [c["color"] for c in COCO_CATEGORIES if c["isthing"] == 0]
-
-        ADE_THING_CLASSES = [
-            label
-            for idx, label in enumerate(self.get_openseg_labels("ade20k_150", True))
-            if ADE20K_150_CATEGORIES[idx]["isthing"] == 1
-        ]
-        ADE_THING_COLORS = [c["color"] for c in ADE20K_150_CATEGORIES if c["isthing"] == 1]
-        ADE_STUFF_CLASSES = [
-            label
-            for idx, label in enumerate(self.get_openseg_labels("ade20k_150", True))
-            if ADE20K_150_CATEGORIES[idx]["isthing"] == 0
-        ]
-        ADE_STUFF_COLORS = [c["color"] for c in ADE20K_150_CATEGORIES if c["isthing"] == 0]
-
-        LVIS_CLASSES = self.get_openseg_labels("lvis_1203", True)
-        # use beautiful coco colors
-        LVIS_COLORS = list(
-            itertools.islice(itertools.cycle([c["color"] for c in COCO_CATEGORIES]), len(LVIS_CLASSES))
+        thing_classes = COCO_PANOPTIC_CLASSES + COCO_INTER_ADE + ADE_PANOPTIC_CLASSES + ADE20K_847 + LVIS_CATEGORIES
+        thing_colors = list(
+            itertools.islice(itertools.cycle([c["color"] for c in COCO_CATEGORIES]), len(thing_classes))
         )
-
-        thing_classes = COCO_THING_CLASSES
-        stuff_classes = COCO_STUFF_CLASSES
-        thing_colors = COCO_THING_COLORS
-        stuff_colors = COCO_STUFF_COLORS
-
-        thing_classes += ADE_THING_CLASSES
-        stuff_classes += ADE_STUFF_CLASSES
-        thing_colors += ADE_THING_COLORS
-        stuff_colors += ADE_STUFF_COLORS
-
-        thing_classes += LVIS_CLASSES
-        thing_colors += LVIS_COLORS
-
-        thing_classes = [thing_class[0] for thing_class in thing_classes]
-        stuff_classes = [stuff_class[0] for stuff_class in stuff_classes]
+        stuff_classes = []
+        stuff_colors = []
     
         thing_dataset_id_to_contiguous_id = {x:x for x in range(len(thing_classes))}
         stuff_dataset_id_to_contiguous_id = {x+len(thing_classes):x for x in range(len(stuff_classes))}
@@ -207,7 +168,7 @@ class TritonPythonModel:
 
             mask_str=[]
             
-            if masks.size:
+            if masks is not None:
                 h, w = masks.shape[-2:]
                 
                 masks = torch.from_numpy(masks.astype(float)).to("cuda") 
