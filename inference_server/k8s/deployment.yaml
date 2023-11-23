@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spire-deployment
+  labels:
+    app: spire
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spire
+  template:
+    metadata:
+      labels:
+        app: spire
+
+    spec:
+      volumes:
+        - name: spire-pv-pretrained-model
+          hostPath:
+            path: "/pretrained_model"
+            type: DirectoryOrCreate
+      containers:
+        - name: spire-container
+          image: "spire_ai:latest"
+          command: ["/bin/sh","-c"]
+          args:
+            - cd /opt/tritonserver/pretrained_model;
+              wget -N https://github.com/IDEA-Research/OpenSeeD/releases/download/openseed/model_state_dict_swint_51.2ap.pt;
+              cd /opt/tritonserver/models/open_seed/1/Mask2Former/mask2former/modeling/pixel_decoder/ops;
+              sh make.sh;
+              cd /opt/tritonserver;
+              tritonserver --model-repository=/opt/tritonserver/models
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: "/opt/tritonserver/pretrained_model"
+              name: spire-pv-pretrained-model
+
+          resources:
+            limits:
+              cpu: 27
+              memory: "110Gi"
+              nvidia.com/gpu: 1
+
+          ports:
+            - containerPort: 8000
+              name: http
+            - containerPort: 8001
+              name: grpc
+            - containerPort: 8002
+              name: metrics
+          livenessProbe:
+            initialDelaySeconds: 480
+            periodSeconds: 5
+            httpGet:
+              path: /v2/health/live
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            httpGet:
+              path: /v2/health/ready
+              port: http
+      
+      imagePullSecrets:
+      - name: regcred
+
