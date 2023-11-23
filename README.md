@@ -231,7 +231,7 @@ Enabling Kubernetes with Docker Desktop makes life much easy. Refer to https://i
 Please refer to https://gpu.snucse.org/kubectl.html `서버 접근 방법` and follow the instructions.
 
 ### Quickstart (Run GPU server)
-Download `sd-deployment.yaml` in `/inference_server/template` to current directory. And also download `sd-service.yaml` in secret. And run following command will create a deployment.
+Download `spire-deployment.yaml` and `spire-service.yaml` in discord. And run following command will create a deployment.
 
 ```bash
 kubectl apply -f spire-deployment.yaml
