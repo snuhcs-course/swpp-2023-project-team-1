@@ -470,7 +470,7 @@ class Visualizer:
         # draw mask for all instances second
         all_stuffs = list(pred.semantic_masks())
         
-        if len(all_instances) != 0:
+        if len(all_stuffs) != 0:
             masks_stuff, sinfo_stuff = list(zip(*all_stuffs))
             category_ids_stuff = [x["category_id"] for x in sinfo_stuff]
             try:
