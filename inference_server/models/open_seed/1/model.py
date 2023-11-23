@@ -10,6 +10,8 @@ import base64
 from PIL import Image
 from torchvision.io import image, ImageReadMode
 
+from kornia.morphology import dilation
+
 import sys
 
 import cv2
@@ -173,8 +175,7 @@ class TritonPythonModel:
     def execute(self, requests):
         responses = []
         for request in requests:
-            input_image_bytes = pb_utils.get_input_tensor_by_name(request, "INPUT_IMAGE").as_numpy()[0]
-            input_image = Image.open(BytesIO(base64.b64decode(input_image_bytes))).convert("RGB")
+            input_image = Image.open(BytesIO(base64.b64decode(pb_utils.get_input_tensor_by_name(request, "INPUT_IMAGE").as_numpy()[0]))).convert("RGB").resize((1024,1024))
 
             with torch.no_grad():
                 width = input_image.size[0]
@@ -204,9 +205,15 @@ class TritonPythonModel:
             _, buffer = cv2.imencode('.png', overall_img)
             overall_img_str = np.asarray([base64.b64encode(buffer)])
 
-            masks = masks.astype("uint8")
             h, w = masks.shape[-2:]
+            
+            masks = torch.from_numpy(masks.astype(float)).to("cuda") 
+            masks = masks.view(-1, 1, h, w)
+            kernel = torch.ones(10, 10).to("cuda") 
+            masks = dilation(masks, kernel) > 0.5
+            
             color = np.asarray([73, 66, 228, 204]).astype("uint8")
+            masks = masks.cpu().numpy().astype("uint8")
             mask_images = masks.reshape(-1, h, w, 1) * color.reshape(1, 1, 1, -1)
             
             mask_str=[]
