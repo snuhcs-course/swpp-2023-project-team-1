@@ -234,13 +234,13 @@ Please refer to https://gpu.snucse.org/kubectl.html `서버 접근 방법` and f
 Download `sd-deployment.yaml` in `/inference_server/template` to current directory. And also download `sd-service.yaml` in secret. And run following command will create a deployment.
 
 ```bash
-kubectl apply -f sd-deployment.yaml
+kubectl apply -f spire-deployment.yaml
 ```
 
 A deployment create and manages pods, and a pod execute a container in Kubernetes.
 
 ```bash
-kubectl apply -f sd-service.yaml
+kubectl apply -f spire-service.yaml
 ```
 This will create a service, which expose a deployment and one can access it via following. Please refer to secret. And also note that it takes time to server to be ready.
 
