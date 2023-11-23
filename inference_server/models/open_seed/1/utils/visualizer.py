@@ -251,6 +251,8 @@ def _create_text_labels(classes, scores, class_names, is_crowd=None):
             labels = ["{} {:.0f}%".format(l, s * 100) for l, s in zip(labels, scores)]
     if labels is not None and is_crowd is not None:
         labels = [l + ("|crowd" if crowd else "") for l, crowd in zip(labels, is_crowd)]
+    if labels is None:
+        labels = []
     return labels
 
 
@@ -440,41 +442,44 @@ class Visualizer:
 
         # draw mask for all instances second
         all_instances = list(pred.instance_masks())
-        if len(all_instances) == 0:
-            return self.output
-        masks, sinfo = list(zip(*all_instances))
-        category_ids = [x["category_id"] for x in sinfo]
+        masks = []
+        masks_stuff = []
+        labels = []
+        labels_stuff = []
+        
+        if len(all_instances) != 0:
+            masks, sinfo = list(zip(*all_instances))
+            category_ids = [x["category_id"] for x in sinfo]
 
-        try:
-            scores = [x["score"] for x in sinfo]
-        except KeyError:
-            scores = None
-        labels = _create_text_labels(
-            category_ids, scores, self.metadata.thing_classes, [x.get("iscrowd", 0) for x in sinfo]
-        )
+            try:
+                scores = [x["score"] for x in sinfo]
+            except KeyError:
+                scores = None
+            labels = _create_text_labels(
+                category_ids, scores, self.metadata.thing_classes, [x.get("iscrowd", 0) for x in sinfo]
+            )
 
-        try:
-            colors = [
-                self._jitter([x / 255 for x in self.metadata.thing_colors[c]]) for c in category_ids
-            ]
-        except AttributeError:
-            colors = None
-        self.overlay_instances(masks=masks, labels=labels, assigned_colors=colors, alpha=alpha)
+            try:
+                colors = [
+                    self._jitter([x / 255 for x in self.metadata.thing_colors[c]]) for c in category_ids
+                ]
+            except AttributeError:
+                colors = None
+            self.overlay_instances(masks=masks, labels=labels, assigned_colors=colors, alpha=alpha)
 
         # draw mask for all instances second
         all_stuffs = list(pred.semantic_masks())
-        if len(all_stuffs) == 0:
-            return self.output, masks, labels
         
-        masks_stuff, sinfo_stuff = list(zip(*all_stuffs))
-        category_ids_stuff = [x["category_id"] for x in sinfo_stuff]
-        try:
-            scores_stuff = [x["score"] for x in sinfo_stuff]
-        except KeyError:
-            scores_stuff = None
-        labels_stuff = _create_text_labels(
-            category_ids_stuff, scores_stuff, self.metadata.stuff_classes, [x.get("iscrowd", 0) for x in sinfo_stuff]
-        )
+        if len(all_instances) != 0:
+            masks_stuff, sinfo_stuff = list(zip(*all_stuffs))
+            category_ids_stuff = [x["category_id"] for x in sinfo_stuff]
+            try:
+                scores_stuff = [x["score"] for x in sinfo_stuff]
+            except KeyError:
+                scores_stuff = None
+            labels_stuff = _create_text_labels(
+                category_ids_stuff, scores_stuff, self.metadata.stuff_classes, [x.get("iscrowd", 0) for x in sinfo_stuff]
+            )
 
         return self.output, np.concatenate((masks,masks_stuff),axis=0), labels + labels_stuff
 

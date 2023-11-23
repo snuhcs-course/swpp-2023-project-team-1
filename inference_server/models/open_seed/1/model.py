@@ -205,22 +205,24 @@ class TritonPythonModel:
             _, buffer = cv2.imencode('.png', overall_img)
             overall_img_str = np.asarray([base64.b64encode(buffer)])
 
-            h, w = masks.shape[-2:]
-            
-            masks = torch.from_numpy(masks.astype(float)).to("cuda") 
-            masks = masks.view(-1, 1, h, w)
-            kernel = torch.ones(10, 10).to("cuda") 
-            masks = dilation(masks, kernel) > 0.5
-            
-            color = np.asarray([73, 66, 228, 204]).astype("uint8")
-            masks = masks.cpu().numpy().astype("uint8")
-            mask_images = masks.reshape(-1, h, w, 1) * color.reshape(1, 1, 1, -1)
-            
             mask_str=[]
-            for mask in mask_images:
-                mask_cv = cv2.cvtColor(mask, cv2.COLOR_RGBA2BGRA)
-                _, buffer = cv2.imencode('.png', mask_cv)
-                mask_str.append(base64.b64encode(buffer))
+            
+            if masks.size:
+                h, w = masks.shape[-2:]
+                
+                masks = torch.from_numpy(masks.astype(float)).to("cuda") 
+                masks = masks.view(-1, 1, h, w)
+                kernel = torch.ones(10, 10).to("cuda") 
+                masks = dilation(masks, kernel) > 0.5
+                
+                color = np.asarray([73, 66, 228, 204]).astype("uint8")
+                masks = masks.cpu().numpy().astype("uint8")
+                mask_images = masks.reshape(-1, h, w, 1) * color.reshape(1, 1, 1, -1)
+            
+                for mask in mask_images:
+                    mask_cv = cv2.cvtColor(mask, cv2.COLOR_RGBA2BGRA)
+                    _, buffer = cv2.imencode('.png', mask_cv)
+                    mask_str.append(base64.b64encode(buffer))
             mask_str = np.asarray(mask_str)
             
             inference_response = pb_utils.InferenceResponse(
