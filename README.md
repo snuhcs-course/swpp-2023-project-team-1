@@ -277,8 +277,60 @@ kubectl delete services --all
 kubectl delete deployments --all
 kubectl delete pods --all
 ```
-## 2. How to develop and load your model on Triton backend
-### Development
-Please refer to the following.
-https://github.com/triton-inference-server/python_backend
+## 2. Build Triton server image and deploy on k8s on-premise environment
+### Build Triton server image
+Download `Dockerfile` in `/inference_server`. Following command will build a docker image for our Triton inference server.
 
+```bash
+docker build -t spire_ai - < Dockerfile
+```
+### Deploy on k8s on-premise environment
+Triton server can be deployed on various environment, but below is how we deployed this on our on-premise server. Please refer to https://github.com/triton-inference-server/server/tree/main for greater details. Our method is essentially adhoc since our permission on SNU GPU server is limited and we don't have any prior experience with k8s.
+
+
+Download `.yaml` files in `/inference_server/k8s`.
+
+
+First, following command will download all pretrained weights of our Triton inference server and initialize the server.
+
+```bash
+kubectl apply -f pod.yaml
+```
+
+Again, if everything is okay and ready, it should be something like this.
+
+<img width="1795" alt="스크린샷 2023-10-26 오후 12 00 33" src="https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/722dab90-4c49-48ae-aaa9-1597c613a43a">
+
+Delete the pod before moving on.
+
+```bash
+kubectl delete pods --all
+```
+
+
+Second, these two command will create a deployment and a service. Whenever these are ready, server can get requests and send responses. You must fill in the NodePort numbers in `service.yaml` in order to create a service.
+
+```bash
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+```
+
+You can check the status of deployments and services via following commands.
+
+```bash
+kubectl get deployments
+kubectl get services
+```
+
+The address for inference server will be as below. `<public-node-ip>` is node IP of SNU GPU server and `<node-port>` will be the number you selected in `service.yaml` for NodePort that corresponses to `http`.
+
+```bash
+http://<public-node-ip>:<node-port>
+```
+
+Don't forget to delete all services, deployments and pods once you are done.
+
+```bash
+kubectl delete services --all
+kubectl delete deployments --all
+```
