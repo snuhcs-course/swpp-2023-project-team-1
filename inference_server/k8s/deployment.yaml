@@ -31,7 +31,7 @@ spec:
               sh make.sh;
               cd /opt/tritonserver;
               tritonserver --model-repository=/opt/tritonserver/models
-          imagePullPolicy: Always
+          imagePullPolicy: Never
           volumeMounts:
             - mountPath: "/opt/tritonserver/pretrained_model"
               name: spire-pv-pretrained-model
