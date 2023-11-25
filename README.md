@@ -288,7 +288,7 @@ docker build -t spire_ai - < Dockerfile
 You may need to run only one model in one container if you don't have sufficient memory.
 
 ```bash
-docker run -it --name spire_stable_diffusion 0jihunlee/tritonserver:latest /bin/sh
+docker run -it --name spire_stable_diffusion spire_ai /bin/sh
 cd models
 rm -rf open_seed
 exit
@@ -296,7 +296,7 @@ docker commit spire_stable_diffusion spire_ai_stable_diffusion
 ```
 
 ```bash
-docker run -it --name spire_open_seed 0jihunlee/tritonserver:latest /bin/sh
+docker run -it --name spire_open_seed spire_ai /bin/sh
 cd models
 rm -rf stable_diffusion
 exit
