@@ -284,6 +284,25 @@ Download `Dockerfile` in `/inference_server`. Following command will build a doc
 ```bash
 docker build -t spire_ai - < Dockerfile
 ```
+
+You may need to run only one model in one container if you don't have sufficient memory.
+
+```bash
+docker run -it --name spire_stable_diffusion 0jihunlee/tritonserver:latest /bin/sh
+cd models
+rm -rf open_seed
+exit
+docker commit spire_stable_diffusion spire_ai_stable_diffusion
+```
+
+```bash
+docker run -it --name spire_open_seed 0jihunlee/tritonserver:latest /bin/sh
+cd models
+rm -rf stable_diffusion
+exit
+docker commit spire_open_seed spire_ai_open_seed
+```
+
 ### Deploy on k8s on-premise environment
 Triton server can be deployed on various environment, but below is how we deployed this on our on-premise server. Please refer to https://github.com/triton-inference-server/server/tree/main for greater details. Our method is essentially adhoc since our permission on SNU GPU server is limited and we don't have any prior experience with k8s.
 
