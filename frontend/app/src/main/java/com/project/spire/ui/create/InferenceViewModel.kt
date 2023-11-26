@@ -7,9 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.inference.InferenceRepository
-import com.project.spire.models.Post
 import com.project.spire.network.RetrofitClient
 import com.project.spire.network.inference.InferenceResponse
 import com.project.spire.network.inference.InferenceSuccess
@@ -21,9 +19,7 @@ import com.project.spire.network.post.response.PostResponse
 import com.project.spire.network.post.response.PostSuccess
 import com.project.spire.utils.AuthProvider
 import com.project.spire.utils.BitmapUtils
-import com.project.spire.utils.DataStoreProvider
 import com.project.spire.utils.InferenceUtils
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 sealed interface Inference {
@@ -48,11 +44,17 @@ class InferenceViewModel(
     private val _previousInference = MutableLiveData<Inference?>().apply { value = null }
     private val _inferenceError = MutableLiveData<Boolean>().apply { value = false }
     private val _postResult = MutableLiveData<PostResponse?>().apply { value = null }
+    private val _maskOverallImage = MutableLiveData<Bitmap?>().apply { value = null }
+    private val _masks = MutableLiveData<ArrayList<Bitmap>?>().apply { value = null }
+    private val _labels = MutableLiveData<List<String>?>().apply { value = null }
 
     val inferenceResult: LiveData<ArrayList<Bitmap>?> get() = _inferenceResult
     val previousInference: LiveData<Inference?> get() = _previousInference
     val inferenceError: LiveData<Boolean> get() = _inferenceError
     val postResult: LiveData<PostResponse?> get() = _postResult
+    val maskOverallImage: LiveData<Bitmap?> get() = _maskOverallImage
+    val masks: LiveData<ArrayList<Bitmap>?> get() = _masks
+    val labels: LiveData<List<String>?> get() = _labels
 
     fun reset() {
         _inferenceResult.value = null
@@ -149,6 +151,56 @@ class InferenceViewModel(
                 Log.e("InferenceViewModel", "Inference failed")
                 _inferenceResult.postValue(null)
                 _inferenceError.postValue(true)
+            }
+        }
+    }
+
+    fun inferMask(image: Bitmap, width: Int, height: Int) {
+        // width and height of the image view
+        Log.d("InferenceViewModel", "infer mask")
+        val request = InferenceUtils.getMaskInferenceRequest(image)
+        viewModelScope.launch {
+            var response: InferenceResponse?
+            try {
+                response = inferenceRepository.inferMask(request)
+            } catch (e: Exception) {
+                try {
+                    Log.e(
+                        "InferenceViewModel",
+                        "Inference mask failed with exception: ${e.message}, retrying..."
+                    )
+                    response = inferenceRepository.inferMask(request) // just retry
+                } catch (e: Exception) {
+                    Log.e("InferenceViewModel", "Inference mask failed")
+                    _maskOverallImage.postValue(null)
+                    _masks.postValue(null)
+                    _labels.postValue(null)
+                    return@launch
+                }
+            }
+
+            if (response is InferenceSuccess) {
+                Log.d("InferenceViewModel", "Inference mask success: ${response.outputs[2].data}")
+
+                val overallBitmap = BitmapUtils.Base64toBitmap(response.outputs[0].data[0])
+                val resizedOverallBitmap = Bitmap.createScaledBitmap(overallBitmap!!, width, height, false)
+                _maskOverallImage.postValue(resizedOverallBitmap) // OUTPUT_OVERALL_IMAGE
+
+                val generatedBitmaps = ArrayList<Bitmap>()
+                for (i in 0 until response.outputs[1].data.size) {
+                    val generatedBase64 = response.outputs[1].data[i]
+                    val generatedBitmap = BitmapUtils.Base64toBitmap(generatedBase64)
+                    val resizedBitmap = Bitmap.createScaledBitmap(generatedBitmap!!, width, height, false)
+                    generatedBitmaps.add(resizedBitmap)
+                }
+                _masks.postValue(generatedBitmaps) // OUTPUT_MASKS
+                _labels.postValue(response.outputs[2].data) // OUTPUT_LABELS
+            }
+            else {
+                Log.e("InferenceViewModel", "Inference mask failed")
+                _maskOverallImage.postValue(null)
+                _masks.postValue(null)
+                _labels.postValue(null)
             }
         }
     }

@@ -7,8 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -60,8 +58,6 @@ class ImageEditActivity : AppCompatActivity() {
         val mCanvasView = binding.spireCanvasView
         mCanvasView.initViewModel(canvasViewModel)
 
-        canvasViewModel.setBackgroundMaskBitmap(BitmapFactory.decodeResource(resources, R.drawable.img_dummy_mask), mCanvasView.COLOR_BLUE)
-
         val editBtn = binding.editButton
         editBtn.setOnClickListener { canvasViewModel.changePenMode() }
         val penModeObserver = Observer<Boolean> { isPenMode ->
@@ -93,16 +89,17 @@ class ImageEditActivity : AppCompatActivity() {
             editBtn.setImageResource(R.drawable.ic_img_edit)
             eraseBtn.setImageResource(R.drawable.ic_img_erase)
         }
-
-        val promptSuggestBtn = binding.promptSuggestionButton
         val promptInput = binding.promptInput
+        /* val promptSuggestBtn = binding.promptSuggestionButton
+
+
         promptSuggestBtn.setOnClickListener {
             val currentText = promptInput.text.toString()
             if (currentText == "") promptInput.setText(promptSuggestBtn.text)
             else {
                 promptInput.setText(currentText + ", " + promptSuggestBtn.text.toString())
             }
-        }
+        } */
 
         val nextBtn = binding.nextButton
         nextBtn.setOnClickListener {
@@ -125,7 +122,29 @@ class ImageEditActivity : AppCompatActivity() {
             finish()
         }
 
+        val fetchButton = binding.fetchButton
+        fetchButton.setOnClickListener {
+            inferenceViewModel.inferMask(mImageBitmap!!, mImageView.width, mImageView.height)
+            fetchButton.visibility = Button.GONE
+        }
 
-        // TODO: implement toolbar buttons
+        inferenceViewModel.maskOverallImage.observe(this) {
+            // TODO fix this
+            if (it != null ) {
+                Log.d("ImageEditActivity", "Mask image received")
+                canvasViewModel.applyFetchedMask(it)
+            }
+        }
+
+        canvasViewModel.backgroundMaskBitmap.observe(this) {
+            if (it != null) {
+                Log.d("ImageEditActivity", "Background mask bitmap received")
+                mCanvasView.invalidate()
+            }
+        }
+
+     //   val newMask = BitmapFactory.decodeResource(resources, R.drawable.img_dummy_mask)
+     //   canvasViewModel.applyFetchedMask(newMask)
+
     }
 }

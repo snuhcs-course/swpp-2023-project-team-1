@@ -35,9 +35,10 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
         super.onDraw(canvas)
         mPaint.xfermode = null
         canvas.drawColor(Color.TRANSPARENT)
-     //   if (viewModel.backgroundMaskBitmap.value != null) {
-     //       canvas.drawBitmap(viewModel.backgroundMaskBitmap.value!!, x, y, null) // draw auto-mask from inference server
-    //    }
+        if (viewModel.backgroundMaskBitmap.value != null) {
+            canvas.drawBitmap(viewModel.backgroundMaskBitmap.value!!, x, y, null)
+            // fetch a mask from inference API
+        }
 
         for ((path, options) in viewModel.paths) {
             mPaint.xfermode = options.xfermode

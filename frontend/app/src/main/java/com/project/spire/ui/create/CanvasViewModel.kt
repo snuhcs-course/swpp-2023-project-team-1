@@ -4,14 +4,25 @@ import android.graphics.Bitmap
 import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
+import android.util.Log
 import android.view.MotionEvent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.project.spire.utils.BitmapUtils
 import com.project.spire.utils.PaintOptions
+import kotlinx.coroutines.launch
 
 class CanvasViewModel: ViewModel() {
+
+    private var _masks = MutableLiveData<List<String>>()
+    val masks: LiveData<List<String>>
+        get() = _masks
+
+    private var _labels = MutableLiveData<List<String>>()
+    val labels: LiveData<List<String>>
+        get() = _labels
 
     private var _originImageBitmap = MutableLiveData<Bitmap>()
     val originImageBitmap: LiveData<Bitmap>
@@ -21,13 +32,14 @@ class CanvasViewModel: ViewModel() {
         _originImageBitmap.value = bitmap
     }
 
-    private var _backgroundMaskBitmap = MutableLiveData<Bitmap>()
-    val backgroundMaskBitmap: LiveData<Bitmap>
+    private var _backgroundMaskBitmap = MutableLiveData<Bitmap?>()
+    val backgroundMaskBitmap: LiveData<Bitmap?>
         get() = _backgroundMaskBitmap
 
+    /*
     fun setBackgroundMaskBitmap(bitmap: Bitmap, color: Int? = null) {
-        _backgroundMaskBitmap.value = BitmapUtils.maskBlackToTransparent(bitmap, color)
-    }
+        _backgroundMaskBitmap.postValue(BitmapUtils.maskBlackToTransparent(bitmap, color))
+    } */
 
     private val STROKE_PEN = 60f
     private val STROKE_ERASER = 80f
@@ -144,7 +156,19 @@ class CanvasViewModel: ViewModel() {
         return true
     }
 
+    fun applyFetchedMask(mask: Bitmap) {
+        _backgroundMaskBitmap.postValue(mask)
+        Log.d("CanvasViewModel", "mask: ${mask.width} * ${mask.height}")
+    }
 
+    fun resetFetchedMask() {
+        _backgroundMaskBitmap.postValue(null)
+        // TODO: set onclick listener
+    }
 
-
+    fun fetch() {
+        viewModelScope.launch {
+            // TODO
+        }
+    }
 }

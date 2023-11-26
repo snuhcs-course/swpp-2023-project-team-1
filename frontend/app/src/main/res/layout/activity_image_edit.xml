@@ -80,33 +80,47 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/prompt_suggestion_constraint_layout"
+        android:id="@+id/mask_fetch_constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/prompt_suggestion_btn_height"
+        android:layout_height="@dimen/mask_fetch_btn_height"
         android:layout_marginHorizontal="15dp"
         android:layout_marginTop="15dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_view_constraint_layout">
+        app:layout_constraintTop_toBottomOf="@id/image_view_constraint_layout"
+        >
 
         <Button
-            android:id="@+id/prompt_suggestion_button"
-            style="@style/PromptSuggestBtn"
-            android:text="@string/prompt_suggestion_button"
+            android:id="@+id/fetch_button"
+            style="@style/ImgEditBtn"
+            android:text="Fetch"
             app:backgroundTint="@null"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mask_fetch_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="invisible"
+            />
 
         <ImageButton
-            android:id="@+id/suggestion_refresh_button"
-            android:layout_width="@dimen/prompt_suggestion_btn_height"
-            android:layout_height="@dimen/prompt_suggestion_btn_height"
+            android:id="@+id/mask_fetch_refresh_button"
+            android:layout_width="@dimen/mask_fetch_btn_height"
+            android:layout_height="@dimen/mask_fetch_btn_height"
             android:background="@null"
             android:padding="0dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_img_refresh"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="invisible"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -120,7 +134,7 @@
         android:hint="@string/prompt_hint"
 
         app:layout_constraintBottom_toTopOf="@id/next_button"
-        app:layout_constraintTop_toBottomOf="@id/prompt_suggestion_constraint_layout">
+        app:layout_constraintTop_toBottomOf="@id/mask_fetch_constraint_layout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/prompt_input"
