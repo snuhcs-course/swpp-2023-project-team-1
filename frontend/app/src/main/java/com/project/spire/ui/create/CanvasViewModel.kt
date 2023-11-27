@@ -169,6 +169,7 @@ class CanvasViewModel(
         // width and height of the image view
         Log.d("CanvasViewModel", "infer mask")
         val request = InferenceUtils.getMaskInferenceRequest(image)
+        _maskError.postValue(0)
         viewModelScope.launch {
             var response: InferenceResponse?
             try {

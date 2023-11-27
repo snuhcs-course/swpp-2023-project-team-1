@@ -55,10 +55,10 @@ class InferenceViewModel(
     fun reset() {
         _inferenceResult.value = null
         Log.d("InferenceViewModel", "Reset LiveData")
-        // TODO: how to stall infer()?
     }
 
     fun infer(image: Bitmap, mask: Bitmap, prompt: String) {
+        _inferenceError.postValue(0)
         _previousInference.value = Inpainting(image, mask, prompt)
         Log.d("InferenceViewModel", "Input image size: ${image.byteCount}")
         Log.d("InferenceViewModel", "Input mask size: ${mask.byteCount}")
@@ -109,6 +109,7 @@ class InferenceViewModel(
     }
 
     fun infer(prompt: String) {
+        _inferenceError.postValue(0)
         _previousInference.value = Txt2Img(prompt)
         Log.d("InferenceViewModel", "Input prompt: $prompt")
         val request = InferenceUtils.getInferenceRequest(prompt)
