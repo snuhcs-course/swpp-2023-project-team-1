@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.spire.databinding.FragmentNotificationsBinding
 
 class NotificationsFragment : Fragment() {
@@ -29,12 +30,29 @@ class NotificationsFragment : Fragment() {
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textNotifications
-        notificationsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        val nothingToShow: TextView = binding.nothingToShow
+        val recyclerView = binding.notificationsRecyclerView
+        val layoutManager = LinearLayoutManager(context)
+        val adapter = NotificationAdapter(notificationsViewModel.notifications.value!!)
+        recyclerView.run {
+            this.layoutManager = layoutManager
+            this.adapter = adapter
         }
 
-        binding.notificationsCount.text = "(0)"
+        notificationsViewModel.text.observe(viewLifecycleOwner) {
+            nothingToShow.text = it
+        }
+
+        notificationsViewModel.notifications.observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                nothingToShow.visibility = View.VISIBLE
+            } else {
+                binding.notificationsCount.text = "(${it.size})"
+                nothingToShow.visibility = View.GONE
+            }
+            adapter.notificationList = it
+            adapter.notifyDataSetChanged()
+        }
         return root
     }
 

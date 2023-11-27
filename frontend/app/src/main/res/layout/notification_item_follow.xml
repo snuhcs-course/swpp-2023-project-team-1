@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/notification_item_follow"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/notification_item_height"
+    android:layout_marginHorizontal="15dp"
+    android:layout_marginVertical="5dp"
+    android:background="@drawable/bg_notification_follow"
+    android:elevation="2dp"
+    android:padding="@dimen/notification_item_padding">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/notification_profile_image"
+        android:layout_width="@dimen/notification_profile_size"
+        android:layout_height="@dimen/notification_profile_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginStart="15dp"
+        app:layout_constraintStart_toEndOf="@+id/notification_profile_image"
+        app:layout_constraintEnd_toStartOf="@id/notification_btn_container">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/notification_username"
+            style="@style/notifications_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="username" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/notification_text"
+            style="@style/notifications_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="content" />
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/notification_time"
+        style="@style/notifications_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/notification_profile_image"
+        android:layout_marginStart="15dp"
+        android:text="1 hour ago" />
+
+    <LinearLayout
+        android:id="@+id/notification_btn_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/follow_accept_btn"
+            android:background="@drawable/btn_follow_accept"
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="Accept" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/follow_decline_btn"
+            android:background="@drawable/btn_follow_decline"
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="Decline" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
