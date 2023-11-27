@@ -1,4 +1,4 @@
-package com.project.spire.utils
+package com.project.spire.ui.profile
 
 import android.graphics.Rect
 import android.view.View

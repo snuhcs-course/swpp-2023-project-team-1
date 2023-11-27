@@ -18,7 +18,7 @@ import com.example.spire.databinding.FragmentProfileBinding
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
 import com.project.spire.core.user.UserRepository
-import com.project.spire.utils.GridSpaceItemDecoration
+import com.project.spire.ui.profile.GridSpaceItemDecoration
 
 class ProfileFragment : Fragment() {
 
