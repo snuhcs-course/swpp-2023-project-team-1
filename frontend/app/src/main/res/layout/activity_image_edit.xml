@@ -101,6 +101,17 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
+        <ProgressBar
+            android:id="@+id/mask_progress_bar"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:indeterminateDrawable="@drawable/loading_progress_bar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:visibility="invisible" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mask_fetch_recycler_view"
             android:layout_width="match_parent"

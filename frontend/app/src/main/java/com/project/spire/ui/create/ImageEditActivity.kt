@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -121,9 +122,13 @@ class ImageEditActivity : AppCompatActivity() {
         }
 
         val fetchButton = binding.fetchButton
+        val progressBar = binding.maskProgressBar
+
         fetchButton.setOnClickListener {
             canvasViewModel.inferMask(mImageBitmap!!, mImageView.width, mImageView.height)
             fetchButton.visibility = Button.GONE
+            progressBar.visibility = ProgressBar.VISIBLE
+            progressBar.isActivated = true
         }
 
         /*
@@ -150,6 +155,8 @@ class ImageEditActivity : AppCompatActivity() {
                     Log.d("ImageEditActivity", "Adapter updated label observer: ${it}")
                     visibility = RecyclerView.VISIBLE
                 }
+                progressBar.isActivated = false
+                progressBar.visibility = ProgressBar.GONE
             }
         }
 
@@ -161,8 +168,10 @@ class ImageEditActivity : AppCompatActivity() {
         canvasViewModel.maskError.observe(this) {
             if (it) {
                 Toast.makeText(this, "Mask generate failed, please try again.", Toast.LENGTH_LONG).show()
-                onBackPressedDispatcher.onBackPressed()
-                finish()
+                fetchButton.visibility = Button.VISIBLE
+                recyclerView.visibility = RecyclerView.INVISIBLE
+                progressBar.isActivated = false
+                progressBar.visibility = ProgressBar.GONE
             }
         }
     }

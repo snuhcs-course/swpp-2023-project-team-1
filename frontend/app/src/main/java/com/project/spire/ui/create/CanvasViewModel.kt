@@ -165,7 +165,7 @@ class CanvasViewModel(
 
     fun inferMask(image: Bitmap, width: Int, height: Int) {
         // width and height of the image view
-        Log.d("InferenceViewModel", "infer mask")
+        Log.d("CanvasViewModel", "infer mask")
         val request = InferenceUtils.getMaskInferenceRequest(image)
         viewModelScope.launch {
             var response: InferenceResponse?
@@ -174,12 +174,12 @@ class CanvasViewModel(
             } catch (e: Exception) {
                 try {
                     Log.e(
-                        "InferenceViewModel",
+                        "CanvasViewModel",
                         "Inference mask failed with exception: ${e.message}, retrying..."
                     )
                     response = segmentationRepository.inferMask(request) // just retry
                 } catch (e: Exception) {
-                    Log.e("InferenceViewModel", "Inference mask failed")
+                    Log.e("CanvasViewModel", "Inference mask failed")
                     _maskOverallImage.postValue(null)
                     _masks.postValue(emptyList())
                     _labels.postValue(emptyList())
@@ -189,7 +189,7 @@ class CanvasViewModel(
             }
 
             if (response is InferenceSuccess) {
-                Log.d("InferenceViewModel", "Inference mask success: ${response.outputs[2].data}")
+                Log.d("CanvasViewModel", "Inference mask success: ${response.outputs[2].data}")
 
                 val overallBitmap = BitmapUtils.Base64toBitmap(response.outputs[0].data[0])
                 val resizedOverallBitmap = Bitmap.createScaledBitmap(overallBitmap!!, width, height, false)
@@ -206,7 +206,7 @@ class CanvasViewModel(
                 _labels.postValue(response.outputs[2].data) // OUTPUT_LABELS
             }
             else {
-                Log.e("InferenceViewModel", "Inference mask failed")
+                Log.e("CanvasViewModel", "Inference mask failed")
                 _maskOverallImage.postValue(null)
                 _masks.postValue(emptyList())
                 _labels.postValue(emptyList())

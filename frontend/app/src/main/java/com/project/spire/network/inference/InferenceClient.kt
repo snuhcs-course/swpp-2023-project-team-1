@@ -11,7 +11,7 @@ class InferenceClient {
         private const val LOCAL_URL = "http://10.0.2.2:8080/v2/"
 
         private val okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(100, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(100, TimeUnit.SECONDS)
             .writeTimeout(100,TimeUnit.SECONDS)
             .build()
