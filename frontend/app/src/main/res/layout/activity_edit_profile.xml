@@ -101,6 +101,7 @@
                 app:layout_constraintTop_toBottomOf="@id/edit_profile_email_title">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_profile_email_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
@@ -129,6 +130,7 @@
                 app:prefixText="\@">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_profile_username_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
@@ -155,6 +157,7 @@
                 app:layout_constraintTop_toBottomOf="@id/edit_profile_bio_title">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_profile_bio_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="80dp"
                     android:inputType="textMultiLine"
