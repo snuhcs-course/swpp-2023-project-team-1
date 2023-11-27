@@ -2,26 +2,38 @@ package com.project.spire.ui.create
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.R
 import com.example.spire.databinding.ActivityImageEditBinding
+import com.project.spire.core.inference.InferenceRepository
+import com.project.spire.core.inference.SegmentationRepository
 import com.project.spire.ui.MainActivity
 import com.project.spire.utils.BitmapUtils
 import com.project.spire.utils.InferenceUtils
+
+const val RECYCLER_VIEW_MARGIN = 30
 
 class ImageEditActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityImageEditBinding
     private lateinit var inferenceViewModel: InferenceViewModel
-    private val canvasViewModel: CanvasViewModel by viewModels()
+
+    private val segmentationRepository = SegmentationRepository()
+    private val canvasViewModelFactory = CanvasViewModelFactory(segmentationRepository)
+    private val canvasViewModel = canvasViewModelFactory.create(CanvasViewModel::class.java)
+
+
+
     private var mImageBitmap: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,16 +102,6 @@ class ImageEditActivity : AppCompatActivity() {
             eraseBtn.setImageResource(R.drawable.ic_img_erase)
         }
         val promptInput = binding.promptInput
-        /* val promptSuggestBtn = binding.promptSuggestionButton
-
-
-        promptSuggestBtn.setOnClickListener {
-            val currentText = promptInput.text.toString()
-            if (currentText == "") promptInput.setText(promptSuggestBtn.text)
-            else {
-                promptInput.setText(currentText + ", " + promptSuggestBtn.text.toString())
-            }
-        } */
 
         val nextBtn = binding.nextButton
         nextBtn.setOnClickListener {
@@ -124,27 +126,47 @@ class ImageEditActivity : AppCompatActivity() {
 
         val fetchButton = binding.fetchButton
         fetchButton.setOnClickListener {
-            inferenceViewModel.inferMask(mImageBitmap!!, mImageView.width, mImageView.height)
+            canvasViewModel.inferMask(mImageBitmap!!, mImageView.width, mImageView.height)
             fetchButton.visibility = Button.GONE
         }
 
+        /*
         inferenceViewModel.maskOverallImage.observe(this) {
-            // TODO fix this
+            // TODO show or not?
             if (it != null ) {
                 Log.d("ImageEditActivity", "Mask image received")
                 canvasViewModel.applyFetchedMask(it)
             }
-        }
+        } */
 
-        canvasViewModel.backgroundMaskBitmap.observe(this) {
-            if (it != null) {
-                Log.d("ImageEditActivity", "Background mask bitmap received")
-                mCanvasView.invalidate()
+        val recyclerView = binding.maskFetchRecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        val adapter = MaskFetchAdapter(canvasViewModel.masks.value!!, canvasViewModel.labels.value!!, canvasViewModel)
+        recyclerView.adapter = adapter
+        recyclerView.addItemDecoration(HorizontalSpaceDecoration(RECYCLER_VIEW_MARGIN))
+
+        canvasViewModel.labels.observe(this) {
+            if (it.isNotEmpty() and (canvasViewModel.masks.value!!.isNotEmpty())) {
+                Log.d("ImageEditActivity", "Masks received")
+                recyclerView.run {
+                    adapter.updateList(canvasViewModel.masks.value!!, it)
+                    Log.d("ImageEditActivity", "Adapter updated label observer: ${it}")
+                    visibility = RecyclerView.VISIBLE
+                }
             }
         }
 
-     //   val newMask = BitmapFactory.decodeResource(resources, R.drawable.img_dummy_mask)
-     //   canvasViewModel.applyFetchedMask(newMask)
+        canvasViewModel.backgroundMaskBitmap.observe(this) {
+            Log.d("ImageEditActivity", "Background mask bitmap received")
+            mCanvasView.invalidate()
+        }
 
+        canvasViewModel.maskError.observe(this) {
+            if (it) {
+                Toast.makeText(this, "Mask generate failed, please try again.", Toast.LENGTH_LONG).show()
+                onBackPressedDispatcher.onBackPressed()
+                finish()
+            }
+        }
     }
 }

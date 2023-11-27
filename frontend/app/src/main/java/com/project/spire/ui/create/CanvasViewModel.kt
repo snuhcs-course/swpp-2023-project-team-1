@@ -9,20 +9,29 @@ import android.view.MotionEvent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.project.spire.core.inference.SegmentationRepository
+import com.project.spire.network.inference.InferenceResponse
+import com.project.spire.network.inference.InferenceSuccess
 import com.project.spire.utils.BitmapUtils
+import com.project.spire.utils.InferenceUtils
 import com.project.spire.utils.PaintOptions
 import kotlinx.coroutines.launch
 
-class CanvasViewModel: ViewModel() {
+class CanvasViewModel(
+    private val segmentationRepository: SegmentationRepository
+): ViewModel() {
 
-    private var _masks = MutableLiveData<List<String>>()
-    val masks: LiveData<List<String>>
-        get() = _masks
+    private val _maskOverallImage = MutableLiveData<Bitmap?>().apply { value = null }
+    private val _masks = MutableLiveData<List<Bitmap>>().apply { value = emptyList() }
+    private val _labels = MutableLiveData<List<String>>().apply { value = emptyList() }
+    private val _maskError = MutableLiveData<Boolean>().apply { value = false }
+    val maskOverallImage: LiveData<Bitmap?> get() = _maskOverallImage
+    val masks: LiveData<List<Bitmap>> get() = _masks
+    val labels: LiveData<List<String>> get() = _labels
+    val maskError: LiveData<Boolean> get() = _maskError
 
-    private var _labels = MutableLiveData<List<String>>()
-    val labels: LiveData<List<String>>
-        get() = _labels
 
     private var _originImageBitmap = MutableLiveData<Bitmap>()
     val originImageBitmap: LiveData<Bitmap>
@@ -35,11 +44,6 @@ class CanvasViewModel: ViewModel() {
     private var _backgroundMaskBitmap = MutableLiveData<Bitmap?>()
     val backgroundMaskBitmap: LiveData<Bitmap?>
         get() = _backgroundMaskBitmap
-
-    /*
-    fun setBackgroundMaskBitmap(bitmap: Bitmap, color: Int? = null) {
-        _backgroundMaskBitmap.postValue(BitmapUtils.maskBlackToTransparent(bitmap, color))
-    } */
 
     private val STROKE_PEN = 60f
     private val STROKE_ERASER = 80f
@@ -77,6 +81,7 @@ class CanvasViewModel: ViewModel() {
 
     fun clearCanvas() {
         _mPath.reset()
+        resetFetchedMask()
         _paths = LinkedHashMap()
         _isEraseMode.postValue(false)
         _isPenMode.postValue(false)
@@ -156,9 +161,62 @@ class CanvasViewModel: ViewModel() {
         return true
     }
 
-    fun applyFetchedMask(mask: Bitmap) {
+    fun inferMask(image: Bitmap, width: Int, height: Int) {
+        // width and height of the image view
+        Log.d("InferenceViewModel", "infer mask")
+        val request = InferenceUtils.getMaskInferenceRequest(image)
+        viewModelScope.launch {
+            var response: InferenceResponse?
+            try {
+                response = segmentationRepository.inferMask(request)
+            } catch (e: Exception) {
+                try {
+                    Log.e(
+                        "InferenceViewModel",
+                        "Inference mask failed with exception: ${e.message}, retrying..."
+                    )
+                    response = segmentationRepository.inferMask(request) // just retry
+                } catch (e: Exception) {
+                    Log.e("InferenceViewModel", "Inference mask failed")
+                    _maskOverallImage.postValue(null)
+                    _masks.postValue(emptyList())
+                    _labels.postValue(emptyList())
+                    _maskError.postValue(true)
+                    return@launch
+                }
+            }
+
+            if (response is InferenceSuccess) {
+                Log.d("InferenceViewModel", "Inference mask success: ${response.outputs[2].data}")
+
+                val overallBitmap = BitmapUtils.Base64toBitmap(response.outputs[0].data[0])
+                val resizedOverallBitmap = Bitmap.createScaledBitmap(overallBitmap!!, width, height, false)
+                _maskOverallImage.postValue(resizedOverallBitmap) // OUTPUT_OVERALL_IMAGE
+
+                val generatedBitmaps = ArrayList<Bitmap>()
+                for (i in 0 until response.outputs[1].data.size) {
+                    val generatedBase64 = response.outputs[1].data[i]
+                    val generatedBitmap = BitmapUtils.Base64toBitmap(generatedBase64)
+                    val resizedBitmap = Bitmap.createScaledBitmap(generatedBitmap!!, width, height, false)
+                    generatedBitmaps.add(resizedBitmap)
+                }
+                _masks.postValue(generatedBitmaps) // OUTPUT_MASKS
+                _labels.postValue(response.outputs[2].data) // OUTPUT_LABELS
+            }
+            else {
+                Log.e("InferenceViewModel", "Inference mask failed")
+                _maskOverallImage.postValue(null)
+                _masks.postValue(emptyList())
+                _labels.postValue(emptyList())
+                _maskError.postValue(true)
+            }
+        }
+    }
+
+    fun applyFetchedMask(mask: Bitmap?) {
         _backgroundMaskBitmap.postValue(mask)
-        Log.d("CanvasViewModel", "mask: ${mask.width} * ${mask.height}")
+        if (mask != null) Log.d("CanvasViewModel", "mask: ${mask.width} * ${mask.height}")
+        else Log.d("CanvasViewModel", "mask: null")
     }
 
     fun resetFetchedMask() {
@@ -166,9 +224,14 @@ class CanvasViewModel: ViewModel() {
         // TODO: set onclick listener
     }
 
-    fun fetch() {
-        viewModelScope.launch {
-            // TODO
+}
+
+class CanvasViewModelFactory(private val segmentationRepository: SegmentationRepository) :
+    ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(CanvasViewModel::class.java)) {
+            return CanvasViewModel(segmentationRepository) as T
         }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

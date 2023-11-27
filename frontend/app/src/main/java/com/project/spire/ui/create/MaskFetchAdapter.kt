@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.R
 
 class MaskFetchAdapter(
-    private val masks: List<Bitmap>,
-    private val labels: List<String>,
+    private var masks: List<Bitmap>,
+    private var labels: List<String>,
     private val canvasViewModel: CanvasViewModel
 ): RecyclerView.Adapter<MaskFetchAdapter.MaskFetchViewHolder>() {
 
@@ -28,16 +28,24 @@ class MaskFetchAdapter(
     }
 
     override fun onBindViewHolder(holder: MaskFetchViewHolder, position: Int) {
+        if (labels.isEmpty() || masks.isEmpty()) return
         val label = labels[position]
         val mask = masks[position]
         holder.button.text = label
         holder.button.setOnClickListener {
             Log.d("MaskFetchAdapter", "Button clicked")
-            //canvasViewModel.applyFetchedMask(mask) // TODO
+            canvasViewModel.applyFetchedMask(mask) // TODO
         }
     }
 
     inner class MaskFetchViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val button: Button = view.findViewById(R.id.mask_fetch_button)
+    }
+
+    fun updateList(newMasks: List<Bitmap>, newLabels: List<String>) {
+        masks = newMasks
+        labels = newLabels
+        //notifyItemInserted(labels.size - 1)
+        notifyDataSetChanged()
     }
 }

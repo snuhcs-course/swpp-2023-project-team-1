@@ -50,7 +50,7 @@ class WriteTextActivity : AppCompatActivity() {
 
         inferenceViewModel.inferenceError.observe(this) {
             if (it) {
-                Toast.makeText(this, "Inference failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Image edit failed, please try again.", Toast.LENGTH_LONG).show()
                 onBackPressedDispatcher.onBackPressed()
                 finish()
             }

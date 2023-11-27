@@ -72,20 +72,20 @@
         <item name="android:background">@drawable/btn_mask_fetch_bg</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:font">@font/font_roboto_light</item>
         <item name="android:letterSpacing">0</item>
 
         <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
+
         <item name="android:paddingTop">1dp</item>
         <item name="android:paddingBottom">1dp</item>
-        <item name="android:paddingLeft">15dp</item>
-        <item name="android:paddingRight">15dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
         <item name="android:elevation">10dp</item>
 
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">25dp</item>
+        <item name="android:layout_height">@dimen/mask_fetch_btn_height</item>
         <item name="android:minWidth">0dp</item>
         <item name="android:minHeight">0dp</item>
     </style>

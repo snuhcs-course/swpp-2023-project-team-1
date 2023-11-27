@@ -41,18 +41,4 @@ class InferenceRepository {
             false
         }
     }
-
-    suspend fun inferMask(request: InferenceRequest): InferenceResponse? {
-        Log.d("InferenceRepository", "Inference Mask request received")
-        val response = SegmentationClient.segmentationAPI.inferMask(request)
-
-        return if (response.isSuccessful) {
-            val successBody = response.body() as InferenceSuccess
-            Log.d("InferenceRepository", "Inference Mask response: ${successBody.modelName}")
-            successBody
-        } else {
-            Log.e("InferenceRepository", "Inference Mask error ${response.code()}: ${response.message()}")
-            null
-        }
-    }
 }

@@ -82,7 +82,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mask_fetch_constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/mask_fetch_btn_height"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
         android:layout_marginTop="15dp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -106,8 +106,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:visibility="invisible"
-            />
+            android:visibility="invisible" />
+
 
         <ImageButton
             android:id="@+id/mask_fetch_refresh_button"
@@ -132,7 +132,6 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="15dp"
         android:hint="@string/prompt_hint"
-
         app:layout_constraintBottom_toTopOf="@id/next_button"
         app:layout_constraintTop_toBottomOf="@id/mask_fetch_constraint_layout">
 
@@ -162,7 +161,8 @@
         android:layout_height="match_parent"
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_edit_app_bar_layout" />
+        app:layout_constraintTop_toBottomOf="@id/image_edit_app_bar_layout"
+        />
 
     <Button
         android:id="@+id/crop_done_button"
