@@ -49,7 +49,10 @@ class WriteTextActivity : AppCompatActivity() {
         val exitBtn = binding.writeTextAppBarLayout.exitButton
 
         inferenceViewModel.inferenceError.observe(this) {
-            if (it) {
+            if (it == 1) {
+                Toast.makeText(this, "Image edit failed, retrying...", Toast.LENGTH_LONG).show()
+            }
+            else if (it == 2) {
                 Toast.makeText(this, "Image edit failed, please try again.", Toast.LENGTH_LONG).show()
                 onBackPressedDispatcher.onBackPressed()
                 finish()
@@ -98,7 +101,7 @@ class WriteTextActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             } else if (it is PostError) {
-                Toast.makeText(this, "Post upload failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Post upload failed, please try again", Toast.LENGTH_SHORT).show()
                 binding.postUploadProgressBar.visibility = View.GONE
             }
         }

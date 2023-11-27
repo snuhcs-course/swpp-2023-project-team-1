@@ -12,8 +12,8 @@ class InferenceClient {
 
         private val okHttpClient = OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(100, TimeUnit.SECONDS)
-            .writeTimeout(100,TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30,TimeUnit.SECONDS)
             .build()
 
         private val retrofit: Retrofit = Retrofit.Builder()

@@ -42,12 +42,13 @@ class InferenceViewModel(
 
     private val _inferenceResult = MutableLiveData<ArrayList<Bitmap>?>().apply { value = null }
     private val _previousInference = MutableLiveData<Inference?>().apply { value = null }
-    private val _inferenceError = MutableLiveData<Boolean>().apply { value = false }
+    private val _inferenceError = MutableLiveData<Int>().apply { value = 0 }
+    // 0: no error, 1: retrying, 2: failed
     private val _postResult = MutableLiveData<PostResponse?>().apply { value = null }
 
     val inferenceResult: LiveData<ArrayList<Bitmap>?> get() = _inferenceResult
     val previousInference: LiveData<Inference?> get() = _previousInference
-    val inferenceError: LiveData<Boolean> get() = _inferenceError
+    val inferenceError: LiveData<Int> get() = _inferenceError
     val postResult: LiveData<PostResponse?> get() = _postResult
 
 
@@ -73,10 +74,12 @@ class InferenceViewModel(
                         "InferenceViewModel",
                         "Inference failed with exception: ${e.message}, retrying..."
                     )
+                    _inferenceError.postValue(1)
                     result = inferenceRepository.infer(request) // just retry
                 } catch (e: Exception) {
                     Log.e("InferenceViewModel", "Inference failed")
                     _inferenceResult.postValue(null)
+                    _inferenceError.postValue(2)
                     return@launch
                 }
             }
@@ -96,10 +99,11 @@ class InferenceViewModel(
                     generatedBitmaps.add(generatedBitmap!!)
                 }
                 _inferenceResult.postValue(generatedBitmaps)
+                _inferenceError.postValue(0)
             } else {
                 Log.e("InferenceViewModel", "Inference failed")
                 _inferenceResult.postValue(null)
-                _inferenceError.postValue(true)
+                _inferenceError.postValue(2)
             }
         }
     }
@@ -119,10 +123,12 @@ class InferenceViewModel(
                         "InferenceViewModel",
                         "Inference failed with exception: ${e.message}, retrying..."
                     )
+                    _inferenceError.postValue(1)
                     result = inferenceRepository.infer(request) // just retry
                 } catch (e: Exception) {
                     Log.e("InferenceViewModel", "Inference failed")
                     _inferenceResult.postValue(null)
+                    _inferenceError.postValue(2)
                     return@launch
                 }
             }
@@ -141,11 +147,12 @@ class InferenceViewModel(
                     generatedBitmaps.add(generatedBitmap!!)
                 }
                 _inferenceResult.postValue(generatedBitmaps)
+                _inferenceError.postValue(0)
 
             } else {
                 Log.e("InferenceViewModel", "Inference failed")
                 _inferenceResult.postValue(null)
-                _inferenceError.postValue(true)
+                _inferenceError.postValue(2)
             }
         }
     }

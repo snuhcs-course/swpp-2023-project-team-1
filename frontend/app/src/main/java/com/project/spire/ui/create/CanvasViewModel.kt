@@ -28,11 +28,13 @@ class CanvasViewModel(
     private val _maskOverallImage = MutableLiveData<Bitmap?>().apply { value = null }
     private val _masks = MutableLiveData<List<Bitmap>>().apply { value = emptyList() }
     private val _labels = MutableLiveData<List<String>>().apply { value = emptyList() }
-    private val _maskError = MutableLiveData<Boolean>().apply { value = false }
+    private val _maskError = MutableLiveData<Int>().apply { value = 0 }
+    // 0: no error, 1: retrying, 2: failed
+
     val maskOverallImage: LiveData<Bitmap?> get() = _maskOverallImage
     val masks: LiveData<List<Bitmap>> get() = _masks
     val labels: LiveData<List<String>> get() = _labels
-    val maskError: LiveData<Boolean> get() = _maskError
+    val maskError: LiveData<Int> get() = _maskError
 
 
     private var _originImageBitmap = MutableLiveData<Bitmap>()
@@ -177,13 +179,14 @@ class CanvasViewModel(
                         "CanvasViewModel",
                         "Inference mask failed with exception: ${e.message}, retrying..."
                     )
+                    _maskError.postValue(1)
                     response = segmentationRepository.inferMask(request) // just retry
                 } catch (e: Exception) {
                     Log.e("CanvasViewModel", "Inference mask failed")
                     _maskOverallImage.postValue(null)
                     _masks.postValue(emptyList())
                     _labels.postValue(emptyList())
-                    _maskError.postValue(true)
+                    _maskError.postValue(2)
                     return@launch
                 }
             }
@@ -204,13 +207,14 @@ class CanvasViewModel(
                 }
                 _masks.postValue(generatedBitmaps) // OUTPUT_MASKS
                 _labels.postValue(response.outputs[2].data) // OUTPUT_LABELS
+                _maskError.postValue(0)
             }
             else {
                 Log.e("CanvasViewModel", "Inference mask failed")
                 _maskOverallImage.postValue(null)
                 _masks.postValue(emptyList())
                 _labels.postValue(emptyList())
-                _maskError.postValue(true)
+                _maskError.postValue(2)
             }
         }
     }
