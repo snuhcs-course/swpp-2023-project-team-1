@@ -36,18 +36,19 @@ class NotificationService:
         sender_id: UUID4,
         recipient_id: UUID4,
         post_id: UUID4,
+        post_image_url: str | None,
         session: AsyncSession,
         **kwargs
     ) -> Notification:
         
-        notification_dict = notification_data.create_dict(sender_id, recipient_id, post_id)
+        notification_dict = notification_data.create_dict(sender_id, recipient_id, post_id ,post_image_url)
 
         try:
             return await notification.create_or_update(notification_dict)
         
         except IntegrityError as e:
             raise BadRequestException(str(e.orig)) from e
-        
+
     @Transactional()
     async def delete_notification(
         self,
@@ -59,7 +60,7 @@ class NotificationService:
         **kwargs
     ):
         
-        notification_dict = notification_data.create_dict(sender_id, recipient_id, post_id)
+        notification_dict = notification_data.create_dict(sender_id, recipient_id, post_id, None)
 
         try:
             await notification.delete_notification(notification_dict)

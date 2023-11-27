@@ -153,6 +153,14 @@ async def get_author_by_comment_id(comment_id: UUID4, session: AsyncSession):
     return res.scalar_one().user_id
 
 @Transactional()
+async def get_image_url_by_post_id(post_id: UUID4, session: AsyncSession):
+    res = await session.execute(
+        select(Post)
+        .where(Post.id == post_id)
+    )
+    return res.scalar_one().image_url
+
+@Transactional()
 async def create(post: dict, session: AsyncSession):
     post_obj = Post(**post)
     session.add(post_obj)
@@ -267,3 +275,4 @@ async def delete_like_by_post_id_and_user_id(post_id: UUID4, user_id: UUID4, ses
     )
     await session.execute(stmt)
     return
+

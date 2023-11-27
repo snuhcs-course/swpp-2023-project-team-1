@@ -255,6 +255,13 @@ class PostService:
             return await post.get_author_by_comment_id(comment_id)
         except NoResultFound as e:
             raise CommentNotFoundException("Comment not found") from e
+        
+    @Transactional()
+    async def get_post_image_url_by_id(self, post_id: UUID4, session: AsyncSession):
+        try:
+            return await post.get_image_url_by_post_id(post_id)
+        except NoResultFound as e:
+            raise NotFoundException("Post not found") from e
     
         
 def upload_post_image_to_s3(
@@ -295,4 +302,3 @@ def upload_post_image_to_s3(
             raise e
     
     return img_url
-

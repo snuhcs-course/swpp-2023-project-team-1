@@ -18,5 +18,4 @@ class Notification(TimestampMixin, Base):
     recipient: Mapped[User] = relationship("User", back_populates="notifications_recipient", foreign_keys=[recipient_id])
     post_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("post.id", ondelete="CASCADE"), nullable=True)
     read_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=utcnow(), nullable=True)
-
-    
+    post_image_url: Mapped[str] = mapped_column(String, nullable=True)

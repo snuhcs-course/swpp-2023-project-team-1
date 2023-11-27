@@ -110,7 +110,8 @@ async def request_follow(
         ),
         sender_id=req.user.id,
         recipient_id=user_id, 
-        post_id=None
+        post_id=None,
+        post_image_url=None
     )
 
     return {"message": f"Requested user {user_id} follow"}
@@ -171,7 +172,8 @@ async def accept_follow_request(
         ),
         sender_id=req.user.id,
         recipient_id=user_id, 
-        post_id=None
+        post_id=None,
+        post_image_url=None
     )
 
     await notification_svc.delete_notification(

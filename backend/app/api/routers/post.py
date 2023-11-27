@@ -221,6 +221,8 @@ async def toggle_post_like(
 
     post_author_id = await post_svc.get_post_author_by_id(post_id)
 
+    post_image_url = await post_svc.get_post_image_url_by_id(post_id)
+
     if post_author_id != user_id and post_like.is_liked:
         await notification_svc.create_or_update_notification(
             notification_data=NotificationBase(
@@ -230,6 +232,7 @@ async def toggle_post_like(
             sender_id=user_id,
             recipient_id=post_author_id,
             post_id=post_id,
+            post_image_url=post_image_url
         )
 
     return post_like
@@ -278,6 +281,8 @@ async def create_comment(
 
     post_author_id = await post_svc.get_post_author_by_id(post_id)
 
+    post_image_url = await post_svc.get_post_image_url_by_id(post_id)
+
     if post_author_id != user_id:
         await notification_svc.create_or_update_notification(
             notification_data=NotificationBase(
@@ -287,6 +292,7 @@ async def create_comment(
             sender_id=user_id,
             recipient_id=post_author_id,
             post_id=post_id,
+            post_image_url=post_image_url
         )
 
     return new_comment
@@ -345,6 +351,8 @@ async def toggle_comment_like(
 
     comment_author_id = await post_svc.get_comment_author_by_id(comment_id)
 
+    post_image_url = await post_svc.get_post_image_url_by_id(post_id)
+
     if comment_author_id != user_id and comment_like.is_liked:
         await notification_svc.create_or_update_notification(
             notification_data=NotificationBase(
@@ -354,6 +362,7 @@ async def toggle_comment_like(
             sender_id=user_id,
             recipient_id=comment_author_id,
             post_id=post_id,
+            post_image_url=post_image_url
         )
     
     return comment_like

@@ -65,10 +65,11 @@ async def create_or_update(notification_dict: dict, session: AsyncSession):
     else:
         notification = None
 
+
     if notification is None:
         notification = Notification(**notification_dict)
         session.add(notification)
-   
+        
     await session.commit()
     await session.refresh(notification)
     return notification
