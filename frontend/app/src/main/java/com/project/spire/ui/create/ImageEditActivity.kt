@@ -8,14 +8,12 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.R
 import com.example.spire.databinding.ActivityImageEditBinding
-import com.project.spire.core.inference.InferenceRepository
 import com.project.spire.core.inference.SegmentationRepository
 import com.project.spire.ui.MainActivity
 import com.project.spire.utils.BitmapUtils
@@ -31,8 +29,6 @@ class ImageEditActivity : AppCompatActivity() {
     private val segmentationRepository = SegmentationRepository()
     private val canvasViewModelFactory = CanvasViewModelFactory(segmentationRepository)
     private val canvasViewModel = canvasViewModelFactory.create(CanvasViewModel::class.java)
-
-
 
     private var mImageBitmap: Bitmap? = null
 
@@ -144,6 +140,7 @@ class ImageEditActivity : AppCompatActivity() {
         val adapter = MaskFetchAdapter(canvasViewModel.masks.value!!, canvasViewModel.labels.value!!, canvasViewModel)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(HorizontalSpaceDecoration(RECYCLER_VIEW_MARGIN))
+        recyclerView.setHasFixedSize(false)
 
         canvasViewModel.labels.observe(this) {
             if (it.isNotEmpty() and (canvasViewModel.masks.value!!.isNotEmpty())) {

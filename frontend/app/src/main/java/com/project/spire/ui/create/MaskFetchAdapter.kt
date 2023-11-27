@@ -27,6 +27,14 @@ class MaskFetchAdapter(
         return labels.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
     override fun onBindViewHolder(holder: MaskFetchViewHolder, position: Int) {
         if (labels.isEmpty() || masks.isEmpty()) return
         val label = labels[position]

@@ -93,7 +93,8 @@
         <Button
             android:id="@+id/fetch_button"
             style="@style/ImgEditBtn"
-            android:text="Fetch"
+            android:layout_width="wrap_content"
+            android:text="@string/mask_generate_button"
             app:backgroundTint="@null"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -107,7 +108,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:visibility="invisible" />
-
 
         <ImageButton
             android:id="@+id/mask_fetch_refresh_button"

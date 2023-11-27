@@ -1,6 +1,8 @@
 package com.project.spire.ui.create
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
@@ -214,9 +216,25 @@ class CanvasViewModel(
     }
 
     fun applyFetchedMask(mask: Bitmap?) {
-        _backgroundMaskBitmap.postValue(mask)
-        if (mask != null) Log.d("CanvasViewModel", "mask: ${mask.width} * ${mask.height}")
-        else Log.d("CanvasViewModel", "mask: null")
+        if (mask == null) {
+            Log.d("CanvasViewModel", "mask: null")
+            _backgroundMaskBitmap.postValue(null)
+            return
+        }
+        else {
+            Log.d("CanvasViewModel", "mask: ${mask.width} * ${mask.height}")
+            val oldMask = _backgroundMaskBitmap.value
+            if (oldMask == null) {
+                _backgroundMaskBitmap.postValue(mask)
+                return
+            }
+            val result = Bitmap.createBitmap(oldMask.width, oldMask.height, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(result)
+            canvas.drawBitmap(oldMask, 0f, 0f, null)
+            canvas.drawBitmap(mask, 0f, 0f, null)
+            // merge two masks
+            _backgroundMaskBitmap.postValue(result)
+        }
     }
 
     fun resetFetchedMask() {
