@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -35,26 +36,29 @@ class SpireCanvasView(internal var context: Context, attrs: AttributeSet?) : Vie
         super.onDraw(canvas)
         mPaint.xfermode = null
         canvas.drawColor(Color.TRANSPARENT)
-        if (viewModel.backgroundMaskBitmap.value != null) {
-            canvas.drawBitmap(viewModel.backgroundMaskBitmap.value!!, x, y, null)
-            // fetch a mask from inference API
-        }
 
         for ((path, options) in viewModel.paths) {
-            mPaint.xfermode = options.xfermode
-            mPaint.strokeWidth = options.strokeWidth
-            if (options.xfermode != null) {
-                setLayerType(LAYER_TYPE_HARDWARE, null)
-                // xfermode doesn't works with hardware acceleration
+            if (path is Bitmap) {
+                canvas.drawBitmap(path, 0f, 0f, null)
+                // draw bitmaps (fetched masks)
             }
-            canvas.drawPath(path, mPaint)
+            else if (path is Path) {
+                mPaint.xfermode = options.xfermode
+                mPaint.strokeWidth = options.strokeWidth
+                if (options.xfermode != null) {
+                    setLayerType(LAYER_TYPE_HARDWARE, null)
+                    // xfermode doesn't works with hardware acceleration
+                }
+                canvas.drawPath(path, mPaint)
+                // draw paths (user touch input)
+            }
         }
         mPaint.xfermode = viewModel.paintOptions.xfermode
         mPaint.strokeWidth = viewModel.paintOptions.strokeWidth
         if (viewModel.isEraseMode.value!!) {
             setLayerType(LAYER_TYPE_HARDWARE, null)
         }
-       canvas.drawPath(viewModel.mPath, mPaint)
+        canvas.drawPath(viewModel.mPath, mPaint)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

@@ -1,8 +1,6 @@
 package com.project.spire.ui.create
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
@@ -24,76 +22,55 @@ import kotlinx.coroutines.launch
 class CanvasViewModel(
     private val segmentationRepository: SegmentationRepository
 ): ViewModel() {
-
-    private val _maskOverallImage = MutableLiveData<Bitmap?>().apply { value = null }
-    private val _masks = MutableLiveData<List<Bitmap>>().apply { value = emptyList() }
-    private val _labels = MutableLiveData<List<String>>().apply { value = emptyList() }
-    private val _maskError = MutableLiveData<Int>().apply { value = 0 }
-    // 0: no error, 1: retrying, 2: failed
-
-    val maskOverallImage: LiveData<Bitmap?> get() = _maskOverallImage
-    val masks: LiveData<List<Bitmap>> get() = _masks
-    val labels: LiveData<List<String>> get() = _labels
-    val maskError: LiveData<Int> get() = _maskError
-
-
-    private var _originImageBitmap = MutableLiveData<Bitmap>()
-    val originImageBitmap: LiveData<Bitmap>
-        get() = _originImageBitmap
-
-    fun setOriginImageBitmap(bitmap: Bitmap) {
-        _originImageBitmap.value = bitmap
-    }
-
-    private var _backgroundMaskBitmap = MutableLiveData<Bitmap?>()
-    val backgroundMaskBitmap: LiveData<Bitmap?>
-        get() = _backgroundMaskBitmap
-
     private val STROKE_PEN = 60f
     private val STROKE_ERASER = 80f
     private val MODE_CLEAR = PorterDuffXfermode(PorterDuff.Mode.CLEAR) // clears when overlapped
-
-    private var _paths = LinkedHashMap<Path, PaintOptions>()
-    val paths: LinkedHashMap<Path, PaintOptions>
-        get() = _paths
-    private var _paintOptions = PaintOptions(STROKE_PEN, null)
-    val paintOptions: PaintOptions
-        get() = _paintOptions
-
     private var _currentX = 0f
     private var _currentY = 0f
     private var _startX = 0f
     private var _startY = 0f
 
+    private var _maskOverallImage = MutableLiveData<Bitmap?>().apply { value = null }
+    private var _masks = MutableLiveData<List<Bitmap>>().apply { value = emptyList() }
+    private var _labels = MutableLiveData<List<String>>().apply { value = emptyList() }
+    private var _maskError = MutableLiveData<Int>().apply { value = 0 }
+    // 0: no error, 1: retrying, 2: failed
+
+    private var _originImageBitmap = MutableLiveData<Bitmap>()
+    private var _paths = LinkedHashMap<Any, PaintOptions>() // drawing until now, ORDER MATTERS
+    // Path for user touch input, Bitmap for fetched mask
+    private var _paintOptions = PaintOptions(STROKE_PEN, null)
     private var _isEraseMode = MutableLiveData<Boolean>(false)
-    val isEraseMode: LiveData<Boolean>
-        get() = _isEraseMode
     private var _isPenMode = MutableLiveData<Boolean>(true)
-    val isPenMode: LiveData<Boolean>
-        get() = _isPenMode
+    private var _mPath: Path = Path() // is significant only when the user is still touching
+    private var _redraw = MutableLiveData<Boolean>(false)
 
-    private var _isDrawing = MutableLiveData<Boolean>(false)
-    val isDrawing: LiveData<Boolean>
-        get() = _isDrawing
+    val maskOverallImage: LiveData<Bitmap?> get() = _maskOverallImage
+    val masks: LiveData<List<Bitmap>> get() = _masks
+    val labels: LiveData<List<String>> get() = _labels
+    val maskError: LiveData<Int> get() = _maskError
+    val originImageBitmap: LiveData<Bitmap> get() = _originImageBitmap
+    val paths: LinkedHashMap<Any, PaintOptions> get() = _paths
+    val paintOptions: PaintOptions get() = _paintOptions
+    val isEraseMode: LiveData<Boolean> get() = _isEraseMode
+    val isPenMode: LiveData<Boolean> get() = _isPenMode
+    val mPath: Path get() = _mPath
+    val redraw: LiveData<Boolean> get() = _redraw  // change this when need to redraw
+    // observe this instead of mPath, to avoid delay
 
-    private var _mPath: Path = Path()
-    val mPath: Path
-        get() = _mPath
+    fun setOriginImageBitmap(bitmap: Bitmap) { // origin bitmap (ImageView)
+        _originImageBitmap.value = bitmap
+    }
 
-    // mPath를 LiveData로 만들고 mPath를 observe하는 경우 화면 표시에 delay가 발생하여
-    // 대신 isDrawing을 observe
-
-    fun clearCanvas() {
+    fun clearCanvas() { // clear all
         _mPath.reset()
-        resetFetchedMask()
         _paths = LinkedHashMap()
         _isEraseMode.postValue(false)
         _isPenMode.postValue(false)
-        _isDrawing.postValue(true)
-        _isDrawing.postValue(false)
+        _redraw.postValue(!_redraw.value!!)
     }
 
-    fun changeEraseMode() {
+    fun changeEraseMode() { // enable or disable eraser
         if (!_isEraseMode.value!!) {
             _isEraseMode.postValue(true)
             _isPenMode.postValue(false)
@@ -105,7 +82,7 @@ class CanvasViewModel(
         }
     }
 
-    fun changePenMode() {
+    fun changePenMode() { // enable or disable pen
         if (!_isPenMode.value!!) {
             _isEraseMode.postValue(false)
             _isPenMode.postValue(true)
@@ -121,29 +98,26 @@ class CanvasViewModel(
         if (!_isPenMode.value!! and !_isEraseMode.value!!) return true;
         // don't need to track path is pen and eraser are both disabled
 
-        val y = event.y
         val x = event.x
+        val y = event.y
         if (event.pointerCount == 1) { // don't track on multi-touch
             when(event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     _startX = x
                     _startY = y
-
                     _mPath.reset()
                     _mPath.moveTo(x, y)
                     _currentX = x
                     _currentY = y
 
-                    _isDrawing.postValue(true)
-                    _isDrawing.postValue(false)
+                    _redraw.postValue(!_redraw.value!!)
                 }
                 MotionEvent.ACTION_MOVE -> {
                     _mPath.quadTo(_currentX, _currentY, (x + _currentX) / 2, (y + _currentY) / 2)
                     _currentX = x
                     _currentY = y
 
-                    _isDrawing.postValue(true)
-                    _isDrawing.postValue(false)
+                    _redraw.postValue(!_redraw.value!!)
                 }
                 MotionEvent.ACTION_UP -> {
                     _mPath.lineTo(_currentX, _currentY)
@@ -157,8 +131,7 @@ class CanvasViewModel(
                     _paths[_mPath] = _paintOptions
                     _mPath = Path()
                     _paintOptions = PaintOptions(_paintOptions.strokeWidth, _paintOptions.xfermode)
-                    _isDrawing.postValue(true)
-                    _isDrawing.postValue(false)
+                    _redraw.postValue(!_redraw.value!!)
                 }
             }
         }
@@ -220,42 +193,12 @@ class CanvasViewModel(
         }
     }
 
-    fun applyFetchedMask(mask: Bitmap?, isErase: Boolean = false) {
-        if (mask == null) {
-            Log.d("CanvasViewModel", "mask: null")
-            _backgroundMaskBitmap.postValue(null)
-            return
-        }
-        else {
-            Log.d("CanvasViewModel", "mask: ${mask.width} * ${mask.height}")
-            val oldMask = _backgroundMaskBitmap.value
-            if (oldMask == null) {
-                _backgroundMaskBitmap.postValue(mask)
-                return
-            }
-            val result = Bitmap.createBitmap(oldMask.width, oldMask.height, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(result)
-            if (isErase) {
-                val paint = Paint()
-                paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-                canvas.drawBitmap(oldMask, 0f, 0f, paint)
-                canvas.drawBitmap(mask, 0f, 0f, paint)
-            }
-            else {
-                canvas.drawBitmap(oldMask, 0f, 0f, null)
-                canvas.drawBitmap(mask, 0f, 0f, null)
-            }
-
-            // merge two masks
-            _backgroundMaskBitmap.postValue(result)
-        }
+    fun applyFetchedMask(mask: Bitmap, isErase: Boolean = false) {
+        Log.d("CanvasViewModel", "mask: ${mask.width} * ${mask.height}")
+        if (isErase) _paths.keys.removeIf{ path -> path is Bitmap && (path == mask) } // erase current
+        else _paths[mask] = PaintOptions(STROKE_PEN, null) // draw current
+        _redraw.postValue(!_redraw.value!!)
     }
-
-    fun resetFetchedMask() {
-        _backgroundMaskBitmap.postValue(null)
-        // TODO: set onclick listener
-    }
-
 }
 
 class CanvasViewModelFactory(private val segmentationRepository: SegmentationRepository) :

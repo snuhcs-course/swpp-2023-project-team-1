@@ -24,7 +24,6 @@ import com.project.spire.utils.InferenceUtils
 const val RECYCLER_VIEW_MARGIN = 30
 
 class ImageEditActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityImageEditBinding
     private lateinit var inferenceViewModel: InferenceViewModel
 
@@ -42,6 +41,7 @@ class ImageEditActivity : AppCompatActivity() {
         setContentView(binding.root)
         inferenceViewModel = InferenceUtils.inferenceViewModel
 
+        // crop image
         val uri = Uri.parse(intent.getStringExtra("imageUri"))
         val cropImageView = binding.cropImageView
         val cropDoneButton = binding.cropDoneButton
@@ -68,37 +68,31 @@ class ImageEditActivity : AppCompatActivity() {
         val mCanvasView = binding.spireCanvasView
         mCanvasView.initViewModel(canvasViewModel)
 
+        // enable or disable pen or erase mode
         val editBtn = binding.editButton
         editBtn.setOnClickListener { canvasViewModel.changePenMode() }
-        val penModeObserver = Observer<Boolean> { isPenMode ->
-            if (isPenMode) {
+        canvasViewModel.isPenMode.observe(this) {
+            if (it) {
                 editBtn.setImageResource(R.drawable.ic_img_edit_selected)
             } else {
                 editBtn.setImageResource(R.drawable.ic_img_edit)
             }
         }
-        canvasViewModel.isPenMode.observe(this, penModeObserver)
 
         val eraseBtn = binding.eraseButton
         eraseBtn.setOnClickListener { canvasViewModel.changeEraseMode() }
-        val eraseModeObserver = Observer<Boolean> { isEraseMode ->
-            if (isEraseMode) {
+        canvasViewModel.isEraseMode.observe(this) {
+            if (it) {
                 eraseBtn.setImageResource(R.drawable.ic_img_erase_selected)
             } else {
                 eraseBtn.setImageResource(R.drawable.ic_img_erase)
             }
         }
-        canvasViewModel.isEraseMode.observe(this, eraseModeObserver)
 
-        val isDrawingObserver = Observer<Boolean> { mCanvasView.invalidate() }
-        canvasViewModel.isDrawing.observe(this, isDrawingObserver)
-
-        val resetBtn = binding.resetButton
-        resetBtn.setOnClickListener {
-            canvasViewModel.clearCanvas()
-            editBtn.setImageResource(R.drawable.ic_img_edit)
-            eraseBtn.setImageResource(R.drawable.ic_img_erase)
+        canvasViewModel.redraw.observe(this) {
+            mCanvasView.invalidate()
         }
+
         val promptInput = binding.promptInput
 
         val nextBtn = binding.nextButton
@@ -152,6 +146,31 @@ class ImageEditActivity : AppCompatActivity() {
         recyclerView.addItemDecoration(HorizontalSpaceDecoration(RECYCLER_VIEW_MARGIN))
         recyclerView.setHasFixedSize(false)
 
+        val resetBtn = binding.resetButton
+        resetBtn.setOnClickListener {
+            canvasViewModel.clearCanvas()
+            editBtn.setImageResource(R.drawable.ic_img_edit)
+            eraseBtn.setImageResource(R.drawable.ic_img_erase)
+            recyclerView.adapter?.run {
+                notifyDataSetChanged()
+            }
+            /*
+            for (i in 0 until recyclerView.childCount) {
+                val child = recyclerView.getChildAt(i)
+                //child.
+
+                recyclerView.getChildViewHolder(child).apply {
+                    isClicked = false
+                }
+
+
+                child.setBackgroundResource(R.drawable.btn_mask_fetch_bg)
+                child.setTextColor(textColorDefault)
+            } */
+        }
+
+
+
         canvasViewModel.labels.observe(this) {
             if (it.isNotEmpty() and (canvasViewModel.masks.value!!.isNotEmpty())) {
                 Log.d("ImageEditActivity", "Masks received")
@@ -165,14 +184,14 @@ class ImageEditActivity : AppCompatActivity() {
             }
         }
 
-        canvasViewModel.backgroundMaskBitmap.observe(this) {
-            Log.d("ImageEditActivity", "Background mask bitmap received")
-            mCanvasView.invalidate()
-        }
+   //     canvasViewModel.backgroundMaskBitmap.observe(this) {
+  //          Log.d("ImageEditActivity", "Background mask bitmap received")
+  //          mCanvasView.invalidate()
+  //      }
 
         canvasViewModel.maskError.observe(this) {
             if (it == 1) {
-                Toast.makeText(this, "Mask generate failed, retrying...", Toast.LENGTH_LONG).show()
+                //Toast.makeText(this, "Mask generate failed, retrying...", Toast.LENGTH_LONG).show()
             }
             else if (it == 2) {
                 Toast.makeText(this, "Mask generate failed, please try again.", Toast.LENGTH_LONG).show()
