@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spire-service
+  labels:
+    app: spire
+spec:
+  type: NodePort
+  ports:
+    - port: 8000
+      targetPort: http
+      nodePort: <Replace this by selecting any number in 30000 - 32768 for the port number>
+      name: http-inference-server
+    - port: 8001
+      targetPort: grpc
+      nodePort: <Replace this by selecting any number in 30000 - 32768 for the port number>
+      name: grpc-inference-server
+    - port: 8002
+      targetPort: metrics
+      nodePort: <Replace this by selecting any number in 30000 - 32768 for the port number>
+      name: metrics-inference-server
+  selector:
+    app: spire
