@@ -198,7 +198,6 @@ class PostFragment : Fragment() {
         binding.commentWriteBtn.visibility = View.VISIBLE
         binding.commentWriteProgressBar.visibility = View.GONE
         binding.commentWriteEditText.text?.clear()
-        val commentAdapter = CommentAdapter(comments, findNavController(), postViewModel)
         val commentAdapter = CommentAdapter(comments, findNavController(), requireContext(), postViewModel)
         recyclerView.adapter = commentAdapter
         recyclerView.visibility = View.VISIBLE
