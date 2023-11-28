@@ -1,18 +1,16 @@
 package com.project.spire.ui.profile
 
-import android.app.Activity
 import android.content.Intent
-import android.os.Build
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.Button
-import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.spire.R
@@ -20,7 +18,7 @@ import com.example.spire.databinding.FragmentProfileBinding
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
 import com.project.spire.core.user.UserRepository
-import com.project.spire.ui.auth.LoginActivity
+import com.project.spire.ui.profile.GridSpaceItemDecoration
 
 class ProfileFragment : Fragment() {
 
@@ -30,7 +28,8 @@ class ProfileFragment : Fragment() {
 
     private lateinit var profileViewModel: ProfileViewModel
 
-    private var TEST_USER_ID = "d2fcfe21-82fa-4008-835d-16c39eca26d7" //"92142569-d579-44e7-bf06-102770db6eb4"
+    private val spanCount = 2
+    private val space = 8f
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +47,16 @@ class ProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        Log.d("ProfileFragment", "onResume")
+
+        if (arguments?.getString("userId") == null) {
+            Log.i("ProfileFragment", "userId is null")
+            profileViewModel.getMyInfo()
+        } else {
+            Log.i("ProfileFragment", "userId: ${arguments?.getString("userId")}")
+            val userId = arguments?.getString("userId")
+            profileViewModel.getUserInfo(userId!!)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,10 +64,12 @@ class ProfileFragment : Fragment() {
 
         // If bundle is null, fetch my profile
         // Else, fetch other user's profile using bundle's user id
-        if (savedInstanceState?.getString("userId") == null) {
+        if (arguments?.getString("userId") == null) {
+            Log.i("ProfileFragment", "userId is null")
             profileViewModel.getMyInfo()
         } else {
-            val userId = savedInstanceState.getString("userId")
+            Log.i("ProfileFragment", "userId: ${arguments?.getString("userId")}")
+            val userId = arguments?.getString("userId")
             profileViewModel.getUserInfo(userId!!)
         }
 
@@ -72,8 +83,15 @@ class ProfileFragment : Fragment() {
         }
 
         profileViewModel.profileImageUrl.observe(viewLifecycleOwner) {
-            binding.profileImage.load(it) {
-                transformations(CircleCropTransformation())
+            if (it != null) {
+                binding.profileImage.load(it) {
+                    transformations(CircleCropTransformation())
+                }
+            }
+            else {
+                binding.profileImage.load(R.drawable.default_profile_img) {
+                    transformations(CircleCropTransformation())
+                }
             }
         }
 
@@ -116,6 +134,16 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        profileViewModel.posts.observe(viewLifecycleOwner) { it ->
+            if (it != null) {
+                val postAdapter = PostAdapter(it, findNavController())
+                binding.profilePostRecyclerView.adapter = postAdapter
+                binding.profilePostRecyclerView.layoutManager =
+                    GridLayoutManager(requireContext(), spanCount)
+                binding.profilePostRecyclerView.addItemDecoration(GridSpaceItemDecoration(spanCount, (space * Resources.getSystem().displayMetrics.density).toInt()))
+            }
+        }
+
         binding.profileLargeButton.setOnClickListener {
             if (profileViewModel.isMyProfile.value == true) {
                 startActivity(Intent(requireContext(), EditProfileActivity::class.java))
@@ -125,14 +153,18 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        binding.testButton.setOnClickListener {
-            if (profileViewModel.isMyProfile.value == true) {
-                profileViewModel.getUserInfo(TEST_USER_ID)
-                binding.testButton.text = "My Profile"
-            } else {
-                profileViewModel.getMyInfo()
-                binding.testButton.text = "Test Profile"
-            }
+        binding.followerButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("type", "followers")
+            bundle.putString("userId", profileViewModel.userId.value)
+            findNavController().navigate(R.id.action_profile_to_relationship, bundle)
+        }
+
+        binding.followingButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("type", "following")
+            bundle.putString("userId", profileViewModel.userId.value)
+            findNavController().navigate(R.id.action_profile_to_relationship, bundle)
         }
     }
 
@@ -140,4 +172,5 @@ class ProfileFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

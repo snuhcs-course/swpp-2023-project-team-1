@@ -3,6 +3,7 @@ package com.project.spire.network
 import com.project.spire.network.auth.AuthAPI
 import com.project.spire.network.notification.NotificationAPI
 import com.project.spire.network.post.PostAPI
+import com.project.spire.network.search.SearchAPI
 import com.project.spire.network.user.UserAPI
 
 import okhttp3.OkHttpClient
@@ -29,6 +30,8 @@ class RetrofitClient {
         val postAPI: PostAPI = retrofit.create(PostAPI::class.java)
         val userAPI: UserAPI = retrofit.create(UserAPI::class.java)
         val notificationAPI: NotificationAPI = retrofit.create(NotificationAPI::class.java)
+        val searchAPI: SearchAPI = retrofit.create(SearchAPI::class.java)
+
 
     }
 }

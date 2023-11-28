@@ -2,6 +2,7 @@ package com.project.spire.ui.profile
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.user.UserRepository
 import com.project.spire.models.Post
+import com.project.spire.network.RetrofitClient.Companion.postAPI
 import com.project.spire.utils.AuthProvider
 import kotlinx.coroutines.launch
 
@@ -22,7 +24,7 @@ class ProfileViewModel(
     private val _email = MutableLiveData<String>().apply { value = "" }
     private val _username = MutableLiveData<String>().apply { value = "" }
     private val _bio = MutableLiveData<String>().apply { value = "" }
-    private val _profileImageUrl = MutableLiveData<String>().apply { value = "" }
+    private val _profileImageUrl = MutableLiveData<String?>()
     private val _followers = MutableLiveData<Int>().apply { value = 0 }
     private val _following = MutableLiveData<Int>().apply { value = 0 }
     private val _posts = MutableLiveData<List<Post>>().apply { value = emptyList() }
@@ -30,18 +32,20 @@ class ProfileViewModel(
     // -1: Not follow, 0: Requested, 1: Accepted
     private val _isMyProfile = MutableLiveData<Boolean>().apply { value = false }
     private val _photoPickerUri = MutableLiveData<Uri?>().apply { value = null }
+    private val _editProfileSuccess = MutableLiveData<Boolean>().apply { value = false }
 
     val userId: LiveData<String> = _userId
     val email: LiveData<String> = _email
     val username: LiveData<String> = _username
     val bio: LiveData<String> = _bio
-    val profileImageUrl: LiveData<String> = _profileImageUrl
+    val profileImageUrl: LiveData<String?> = _profileImageUrl
     val followers: LiveData<Int> = _followers
     val following: LiveData<Int> = _following
     val posts: LiveData<List<Post>> = _posts
     val followingState: LiveData<Int> = _followingState
     val isMyProfile: LiveData<Boolean> = _isMyProfile
     val photoPickerUri: LiveData<Uri?> = _photoPickerUri
+    val editProfileSuccess: LiveData<Boolean> = _editProfileSuccess
 
 
     private val _logoutSuccess = MutableLiveData<Boolean>()
@@ -65,17 +69,19 @@ class ProfileViewModel(
             val myInfo = userRepository.getMyInfo(accessToken)
             val followInfo = userRepository.getFollowInfo(accessToken, myInfo?.id!!)
 
-            _userId.postValue(myInfo?.id)
-            _email.postValue(myInfo?.email)
-            _username.postValue(myInfo?.username)
-            _bio.postValue(myInfo?.bio)
-            _profileImageUrl.postValue(myInfo?.profileImageUrl)
+            _userId.postValue(myInfo.id)
+            _email.postValue(myInfo.email)
+            _username.postValue(myInfo.username)
+            _bio.postValue(myInfo.bio)
+            _profileImageUrl.postValue(myInfo.profileImageUrl)
             _followers.postValue(followInfo!!.followerCnt)
-            _following.postValue(followInfo!!.followingCnt)
+            _following.postValue(followInfo.followingCnt)
             // _posts.postValue(myInfo?.posts)
             _followingState.postValue(-1)
             _isMyProfile.postValue(true)
+            getMyPosts()
         }
+
     }
 
     fun getUserInfo(userId: String) {
@@ -90,8 +96,8 @@ class ProfileViewModel(
             _bio.postValue(userInfo?.bio)
             _profileImageUrl.postValue(userInfo?.profileImageUrl)
             _followers.postValue(followInfo!!.followerCnt)
-            _following.postValue(followInfo!!.followingCnt)
-            _followingState.postValue(followInfo!!.followingStatus)
+            _following.postValue(followInfo.followingCnt)
+            _followingState.postValue(followInfo.followingStatus)
             // _posts.postValue(userInfo?.posts)
             _isMyProfile.postValue(false)
         }
@@ -101,10 +107,15 @@ class ProfileViewModel(
         viewModelScope.launch {
             val accessToken = AuthProvider.getAccessToken()
             val updateProfile = userRepository.updateMyInfo(accessToken, username, bio, profileImage, context)
+            if (updateProfile != null) {
+                _username.postValue(updateProfile.username)
+                _bio.postValue(updateProfile.bio)
+                _profileImageUrl.postValue(updateProfile.profileImageUrl)
+                _editProfileSuccess.postValue(true)
+            } else {
+                Log.e("ProfileViewModel", "Update profile error")
+            }
 
-            _username.postValue(updateProfile?.username)
-            _bio.postValue(updateProfile?.bio)
-            _profileImageUrl.postValue(updateProfile?.profileImageUrl)
         }
     }
 
@@ -132,6 +143,35 @@ class ProfileViewModel(
                 // unfollow
                 val unfollowRequest = userRepository.unfollow(accessToken, followUserId)
                 if (unfollowRequest) _followingState.postValue(-1)
+            }
+        }
+    }
+
+    fun getMyPosts() {
+        if (_isMyProfile.value!!) {
+            return
+        }
+        viewModelScope.launch {
+            val accessToken = AuthProvider.getAccessToken()
+            val response = postAPI.getMyPosts(accessToken, 30, 0)
+            // TODO: implement pagination
+            if (response.isSuccessful) {
+                val successBody = response.body()
+                Log.d("ProfileViewModel", "Get my posts response: ${successBody?.total}")
+                _posts.postValue(successBody?.items)
+            } else {
+                val errorBody = response.errorBody()
+                Log.e("ProfileViewModel", "Get my posts error: ${errorBody?.string()!!}")
+            }
+        }
+    }
+
+    fun unregister() {
+        viewModelScope.launch {
+            val accessToken = AuthProvider.getAccessToken()
+            val unregister = authRepository.unregister(accessToken)
+            if (unregister) {
+                _logoutSuccess.postValue(true)
             }
         }
     }
