@@ -8,7 +8,7 @@ import com.example.spire.R
 import com.project.spire.models.Noti
 
 class NotificationAdapter(
-    var notificationList: List<Noti>
+    private var notificationList: List<Noti>
 ) : RecyclerView.Adapter<NotificationViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -39,5 +39,11 @@ class NotificationAdapter(
         else -> {
             R.layout.notification_item_follow
         }
+    }
+
+    fun updateList(newList: List<Noti>) {
+        val previousSize = itemCount
+        notificationList = newList
+        notifyItemRangeInserted(previousSize, newList.size)
     }
 }

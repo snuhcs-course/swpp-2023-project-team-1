@@ -8,11 +8,11 @@ data class GetNotificationsSuccess (
     @SerializedName("total")
     var total: Int,
 
-    @SerializedName("notifications")
+    @SerializedName("items")
     var notifications: List<Noti>,
 
     @SerializedName("next_cursor")
-    var nextCursor: String
+    var nextCursor: Int?
     ) {
     // TODO
 }

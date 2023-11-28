@@ -1,5 +1,6 @@
 package com.project.spire.ui.notifications
 
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -44,12 +45,20 @@ open class NotificationViewHolder(private val view: View) : RecyclerView.ViewHol
                     ""
                 }
             }
-            /* TODO
             postImage.load(noti.postImageUrl) {
+                Log.i("NotificationViewHolder", "Loading image: ${noti.postImageUrl}")
                 crossfade(true)
                 transformations(CircleCropTransformation())
             }
-            */
+            view.setOnClickListener {
+                // TODO: Show post
+            }
+            view.findViewById<TextView>(R.id.notification_username).setOnClickListener {
+                // TODO: Show profile
+            }
+            view.findViewById<ImageView>(R.id.notification_profile_image).setOnClickListener {
+                // TODO: Show profile
+            }
         }
     }
 
@@ -72,11 +81,14 @@ open class NotificationViewHolder(private val view: View) : RecyclerView.ViewHol
                     ""
                 }
             }
+            view.setOnClickListener {
+                // TODO: Show profile
+            }
             acceptBtn.setOnClickListener {
-                // TODO
+                // TODO: Accept follow request
             }
             declineBtn.setOnClickListener {
-                // TODO
+                // TODO: Decline follow request
             }
         }
     }

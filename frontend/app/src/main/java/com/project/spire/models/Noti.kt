@@ -7,7 +7,7 @@ data class Noti (
     @SerializedName("id")
     var id: String,
 
-    @SerializedName("type")
+    @SerializedName("notification_type")
     var type: String,
 
     @SerializedName("read_at")
@@ -27,6 +27,9 @@ data class Noti (
 
     @SerializedName("post_id")
     var postId: String?,
+
+    @SerializedName("post_image_url")
+    var postImageUrl: String?,
 
     @SerializedName("created_at")
     var createdAt: String,

@@ -8,11 +8,15 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.databinding.FragmentNotificationsBinding
 
 class NotificationsFragment : Fragment() {
 
     private var _binding: FragmentNotificationsBinding? = null
+    private val notificationsViewModel: NotificationsViewModel by lazy {
+        ViewModelProvider(this)[NotificationsViewModel::class.java]
+    }
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -23,12 +27,13 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        val notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
-
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
 
         val nothingToShow: TextView = binding.nothingToShow
         val recyclerView = binding.notificationsRecyclerView
@@ -39,21 +44,38 @@ class NotificationsFragment : Fragment() {
             this.adapter = adapter
         }
 
+        notificationsViewModel.getInitialNotifications()
+
         notificationsViewModel.text.observe(viewLifecycleOwner) {
             nothingToShow.text = it
         }
 
         notificationsViewModel.notifications.observe(viewLifecycleOwner) {
-            if (it.isEmpty()) {
-                nothingToShow.visibility = View.VISIBLE
-            } else {
-                binding.notificationsCount.text = "(${it.size})"
-                nothingToShow.visibility = View.GONE
+            if (it != null) {
+                if (it.isEmpty()) {
+                    nothingToShow.visibility = View.VISIBLE
+                } else {
+                    binding.notificationsCount.text = "(${it.size})"
+                    nothingToShow.visibility = View.GONE
+                }
+                adapter.updateList(it)
             }
-            adapter.notificationList = it
-            adapter.notifyDataSetChanged()
         }
-        return root
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                // Loads more posts when the user scrolls to the bottom of the list
+                if (!recyclerView.canScrollVertically(1)) {
+                    notificationsViewModel.getMoreNotifications()
+                }
+            }
+        })
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            notificationsViewModel.getInitialNotifications()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
     }
 
     override fun onDestroyView() {
