@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.databinding.FragmentNotificationsBinding
@@ -34,11 +35,14 @@ class NotificationsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val nothingToShow: TextView = binding.nothingToShow
         val recyclerView = binding.notificationsRecyclerView
         val layoutManager = LinearLayoutManager(context)
-        val adapter = NotificationAdapter(notificationsViewModel.notifications.value!!)
+        val adapter = NotificationAdapter(
+            emptyList(),
+            findNavController(),
+            notificationsViewModel
+        )
         recyclerView.run {
             this.layoutManager = layoutManager
             this.adapter = adapter
@@ -52,6 +56,7 @@ class NotificationsFragment : Fragment() {
 
         notificationsViewModel.notifications.observe(viewLifecycleOwner) {
             if (it != null) {
+                binding.progressBar.visibility = View.GONE
                 if (it.isEmpty()) {
                     nothingToShow.visibility = View.VISIBLE
                 } else {
@@ -59,6 +64,13 @@ class NotificationsFragment : Fragment() {
                     nothingToShow.visibility = View.GONE
                 }
                 adapter.updateList(it)
+            }
+        }
+
+        notificationsViewModel.removeAt.observe(viewLifecycleOwner) {
+            if (it != -1) {
+                adapter.removeAt(it)
+                binding.notificationsCount.text = "(${adapter.itemCount})"
             }
         }
 

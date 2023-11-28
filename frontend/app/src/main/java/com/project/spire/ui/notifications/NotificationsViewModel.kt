@@ -18,8 +18,8 @@ class NotificationsViewModel : ViewModel() {
     private val _text = MutableLiveData<String>().apply {
         value = "Nothing here yet!"
     }
-    private val _notifications = MutableLiveData<List<Noti>>().apply {
-        value = emptyList()
+    private val _notifications = MutableLiveData<List<Noti>?>().apply {
+        value = null
     }
     private val _total = MutableLiveData<Int>().apply {
         value = 0
@@ -27,8 +27,12 @@ class NotificationsViewModel : ViewModel() {
     private val _nextCursor = MutableLiveData<Int?>().apply {
         value = 0
     }
+    private val _removeAt = MutableLiveData<Int>().apply {
+        value = -1
+    }
     val text: LiveData<String> = _text
-    val notifications: LiveData<List<Noti>> = _notifications
+    val notifications: LiveData<List<Noti>?> = _notifications
+    val removeAt: LiveData<Int> = _removeAt
 
     fun getInitialNotifications() {
         if (_nextCursor.value != null) {
@@ -71,6 +75,52 @@ class NotificationsViewModel : ViewModel() {
                     _notifications.value = _notifications.value!! + body.notifications
                     _total.value = body.total
                     _nextCursor.value = body.nextCursor
+                } else {
+                    // TODO: Handle error
+                    Log.e(
+                        "NotificationsViewModel",
+                        "Error: ${response.code()}\n${response.errorBody()}"
+                    )
+                }
+            }
+        }
+    }
+
+    fun acceptFollowRequest(position: Int, userId: String) {
+        if (_notifications.value!![position].sender.id == userId) {
+            viewModelScope.launch {
+                val accessToken = AuthProvider.getAccessToken()
+                val response = RetrofitClient.userAPI.acceptFollowRequest(
+                    token = accessToken,
+                    userId = _notifications.value!![position].sender.id
+                )
+                if (response.isSuccessful && response.code() == 200) {
+                    Log.i("NotificationsViewModel", "Success: ${response.body()}")
+                    // Delete the notification
+                    _removeAt.value = position
+                } else {
+                    // TODO: Handle error
+                    Log.e(
+                        "NotificationsViewModel",
+                        "Error: ${response.code()}\n${response.errorBody()}"
+                    )
+                }
+            }
+        }
+    }
+
+    fun declineFollowRequest(position: Int, userId: String) {
+        if (_notifications.value!![position].sender.id == userId) {
+            viewModelScope.launch {
+                val accessToken = AuthProvider.getAccessToken()
+                val response = RetrofitClient.userAPI.rejectFollowRequest(
+                    token = accessToken,
+                    userId = _notifications.value!![position].sender.id
+                )
+                if (response.isSuccessful && response.code() == 200) {
+                    Log.i("NotificationsViewModel", "Success: ${response.body()}")
+                    // Delete the notification
+                    _removeAt.value = position
                 } else {
                     // TODO: Handle error
                     Log.e(

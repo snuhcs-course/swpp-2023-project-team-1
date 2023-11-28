@@ -1,9 +1,11 @@
 package com.project.spire.ui.notifications
 
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -26,7 +28,10 @@ open class NotificationViewHolder(private val view: View) : RecyclerView.ViewHol
         time.text = DateUtils.formatTime(noti.createdAt)
     }
 
-    class PostNotificationViewHolder(private val view: View) : NotificationViewHolder(view) {
+    class PostNotificationViewHolder(
+        private val view: View,
+        private val navController: NavController,
+    ) : NotificationViewHolder(view) {
         override fun bind(noti: Noti) {
             super.bind(noti)
             val content = view.findViewById<TextView>(R.id.notification_text)
@@ -51,18 +56,22 @@ open class NotificationViewHolder(private val view: View) : RecyclerView.ViewHol
                 transformations(CircleCropTransformation())
             }
             view.setOnClickListener {
-                // TODO: Show post
+                super.showPost(navController, noti.postId!!)
             }
             view.findViewById<TextView>(R.id.notification_username).setOnClickListener {
-                // TODO: Show profile
+                super.showProfile(navController, noti.sender.id)
             }
             view.findViewById<ImageView>(R.id.notification_profile_image).setOnClickListener {
-                // TODO: Show profile
+                super.showProfile(navController, noti.sender.id)
             }
         }
     }
 
-    class FollowNotificationViewHolder(private val view: View) : NotificationViewHolder(view) {
+    class FollowNotificationViewHolder(
+        private val view: View,
+        private val navController: NavController,
+        private val viewModel: NotificationsViewModel
+    ) : NotificationViewHolder(view) {
         override fun bind(noti: Noti) {
             super.bind(noti)
             val content = view.findViewById<TextView>(R.id.notification_text)
@@ -82,14 +91,32 @@ open class NotificationViewHolder(private val view: View) : RecyclerView.ViewHol
                 }
             }
             view.setOnClickListener {
-                // TODO: Show profile
+                super.showProfile(navController, noti.sender.id)
             }
             acceptBtn.setOnClickListener {
-                // TODO: Accept follow request
+                viewModel.acceptFollowRequest(adapterPosition, noti.sender.id)
             }
             declineBtn.setOnClickListener {
-                // TODO: Decline follow request
+                viewModel.declineFollowRequest(adapterPosition, noti.sender.id)
             }
         }
+    }
+
+    fun showProfile(navController: NavController, userId: String) {
+        val bundle = Bundle()
+        bundle.putString("userId", userId)
+        navController.navigate(
+            R.id.action_notification_to_profile,
+            bundle
+        )
+    }
+
+    fun showPost(navController: NavController, postId: String) {
+        val bundle = Bundle()
+        bundle.putString("postId", postId)
+        navController.navigate(
+            R.id.action_notification_to_post,
+            bundle
+        )
     }
 }

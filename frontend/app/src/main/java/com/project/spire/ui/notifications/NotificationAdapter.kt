@@ -3,12 +3,15 @@ package com.project.spire.ui.notifications
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.R
 import com.project.spire.models.Noti
 
 class NotificationAdapter(
-    private var notificationList: List<Noti>
+    private var notificationList: List<Noti>,
+    private val navController: NavController,
+    private val viewModel: NotificationsViewModel
 ) : RecyclerView.Adapter<NotificationViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -16,10 +19,10 @@ class NotificationAdapter(
         Log.d("NotificationAdapter", "viewType: $viewType")
         return when (viewType) {
             R.layout.notification_item_post -> {
-                NotificationViewHolder.PostNotificationViewHolder(view)
+                NotificationViewHolder.PostNotificationViewHolder(view, navController)
             }
             else -> {
-                NotificationViewHolder.FollowNotificationViewHolder(view)
+                NotificationViewHolder.FollowNotificationViewHolder(view, navController, viewModel)
             }
         }
     }
@@ -44,6 +47,15 @@ class NotificationAdapter(
     fun updateList(newList: List<Noti>) {
         val previousSize = itemCount
         notificationList = newList
-        notifyItemRangeInserted(previousSize, newList.size)
+        if (previousSize < newList.size) {
+            notifyItemRangeInserted(previousSize, newList.size)
+        } else {
+            notifyItemRangeChanged(0, newList.size)
+        }
+    }
+
+    fun removeAt(position: Int) {
+        notificationList = notificationList.filterIndexed { index, _ -> index != position }
+        notifyItemRemoved(position)
     }
 }
