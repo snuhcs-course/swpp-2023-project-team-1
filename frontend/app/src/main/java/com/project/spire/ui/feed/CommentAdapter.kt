@@ -80,12 +80,18 @@ class CommentAdapter(
     }
 
     private fun showProfile(userId: String) {
-        val bundle = Bundle()
-        bundle.putString("userId", userId)
-        navController.navigate(
-            R.id.action_post_to_profile,
-            bundle
-        )
+        if (postViewModel.myUserId.value == userId) {
+            navController.navigate(
+                R.id.action_post_to_profile,
+            )
+        } else {
+            val bundle = Bundle()
+            bundle.putString("userId", userId)
+            navController.navigate(
+                R.id.action_post_to_profile,
+                bundle
+            )
+        }
     }
 
     private fun deleteComment(position: Int) {

@@ -30,10 +30,20 @@ class FeedViewModel : ViewModel() {
     private val _postLiked = MutableLiveData<Int?>().apply {
         value = null
     }
+    private val _myUserId = MutableLiveData<String?>().apply {
+        value = null
+    }
 
     val posts: LiveData<List<Post>> = _posts
     val nextCursor: LiveData<Int?> = _nextCursor
     val postLiked: LiveData<Int?> = _postLiked
+    val myUserId: LiveData<String?> = _myUserId
+
+    init {
+        viewModelScope.launch {
+            _myUserId.value = AuthProvider.getMyUserId()
+        }
+    }
 
     fun getInitialPosts() {
         viewModelScope.launch {
