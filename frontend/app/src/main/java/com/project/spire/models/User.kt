@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName
 open class User (
 
     @SerializedName("id")
-    val id: String,
+    open val id: String,
 
     @SerializedName("username")
-    var userName: String,
+    open var userName: String,
 
     @SerializedName("profile_image_url")
-    var profileImage: String?
+    open var profileImage: String?
 ) {
     override fun toString(): String {
         return "User(id='$id', userName='$userName', profileImage=$profileImage)"
@@ -27,6 +27,25 @@ class UserDetail (
     followers: List<User>,
     bio: String,
     posts: List<Post>,
+) : User(id, userName, profileImage) {
+    // TODO
+}
+
+class RelatedUser (
+    @SerializedName("id")
+    override val id: String,
+
+    @SerializedName("username")
+    override var userName: String,
+
+    @SerializedName("profile_image_url")
+    override var profileImage: String?,
+
+    @SerializedName("is_following")
+    val isFollowing: Boolean,
+
+    @SerializedName("is_follower")
+    val isFollower: Boolean,
 ) : User(id, userName, profileImage) {
     // TODO
 }

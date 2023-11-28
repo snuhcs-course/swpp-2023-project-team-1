@@ -79,8 +79,8 @@ class UserRepository {
         }
     }
 
-    suspend fun getFollowers(accessToken: String, userId: String): FollowListSuccess? {
-        val response = userAPI.getFollowers("Bearer $accessToken", userId)
+    suspend fun getFollowers(accessToken: String, userId: String, limit: Int, offset: Int): FollowListSuccess? {
+        val response = userAPI.getFollowers("Bearer $accessToken", userId, limit, offset)
 
         return if (response.isSuccessful) {
             val successBody = response.body() as FollowListSuccess
@@ -93,8 +93,8 @@ class UserRepository {
         }
     }
 
-    suspend fun getFollowings(accessToken: String, userId: String): FollowListSuccess? {
-        val response = userAPI.getFollowings("Bearer $accessToken", userId)
+    suspend fun getFollowings(accessToken: String, userId: String, limit: Int, offset: Int): FollowListSuccess? {
+        val response = userAPI.getFollowings("Bearer $accessToken", userId, limit, offset)
 
         return if (response.isSuccessful) {
             val successBody = response.body() as FollowListSuccess

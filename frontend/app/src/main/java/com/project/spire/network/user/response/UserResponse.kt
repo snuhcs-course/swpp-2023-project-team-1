@@ -16,10 +16,10 @@ data class UserSuccess (
     val username: String,
 
     @SerializedName("bio")
-    val bio: String,
+    val bio: String?,
 
     @SerializedName("profile_image_url")
-    val profileImageUrl: String,
+    val profileImageUrl: String?,
 ): UserResponse
 
 data class UserError (

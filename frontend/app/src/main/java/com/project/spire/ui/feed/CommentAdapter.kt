@@ -25,6 +25,7 @@ class CommentAdapter(
     private val postViewModel: PostViewModel
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
 
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val layout = LayoutInflater
             .from(parent.context)
@@ -92,6 +93,7 @@ class CommentAdapter(
                 bundle
             )
         }
+
     }
 
     private fun deleteComment(position: Int) {

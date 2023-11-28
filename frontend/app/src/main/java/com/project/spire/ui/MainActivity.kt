@@ -53,9 +53,19 @@ class MainActivity : AppCompatActivity() {
             supportActionBar!!.hide()
         }
 
+
+
         // Navigation
         val navView: BottomNavigationView = binding.bottomNavigationView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
+
+        if (intent.getStringExtra("fragment").equals("profile")) {
+            // refresh profile on update
+            Log.i("MainActivity", "${navController.currentDestination}, ${navController.currentBackStack}")
+            navController.popBackStack(R.id.tab_profile, false)
+            navController.navigate(R.id.tab_profile)
+        }
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration.Builder(

@@ -53,6 +53,11 @@
     <dimen name="edit_profile_profile_image_size">150dp</dimen>
     <dimen name="edit_profile_profile_image_radius">75dp</dimen>
 
+    <!-- Followers & Following -->
+    <dimen name="relationship_toolbar_height">60dp</dimen>
+    <dimen name="follow_item_profile_image_size">70dp</dimen>
+
+
     <!-- image edit -->
     <dimen name="img_edit_btn_size">45dp</dimen>
     <dimen name="prompt_suggestion_btn_height">25dp</dimen>

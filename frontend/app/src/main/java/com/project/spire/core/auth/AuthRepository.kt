@@ -177,6 +177,19 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
         }
     }
 
+    suspend fun unregister(accessToken: String): Boolean {
+        val response = authAPI.unregister("Bearer $accessToken")
+
+        return if (response.isSuccessful) {
+            Log.d("AuthRepository", "Unregister response: ${response.code()}")
+            clearTokens()
+            true
+        } else {
+            Log.e("AuthRepository", "Unregister error ${response.code()}: ${response.message()}")
+            false
+        }
+    }
+
     private suspend fun clearTokens() {
         authDataStore.edit {
             it[AuthPreferenceKeys.ACCESS_TOKEN] = ""
