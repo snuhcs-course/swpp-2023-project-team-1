@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -142,7 +143,11 @@ class ImageEditActivity : AppCompatActivity() {
 
         val recyclerView = binding.maskFetchRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        val adapter = MaskFetchAdapter(canvasViewModel.masks.value!!, canvasViewModel.labels.value!!, canvasViewModel)
+
+        val textColorDefault = ContextCompat.getColor(this, R.color.black)
+        val textColorClicked = ContextCompat.getColor(this, R.color.white)
+
+        val adapter = MaskFetchAdapter(canvasViewModel.masks.value!!, canvasViewModel.labels.value!!, canvasViewModel, textColorDefault, textColorClicked)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(HorizontalSpaceDecoration(RECYCLER_VIEW_MARGIN))
         recyclerView.setHasFixedSize(false)

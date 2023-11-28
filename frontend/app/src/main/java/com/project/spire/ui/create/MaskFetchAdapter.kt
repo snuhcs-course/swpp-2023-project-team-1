@@ -12,7 +12,9 @@ import com.example.spire.R
 class MaskFetchAdapter(
     private var masks: List<Bitmap>,
     private var labels: List<String>,
-    private val canvasViewModel: CanvasViewModel
+    private val canvasViewModel: CanvasViewModel,
+    private val textColorDefault: Int,
+    private val textColorClicked: Int
 ): RecyclerView.Adapter<MaskFetchAdapter.MaskFetchViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MaskFetchViewHolder {
@@ -41,13 +43,26 @@ class MaskFetchAdapter(
         val mask = masks[position]
         holder.button.text = label
         holder.button.setOnClickListener {
-            Log.d("MaskFetchAdapter", "Button clicked")
-            canvasViewModel.applyFetchedMask(mask) // TODO
+            if (!holder.isClicked) {
+                Log.d("MaskFetchAdapter", "Button clicked")
+                canvasViewModel.applyFetchedMask(mask)
+                holder.button.setBackgroundResource(R.drawable.btn_mask_fetch_clicked_bg)
+                holder.button.setTextColor(textColorClicked)
+                holder.isClicked = true
+            }
+            else {
+                Log.d("MaskFetchAdapter", "Button unclicked")
+                canvasViewModel.applyFetchedMask(mask, true)
+                holder.button.setBackgroundResource(R.drawable.btn_mask_fetch_bg)
+                holder.button.setTextColor(textColorDefault)
+                holder.isClicked = false
+            }
         }
     }
 
     inner class MaskFetchViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val button: Button = view.findViewById(R.id.mask_fetch_button)
+        var isClicked: Boolean = false
     }
 
     fun updateList(newMasks: List<Bitmap>, newLabels: List<String>) {

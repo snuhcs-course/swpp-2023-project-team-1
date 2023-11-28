@@ -220,7 +220,7 @@ class CanvasViewModel(
         }
     }
 
-    fun applyFetchedMask(mask: Bitmap?) {
+    fun applyFetchedMask(mask: Bitmap?, isErase: Boolean = false) {
         if (mask == null) {
             Log.d("CanvasViewModel", "mask: null")
             _backgroundMaskBitmap.postValue(null)
@@ -235,8 +235,17 @@ class CanvasViewModel(
             }
             val result = Bitmap.createBitmap(oldMask.width, oldMask.height, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(result)
-            canvas.drawBitmap(oldMask, 0f, 0f, null)
-            canvas.drawBitmap(mask, 0f, 0f, null)
+            if (isErase) {
+                val paint = Paint()
+                paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+                canvas.drawBitmap(oldMask, 0f, 0f, paint)
+                canvas.drawBitmap(mask, 0f, 0f, paint)
+            }
+            else {
+                canvas.drawBitmap(oldMask, 0f, 0f, null)
+                canvas.drawBitmap(mask, 0f, 0f, null)
+            }
+
             // merge two masks
             _backgroundMaskBitmap.postValue(result)
         }

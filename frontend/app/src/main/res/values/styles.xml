@@ -90,7 +90,6 @@
         <item name="android:minHeight">0dp</item>
     </style>
 
-
     <style name="create_post_fab" parent="Widget.MaterialComponents.FloatingActionButton">
         <item name="android:foreground">@drawable/ic_nav_create_post</item>
     </style>
