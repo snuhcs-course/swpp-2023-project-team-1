@@ -14,6 +14,9 @@ import com.project.spire.network.auth.request.EmailRequest
 import com.project.spire.network.auth.request.RefreshRequest
 import com.project.spire.network.auth.request.RegisterRequest
 import com.project.spire.network.auth.request.VerifyCodeRequest
+import com.project.spire.network.auth.response.CheckError
+import com.project.spire.network.auth.response.CheckResponse
+import com.project.spire.network.auth.response.CheckSuccess
 import com.project.spire.network.auth.response.LoginError
 import com.project.spire.network.auth.response.LoginResponse
 import com.project.spire.network.auth.response.LoginSuccess
@@ -177,6 +180,24 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
         }
     }
 
+    /**
+     * Check API
+     * Returns true if email and username are available */
+    suspend fun check(email: String, username: String): CheckResponse {
+        val response = authAPI.check(email, username)
+
+        return if (response.isSuccessful) {
+            Log.d("AuthRepository", "Check response: ${response.code()}")
+            response.body() as CheckSuccess
+        } else {
+            Log.e("AuthRepository", "Check error ${response.code()}: ${response.message()}")
+            CheckError(message = response.message())
+        }
+    }
+
+    /**
+     * Unregister API
+     * Returns true if unregister is successful */
     suspend fun unregister(accessToken: String): Boolean {
         val response = authAPI.unregister("Bearer $accessToken")
 

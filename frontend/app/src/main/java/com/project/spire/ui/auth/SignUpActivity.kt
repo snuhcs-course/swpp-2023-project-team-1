@@ -53,6 +53,8 @@ class SignUpActivity : AppCompatActivity() {
         val popupView = LayoutInflater.from(this).inflate(R.layout.password_pattern_popup, null)
         val popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true)
         passwordPatternButton.isActivated = false
+        signUpBtn.background = resources.getDrawable(R.drawable.btn_bg_disabled, null)
+        signUpBtn.isEnabled = false
 
         emailInput.editText?.setOnFocusChangeListener { _, hasFocus ->
             setHelperText(emailInput, hasFocus, resources.getString(R.string.email_helper_text))
@@ -116,7 +118,7 @@ class SignUpActivity : AppCompatActivity() {
 
         viewModel.errorMessage.observe(this) {
             binding.loadingIndicator.hide()
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            usernameInput.error = it
         }
     }
 

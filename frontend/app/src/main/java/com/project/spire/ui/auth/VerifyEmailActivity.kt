@@ -50,10 +50,13 @@ class VerifyEmailActivity : AppCompatActivity() {
 
         sendMailButton.setOnClickListener {
             viewModel.sendEmail(emailInput.editText?.text.toString())
+            viewModel.startTimer()
         }
 
         sendAgainButton.setOnClickListener {
             viewModel.sendEmail(emailInput.editText?.text.toString())
+            viewModel.startTimer()
+            sendAgainButton.isEnabled = false
         }
 
         viewModel.emailSent.observe(this) {
@@ -61,6 +64,7 @@ class VerifyEmailActivity : AppCompatActivity() {
                 true -> {
                     sendMailButton.visibility = View.GONE
                     verificationLayout.visibility = View.VISIBLE
+                    emailInput.isEnabled = false
                 }
                 false -> {
                     sendMailButton.visibility = View.VISIBLE
@@ -76,10 +80,16 @@ class VerifyEmailActivity : AppCompatActivity() {
         viewModel.remainingSeconds.observe(this) {
             if (it > 0) {
                 sendAgainTimer.text = "in $it seconds"
-            } else {
+            }
+        }
+
+        viewModel.canSendAgain.observe(this) {
+            sendAgainButton.isEnabled = it
+            if (it) {
                 sendAgainTimer.text = ""
-                sendAgainButton.isEnabled = true
                 sendAgainButton.setTextColor(resources.getColor(R.color.blue_700))
+            } else {
+                sendAgainButton.setTextColor(resources.getColor(R.color.grey_400))
             }
         }
 
@@ -94,6 +104,12 @@ class VerifyEmailActivity : AppCompatActivity() {
 
         viewModel.verifyErrorMessage.observe(this) {
             verifyError.text = it
+        }
+
+        viewModel.emailExists.observe(this) {
+            if (it) {
+                emailInput.error = "Email already exists"
+            }
         }
 
         for (i in 1..6) {
