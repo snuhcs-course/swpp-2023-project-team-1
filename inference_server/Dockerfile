@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install git && apt-get install ffmpeg libsm6 libxe
     mkdir clone_model && cd clone_model &&\
     git init && git remote add -f origin https://github.com/snuhcs-course/swpp-2023-project-team-1.git &&\
     git config core.sparseCheckout true && echo inference_server/models/ >> .git/info/sparse-checkout &&\
-    git pull origin feat/inference &&\
+    git pull origin main &&\
     cd .. && mv clone_model/inference_server/models models && rm -rf clone_model
 
 WORKDIR /opt/tritonserver/models/stable_diffusion/1
