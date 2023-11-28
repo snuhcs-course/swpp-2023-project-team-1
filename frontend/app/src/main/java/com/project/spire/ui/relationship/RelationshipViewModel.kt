@@ -17,11 +17,11 @@ const val LIMIT = 10
 
 class RelationshipViewModel : ViewModel() {
     private val _users =
-        MutableLiveData<MutableList<FollowItems>>().apply { value = mutableListOf() }
+        MutableLiveData<List<FollowItems>>().apply { value = emptyList() }
     private var _total = 0
     private var _nextCursor: Int? = 0
 
-    val users: LiveData<MutableList<FollowItems>> = _users
+    val users: LiveData<List<FollowItems>> = _users
 
     fun getRelationship(userId: String, type: String) {
         if (_nextCursor != null) {
@@ -46,7 +46,7 @@ class RelationshipViewModel : ViewModel() {
             if (response.isSuccessful && response.code() == 200) {
                 Log.d("RelationshipViewModel", "Get followers response: ${response.body()}")
                 val followListSuccess = response.body()!!
-                _users.value?.addAll(followListSuccess.items)
+                _users.value = followListSuccess.items
                 _total = followListSuccess.total
                 _nextCursor = followListSuccess.nextCursor
             } else {
@@ -64,7 +64,7 @@ class RelationshipViewModel : ViewModel() {
             if (response.isSuccessful && response.code() == 200) {
                 Log.d("RelationshipViewModel", "Get following response: ${response.body()}")
                 val followListSuccess = response.body()!!
-                _users.value?.addAll(followListSuccess.items)
+                _users.value = followListSuccess.items
                 _total = followListSuccess.total
                 _nextCursor = followListSuccess.nextCursor
             } else {

@@ -60,6 +60,7 @@ class RelationshipFragment : Fragment() {
         recyclerView.adapter = adapter
 
         relationshipViewModel.users.observe(viewLifecycleOwner) {
+            Log.d("RelationshipFragment", "Users: $it")
             if (!it.isNullOrEmpty()) {
                 binding.relationshipEmptyText.visibility = View.GONE
                 recyclerView.run {
