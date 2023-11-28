@@ -101,5 +101,10 @@
     <dimen name="search_profile_image_height">70dp</dimen>
     <dimen name="search_item_padding">15dp</dimen>
 
+    <!-- notification -->
+    <dimen name="notification_item_height">110dp</dimen>
+    <dimen name="notification_item_padding">13dp</dimen>
+    <dimen name="notification_profile_size">35dp</dimen>
+    <dimen name="notification_image_size">80dp</dimen>
 
 </resources>

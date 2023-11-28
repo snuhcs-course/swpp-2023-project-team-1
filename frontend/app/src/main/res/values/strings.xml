@@ -102,6 +102,12 @@
 
     <!-- Notifications -->
     <string name="notifications_title">Notifications</string>
+    <string name="notifications_nothing_to_show">Nothing to show</string>
+    <string name="notifications_follow_request">wants to be friend with you</string>
+    <string name="notifications_liked_your_post">liked your post</string>
+    <string name="notifications_commented_your_post">commented on your post</string>
+    <string name="notifications_follow_accept">accepted your follow request</string>
+    <string name="notifications_liked_your_comment">likes your comment</string>
 
 
 </resources>
