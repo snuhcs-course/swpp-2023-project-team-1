@@ -86,6 +86,4 @@ class SignUpActivityUITest {
 
         intended(hasComponent(MainActivity::class.java.name))
     }
-
-
 }

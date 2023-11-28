@@ -7,6 +7,7 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.intent.Intents.intended
@@ -67,6 +68,8 @@ class MainActivityUITest {
 
     @Test
     fun test_postLikeButton() {
+        onView(withId(R.id.recycler_view_feed))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<>(hasDescendant(withText("whatever")), click()))
     }
 
     @Test
