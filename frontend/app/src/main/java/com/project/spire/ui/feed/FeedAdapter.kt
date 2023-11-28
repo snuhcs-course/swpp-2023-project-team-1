@@ -104,8 +104,9 @@ class FeedAdapter(
     }
 
     fun updateList(newList: List<Post>) {
+        val previousItemCount = itemCount
         postList = newList
-        notifyItemInserted(postList.size - 1)
+        notifyItemRangeInserted(previousItemCount, newList.size)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -135,7 +136,10 @@ class FeedAdapter(
         holder.commentCount.text = post.commentCount.toString()
 
         if (post.originalImageUrl != null) {
+            Log.d("FeedAdapter", "Original image url: ${post.originalImageUrl}")
             holder.originalImageButton.visibility = View.VISIBLE
+        } else {
+            holder.originalImageButton.visibility = View.GONE
         }
 
         holder.originalImageButton.setOnTouchListener { _, event ->

@@ -73,7 +73,7 @@ class PostFragment : Fragment() {
         postViewModel.comments.observe(viewLifecycleOwner) {
             // Comments loaded
             if (it != null) {
-                onCommentsLoaded(it)
+                onCommentsLoaded(it as MutableList<Comment>)
             }
         }
 
@@ -194,11 +194,11 @@ class PostFragment : Fragment() {
         binding.shimmerViewContainer.visibility = View.GONE
     }
 
-    private fun onCommentsLoaded(comments: List<Comment>) {
+    private fun onCommentsLoaded(comments: MutableList<Comment>) {
         binding.commentWriteBtn.visibility = View.VISIBLE
         binding.commentWriteProgressBar.visibility = View.GONE
         binding.commentWriteEditText.text?.clear()
-        val commentAdapter = CommentAdapter(comments, findNavController(), postViewModel)
+        val commentAdapter = CommentAdapter(comments, findNavController(), requireContext(), postViewModel)
         recyclerView.adapter = commentAdapter
         recyclerView.visibility = View.VISIBLE
         binding.shimmerViewContainerComment.stopShimmer()

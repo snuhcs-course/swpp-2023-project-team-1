@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/search_item_padding"
+    android:paddingVertical="@dimen/search_item_padding">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/search_profile_image"
+        android:layout_width="@dimen/search_profile_image_width"
+        android:layout_height="@dimen/search_profile_image_height"
+        android:scaleType="centerInside"
+        android:orientation="horizontal"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+            <TextView
+                android:id="@+id/search_username"
+                android:text="username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/user_username_text"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp">
+            <TextView
+                android:id="@+id/user_following_status"
+                style="@style/user_following_status_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="following" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>
