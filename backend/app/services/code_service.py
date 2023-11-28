@@ -1,9 +1,10 @@
-from sqlalchemy import or_, select, and_
+from datetime import datetime, timedelta, timezone
+from sqlalchemy import or_, select, and_, update
 from app.session import Transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.code import Code
-from app.core.exceptions import DuplicateEmailOrUsernameException, CodeNotFoundException
-
+from app.core.exceptions import CodeNotFoundException, CodeExpiredException
+from app.repository import code
 
 class CodeService:
     @Transactional()
@@ -15,21 +16,25 @@ class CodeService:
             result = await session.execute(query)
             is_exist = result.scalars().first()
 
+
             if is_exist:
-                raise DuplicateEmailOrUsernameException
+                return await self.patch_code(email=email, _code=code)
+            
+            else:
+                new_code = Code(email=email, code=code)
 
-            code = Code(email=email, code=code)
-            session.add(code)
-            await session.commit()
+                session.add(new_code)
 
-            await session.refresh(code)
+                await session.commit()
+                await session.refresh(new_code)
 
-            return code
+                return new_code
 
         except Exception as e:
             await session.rollback()
             await session.close()
             raise e
+
 
     @Transactional()
     async def verify_code(self, email: str, code: int, session: AsyncSession) -> Code:
@@ -37,11 +42,22 @@ class CodeService:
             select(Code).where(and_(Code.email == email, Code.code == code))
         )
 
-        code: Code | None = result.scalars().first()
+        _code: Code | None = result.scalars().first()
 
-        if not code:
+        if not _code:
             raise CodeNotFoundException("Code not found")
+
+        current_time = datetime.now(timezone.utc)
+
+        time_difference = current_time - _code.updated_at
+
+        if time_difference > timedelta(minutes=3):
+            raise CodeExpiredException("Code has expired")
 
         await session.commit()
 
-        return code
+        return _code
+
+    @Transactional()
+    async def patch_code(self, email: str, _code: int, session: AsyncSession) -> Code:
+        return await code.update_code_by_email(email=email, code=_code, session=session)

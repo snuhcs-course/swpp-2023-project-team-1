@@ -21,6 +21,9 @@ bcrypt = "^4.0.1"
 fastapi-mail = {extras = ["httpx"], version = "^1.4.1"}
 jinja2 = "^3.1.2"
 boto3 = "^1.28.70"
+ujson = "^5.8.0"
+pytest = "^7.4.3"
+pytest-asyncio = "^0.21.1"
 
 [tool.poetry.group.local.dependencies]
 mypy = "^1.5.1"
@@ -31,7 +34,25 @@ flake8 = "^6.1.0"
 [tool.poetry.group.dev.dependencies]
 pylint = "^3.0.1"
 pre-commit = "^3.4.0"
+pytest-cov = "^4.1.0"
 
+[tool.black]
+line-length = 120
+target-version = ['py38']
+exclude = '''
+/(
+  \.git
+  | \.venv
+)/
+'''
+
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 120
+disable = 'C,R,I,import-error'
+
+[tool.pytest.ini_options]
+python_files = ["test_*.py"]
+testpaths = ["tests"]
 
 [build-system]
 requires = ["poetry-core"]

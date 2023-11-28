@@ -1,23 +1,76 @@
 import uuid
 from pydantic import UUID4
 from app.models import Base
-from sqlalchemy import String, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Integer, ForeignKey, TEXT, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship, query_expression
 from app.models.guid import GUID
-from app.models.comment import Comment
-from app.models.post_like import PostLike
 from app.models.timestamp_mixin import TimestampMixin
+from app.models.user import User
 
 
 class Post(Base, TimestampMixin):
     id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id"), nullable=False)
+    content: Mapped[str] = mapped_column(TEXT, nullable=False)
+    image_url: Mapped[str] = mapped_column(TEXT, nullable=True)
+    origin_image_url = mapped_column(TEXT, nullable=True)
+    mask_image_url = mapped_column(TEXT, nullable=True)
+    user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id", ondelete="CASCADE"), index=True, nullable=False)
+    user: Mapped[User] = relationship("User", back_populates="posts")
+    image: Mapped["Image"] = relationship("Image", back_populates="post", uselist=False)
+    post_likes: Mapped[list["PostLike"]] = relationship("PostLike", back_populates="post")
+    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="post")
+    like_cnt: Mapped[int] = query_expression()
+    comment_cnt: Mapped[int] = query_expression()
+    is_liked: Mapped[int] = query_expression()
 
-    content: Mapped[str] = mapped_column(String(500), nullable=True)
-    post_image_url: Mapped[str] = mapped_column(String(100), nullable=True)
 
-    comments = relationship("Comment", back_populates="post")
-    likes = relationship("PostLike", back_populates="post")
+class PostLike(Base, TimestampMixin):
+    id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
+    is_liked: Mapped[int] = mapped_column(Integer, nullable=False)
+    user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id", ondelete="CASCADE"), index=True, nullable=False)
+    post_id: Mapped[UUID4] = mapped_column(
+        GUID, ForeignKey("post.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    user: Mapped[User] = relationship("User", back_populates="post_likes", uselist=False)
+    post: Mapped[Post] = relationship("Post", back_populates="post_likes")
+    __table_args__ = (UniqueConstraint("user_id", "post_id"),)
 
-    class Config:
-        orm_mode = True
+
+class Comment(Base, TimestampMixin):
+    id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
+    content: Mapped[str] = mapped_column(TEXT, nullable=False)
+    user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id", ondelete="CASCADE"), index=True, nullable=False)
+    post_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("post.id", ondelete="CASCADE"), index=True, nullable=False)
+    user: Mapped[User] = relationship("User", back_populates="comments", uselist=False)
+    post: Mapped[Post] = relationship("Post", back_populates="comments", uselist=False)
+    comment_likes: Mapped[list["CommentLike"]] = relationship("CommentLike", back_populates="comment")
+
+    like_cnt: Mapped[int] = query_expression()
+    is_liked: Mapped[int] = query_expression()
+
+
+class CommentLike(Base, TimestampMixin):
+    id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
+    is_liked: Mapped[int] = mapped_column(Integer, nullable=False)
+    user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id", ondelete="CASCADE"), index=True, nullable=False)
+    comment_id: Mapped[UUID4] = mapped_column(
+        GUID,
+        ForeignKey("comment.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
+    user: Mapped[User] = relationship("User", back_populates="comment_likes")
+    comment: Mapped[Comment] = relationship("Comment", back_populates="comment_likes")
+    __table_args__ = (UniqueConstraint("user_id", "comment_id"),)
+
+
+class Image(Base, TimestampMixin):
+    id: Mapped[UUID4] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
+    origin_image: Mapped[str] = mapped_column(TEXT, nullable=True)
+    mask_image: Mapped[str] = mapped_column(TEXT, nullable=True)
+    modified_image: Mapped[str] = mapped_column(TEXT, nullable=False)
+    prompt: Mapped[str] = mapped_column(TEXT, nullable=False)
+    user_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("user.id", ondelete="CASCADE"), index=True, nullable=False)
+    user: Mapped[User] = relationship("User", back_populates="images")
+    post_id: Mapped[UUID4] = mapped_column(GUID, ForeignKey("post.id", ondelete="CASCADE"), index=True, nullable=True)
+    post: Mapped[Post] = relationship("Post", back_populates="image")

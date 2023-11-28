@@ -16,3 +16,8 @@ class UserNotOwnerException(CustomException):
     code = 403
     error_code = "USER__NOT_OWNER"
     message = "user is not the owner"
+
+class InvalidPostImageException(CustomException):
+    code = 400
+    error_code = "INVALID__POST__IMAGE"
+    message = "invalid post image"
