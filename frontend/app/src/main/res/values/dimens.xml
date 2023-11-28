@@ -53,6 +53,11 @@
     <dimen name="edit_profile_profile_image_size">150dp</dimen>
     <dimen name="edit_profile_profile_image_radius">75dp</dimen>
 
+    <!-- Followers & Following -->
+    <dimen name="relationship_toolbar_height">60dp</dimen>
+    <dimen name="follow_item_profile_image_size">70dp</dimen>
+
+
     <!-- image edit -->
     <dimen name="img_edit_btn_size">45dp</dimen>
     <dimen name="prompt_suggestion_btn_height">25dp</dimen>
@@ -87,11 +92,19 @@
     <dimen name="comment_write_btn_padding">10dp</dimen>
 
     <!-- search -->
-    <dimen name="search_bar_height">50dp</dimen>
+    <dimen name="search_bar_height">60dp</dimen>
     <dimen name="search_bar_margin">20dp</dimen>
-    <dimen name="search_bar_icon_size">25dp</dimen>
-    <dimen name="search_bar_text_size">16sp</dimen>
+    <dimen name="search_bar_icon_size">30dp</dimen>
+    <dimen name="search_bar_text_size">20sp</dimen>
     <dimen name="search_bar_text_padding">46dp</dimen>
+    <dimen name="search_profile_image_width">70dp</dimen>
+    <dimen name="search_profile_image_height">70dp</dimen>
+    <dimen name="search_item_padding">15dp</dimen>
 
+    <!-- notification -->
+    <dimen name="notification_item_height">110dp</dimen>
+    <dimen name="notification_item_padding">13dp</dimen>
+    <dimen name="notification_profile_size">35dp</dimen>
+    <dimen name="notification_image_size">80dp</dimen>
 
 </resources>

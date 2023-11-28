@@ -261,11 +261,17 @@ class PostFragment : Fragment() {
     }
 
     private fun showProfile(userId: String) {
-        val bundle = Bundle()
-        bundle.putString("userId", userId)
-        findNavController().navigate(
-            R.id.action_post_to_profile,
-            bundle
-        )
+        if (postViewModel.myUserId.value == userId) {
+            findNavController().navigate(
+                R.id.action_post_to_profile
+            )
+        } else {
+            val bundle = Bundle()
+            bundle.putString("userId", userId)
+            findNavController().navigate(
+                R.id.action_post_to_profile,
+                bundle
+            )
+        }
     }
 }

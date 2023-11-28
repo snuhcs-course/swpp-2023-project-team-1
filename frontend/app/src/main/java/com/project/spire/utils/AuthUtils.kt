@@ -31,4 +31,8 @@ object AuthProvider {
     suspend fun getRefreshToken(): String {
         return authRepository.refreshTokenFlow.first()
     }
+
+    suspend fun getMyUserId(): String {
+        return authRepository.userIdFlow.first()
+    }
 }
