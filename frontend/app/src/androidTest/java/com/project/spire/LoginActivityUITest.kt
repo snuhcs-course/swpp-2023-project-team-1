@@ -24,8 +24,6 @@ import com.project.spire.ui.auth.LoginActivity
 import com.example.spire.R
 import com.project.spire.ui.MainActivity
 import com.project.spire.ui.auth.VerifyEmailActivity
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.endsWith
 import org.junit.After
 import org.junit.Before
 
@@ -89,6 +87,8 @@ class LoginActivityUITest {
 
         onView(withId(R.id.login_btn))
             .perform(click())
+
+        Thread.sleep(1000)
 
         onView(withId(R.id.email_input))
             .check(matches(hasDescendant(withText("Email Not Found"))))
