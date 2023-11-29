@@ -62,7 +62,7 @@ class SearchAdapter(
 
     fun updateList(newList: List<UserListItem>) {
         searchList = newList
-        notifyItemInserted(searchList.size - 1)
+        notifyDataSetChanged()
     }
 
     inner class SearchViewHolder(val view: View) : RecyclerView.ViewHolder(view){

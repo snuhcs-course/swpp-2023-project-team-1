@@ -65,7 +65,10 @@ class SearchViewModel(
     }
 
     fun getEmptyList() {
-
+        _users.postValue(emptyList())
+        _totalUsers.postValue(0)
+        _nextCursor.postValue(null)
+        _searchString.postValue(null)
     }
 }
 
