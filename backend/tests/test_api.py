@@ -5,6 +5,7 @@ import pytest
 import pytest_asyncio, asyncio
 from httpx import AsyncClient
 from tests.test_base64 import test_base64
+from app.core.config import settings as config
 
 fake_uuid4 = "8e6f6dc9-bfcf-44ac-8081-58db10f4e18c"
 
@@ -247,7 +248,7 @@ async def test_check_wrong_params_wrong():
     assert response.status_code == 400
     
 @pytest.mark.asyncio
-async def test_verify_correct():
+async def test_verify_token_correct():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         response = await ac.post(
             "/api/auth/verify",
@@ -258,6 +259,59 @@ async def test_verify_correct():
             ),
         )
     assert response.status_code == 200
+
+@pytest.mark.asyncio
+async def test_refresh_token_correct():
+    global access_token, refresh_token
+
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        response = await ac.post(
+            "/api/auth/refresh",
+            content=json.dumps(
+                {
+                    "access_token": access_token,
+                    "refresh_token": refresh_token
+                }
+            ),
+        )
+    assert response.status_code == 200
+    response_data = response.json()
+    assert isinstance(response_data['access_token'], str)
+    access_token = response_data['access_token']
+    assert isinstance(response_data['refresh_token'], str)
+    refresh_token = response_data['refresh_token']
+
+# # depends on email connection
+# @pytest.mark.asyncio
+# async def test_send_email_correct():
+#     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+#         response = await ac.post(
+#             "/api/auth/email",
+#             content=json.dumps(
+#                 {
+#                     "email": [config.TESTING_MAIL]
+#                 }
+#             ),
+#         )
+#     assert response.status_code == 200
+#     response_data = response.json()
+#     assert response_data['message'] == f"Email sent to email=['{config.TESTING_MAIL}']"
+
+@pytest.mark.asyncio
+async def test_verify_code_wrong():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        response = await ac.post(
+            "/api/auth/verify/code",
+            content=json.dumps(
+                {
+                    "email": "test",
+                    "code": 123456
+                }
+            ),
+        )
+    assert response.status_code == 404
+    response_data = response.json()
+    assert response_data['message'] == "CODE__NOT_FOUND"
 
 @pytest.mark.asyncio
 async def test_verify_password_correct():
@@ -345,8 +399,6 @@ async def test_unregister_unauthorized_wrong():
         )
     assert response.status_code == 401
 
-
-############## Code verify omitted ##############
 
 ############## User ##############
 @pytest.mark.asyncio
