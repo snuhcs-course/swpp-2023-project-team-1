@@ -13,10 +13,14 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.spire.R
 import com.project.spire.models.UserListItem
+import com.project.spire.utils.AuthProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SearchAdapter(
     private var searchList: List<UserListItem>,
-    private val navController: NavController
+    private val navController: NavController,
 ): RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
@@ -38,11 +42,9 @@ class SearchAdapter(
             holder.profileImage.load(R.drawable.default_profile_img) {
                 transformations(CircleCropTransformation())
             }
-        }
-        else {
-            holder.profileImage.load(search.profileImageUrl){
+        } else {
+            holder.profileImage.load(search.profileImageUrl) {
                 transformations(CircleCropTransformation())
-                placeholder(R.drawable.default_profile_img)
             }
         }
         holder.username.text = search.username
@@ -70,11 +72,20 @@ class SearchAdapter(
     }
 
     private fun showProfile(userId: String) {
-        val bundle = Bundle()
-        bundle.putString("userId", userId)
-        navController.navigate(
-            R.id.action_search_to_profile,
-            bundle
-        )
+        CoroutineScope(Dispatchers.Main).launch {
+            val myUserId = AuthProvider.getMyUserId()
+            if (myUserId == userId) {
+                navController.navigate(
+                    R.id.action_search_to_profile
+                )
+            } else {
+                val bundle = Bundle()
+                bundle.putString("userId", userId)
+                navController.navigate(
+                    R.id.action_search_to_profile,
+                    bundle
+                )
+            }
+        }
     }
 }
