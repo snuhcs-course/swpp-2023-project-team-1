@@ -9,13 +9,14 @@ import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.R
 
+
+
 class MaskFetchAdapter(
     private var masks: List<Bitmap>,
     private var labels: List<String>,
-    private val canvasViewModel: CanvasViewModel,
-    private val textColorDefault: Int,
-    private val textColorClicked: Int
+    private val canvasViewModel: CanvasViewModel
 ): RecyclerView.Adapter<MaskFetchAdapter.MaskFetchViewHolder>() {
+    private var clickedItems = MutableList<Boolean>(masks.size) { false }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MaskFetchViewHolder {
         val layout = LayoutInflater
@@ -41,34 +42,30 @@ class MaskFetchAdapter(
         if (labels.isEmpty() || masks.isEmpty()) return
         val label = labels[position]
         val mask = masks[position]
+
+        holder.button.isSelected = clickedItems[position]
         holder.button.text = label
         holder.button.setOnClickListener {
-            if (!holder.isClicked) {
-                Log.d("MaskFetchAdapter", "Button clicked")
-                canvasViewModel.applyFetchedMask(mask)
-                holder.button.setBackgroundResource(R.drawable.btn_mask_fetch_clicked_bg)
-                holder.button.setTextColor(textColorClicked)
-                holder.isClicked = true
-            }
-            else {
-                Log.d("MaskFetchAdapter", "Button unclicked")
-                canvasViewModel.applyFetchedMask(mask, true)
-                holder.button.setBackgroundResource(R.drawable.btn_mask_fetch_bg)
-                holder.button.setTextColor(textColorDefault)
-                holder.isClicked = false
-            }
+            Log.d("MaskFetchAdapter", "Button clicked: ${clickedItems[position]}")
+            canvasViewModel.applyFetchedMask(mask, clickedItems[position])
+            clickedItems[position] = !clickedItems[position]
+            holder.button.isSelected = clickedItems[position]
         }
     }
 
     inner class MaskFetchViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val button: Button = view.findViewById(R.id.mask_fetch_button)
-        var isClicked: Boolean = false
     }
 
     fun updateList(newMasks: List<Bitmap>, newLabels: List<String>) {
         masks = newMasks
         labels = newLabels
-        //notifyItemInserted(labels.size - 1)
+        clickedItems = MutableList(newMasks.size) { false }
+        notifyDataSetChanged()
+    }
+
+    fun clearClickedItems() {
+        clickedItems = MutableList(masks.size) { false }
         notifyDataSetChanged()
     }
 }

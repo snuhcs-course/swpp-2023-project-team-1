@@ -138,10 +138,10 @@ class ImageEditActivity : AppCompatActivity() {
         val recyclerView = binding.maskFetchRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        val textColorDefault = ContextCompat.getColor(this, R.color.black)
-        val textColorClicked = ContextCompat.getColor(this, R.color.white)
+    //    val textColorDefault = ContextCompat.getColor(this, R.color.black)
+     //   val textColorClicked = ContextCompat.getColor(this, R.color.white)
 
-        val adapter = MaskFetchAdapter(canvasViewModel.masks.value!!, canvasViewModel.labels.value!!, canvasViewModel, textColorDefault, textColorClicked)
+        val adapter = MaskFetchAdapter(canvasViewModel.masks.value!!, canvasViewModel.labels.value!!, canvasViewModel) //, textColorDefault, textColorClicked)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(HorizontalSpaceDecoration(RECYCLER_VIEW_MARGIN))
         recyclerView.setHasFixedSize(false)
@@ -152,7 +152,7 @@ class ImageEditActivity : AppCompatActivity() {
             editBtn.setImageResource(R.drawable.ic_img_edit)
             eraseBtn.setImageResource(R.drawable.ic_img_erase)
             recyclerView.adapter?.run {
-                notifyDataSetChanged()
+                (this as MaskFetchAdapter).clearClickedItems()
             }
             /*
             for (i in 0 until recyclerView.childCount) {
