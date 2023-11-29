@@ -56,6 +56,18 @@ class CommentAdapter(
         if (comment.user.id == postViewModel.myUserId.value) {
             holder.deleteBtn.visibility = View.VISIBLE
         }
+
+        holder.deleteBtn.setOnClickListener {
+            deleteComment(position)
+        }
+
+        holder.profileImage.setOnClickListener {
+            showProfile(comment.user.id)
+        }
+
+        holder.username.setOnClickListener {
+            showProfile(comment.user.id)
+        }
     }
 
     inner class CommentViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -64,20 +76,6 @@ class CommentAdapter(
         val content: TextView = view.findViewById(R.id.comment_content)
         val updatedAt: TextView = view.findViewById(R.id.comment_updated_at)
         val deleteBtn: ImageView = view.findViewById(R.id.comment_delete_btn)
-
-        init {
-            val position = adapterPosition
-            val commentId = commentList[adapterPosition].id
-            deleteBtn.setOnClickListener {
-                deleteComment(position)
-            }
-            profileImage.setOnClickListener {
-                showProfile(commentId)
-            }
-            username.setOnClickListener {
-                showProfile(commentId)
-            }
-        }
     }
 
     private fun showProfile(userId: String) {
