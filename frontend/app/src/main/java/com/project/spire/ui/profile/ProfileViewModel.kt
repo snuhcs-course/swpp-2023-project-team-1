@@ -13,6 +13,7 @@ import com.project.spire.core.user.UserRepository
 import com.project.spire.models.Post
 import com.project.spire.network.RetrofitClient.Companion.postAPI
 import com.project.spire.utils.AuthProvider
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
@@ -33,6 +34,8 @@ class ProfileViewModel(
     private val _isMyProfile = MutableLiveData<Boolean>().apply { value = false }
     private val _photoPickerUri = MutableLiveData<Uri?>().apply { value = null }
     private val _editProfileSuccess = MutableLiveData<Boolean>().apply { value = false }
+    private val _profileLoaded = MutableLiveData<Boolean>().apply { value = false }
+    private val _postLoaded = MutableLiveData<Boolean>().apply { value = false }
 
     val userId: LiveData<String> = _userId
     val email: LiveData<String> = _email
@@ -46,6 +49,8 @@ class ProfileViewModel(
     val isMyProfile: LiveData<Boolean> = _isMyProfile
     val photoPickerUri: LiveData<Uri?> = _photoPickerUri
     val editProfileSuccess: LiveData<Boolean> = _editProfileSuccess
+    val profileLoaded: LiveData<Boolean> = _profileLoaded
+    val postLoaded: LiveData<Boolean> = _postLoaded
 
 
     private val _logoutSuccess = MutableLiveData<Boolean>()
@@ -79,6 +84,7 @@ class ProfileViewModel(
             // _posts.postValue(myInfo?.posts)
             _followingState.postValue(-1)
             _isMyProfile.postValue(true)
+            _profileLoaded.postValue(true)
             getMyPosts()
         }
 
@@ -100,6 +106,7 @@ class ProfileViewModel(
             _followingState.postValue(followInfo.followingStatus)
             // _posts.postValue(userInfo?.posts)
             _isMyProfile.postValue(false)
+            _profileLoaded.postValue(true)
             getUserPosts(userId)
         }
     }
@@ -157,6 +164,7 @@ class ProfileViewModel(
                 val successBody = response.body()
                 Log.d("ProfileViewModel", "Get my posts response: ${successBody?.total}")
                 _posts.postValue(successBody?.items)
+                _postLoaded.postValue(true)
             } else {
                 val errorBody = response.errorBody()
                 Log.e("ProfileViewModel", "Get my posts error: ${errorBody?.string()!!}")
@@ -173,6 +181,7 @@ class ProfileViewModel(
                 val successBody = response.body()
                 Log.d("ProfileViewModel", "Get user posts response: ${successBody?.total}")
                 _posts.postValue(successBody?.items)
+                _postLoaded.postValue(true)
             } else {
                 val errorBody = response.errorBody()
                 Log.e("ProfileViewModel", "Get user posts error: ${errorBody?.string()!!}")

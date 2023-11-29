@@ -174,6 +174,21 @@ class ProfileFragment : Fragment() {
             bundle.putString("userId", profileViewModel.userId.value)
             findNavController().navigate(R.id.action_profile_to_relationship, bundle)
         }
+
+        profileViewModel.profileLoaded.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.profileShimmer.stopShimmer()
+                binding.profileShimmer.visibility = View.INVISIBLE
+                binding.profileLayout.visibility = View.VISIBLE
+            }
+        }
+
+        profileViewModel.postLoaded.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.postShimmerLayout.stopShimmer()
+                binding.postShimmerLayout.visibility = View.GONE
+            }
+        }
     }
 
     override fun onDestroyView() {
