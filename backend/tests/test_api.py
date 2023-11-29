@@ -281,21 +281,21 @@ async def test_refresh_token_correct():
     assert isinstance(response_data['refresh_token'], str)
     refresh_token = response_data['refresh_token']
 
-# # depends on email connection
-# @pytest.mark.asyncio
-# async def test_send_email_correct():
-#     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
-#         response = await ac.post(
-#             "/api/auth/email",
-#             content=json.dumps(
-#                 {
-#                     "email": [config.TESTING_MAIL]
-#                 }
-#             ),
-#         )
-#     assert response.status_code == 200
-#     response_data = response.json()
-#     assert response_data['message'] == f"Email sent to email=['{config.TESTING_MAIL}']"
+# depends on email connection
+@pytest.mark.asyncio
+async def test_send_email_correct():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        response = await ac.post(
+            "/api/auth/email",
+            content=json.dumps(
+                {
+                    "email": [config.TESTING_MAIL]
+                }
+            ),
+        )
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['message'] == f"Email sent to email=['{config.TESTING_MAIL}']"
 
 @pytest.mark.asyncio
 async def test_verify_code_wrong():
