@@ -60,6 +60,7 @@ class EditProfileActivityUITest {
 
     @Test
     fun test_checkEmail() {
+        Thread.sleep(100)
         onView(withId(R.id.edit_profile_email_edit_text))
             .check(matches(withText("uitest@google.com")))
     }
