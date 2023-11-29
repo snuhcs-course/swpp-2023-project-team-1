@@ -29,8 +29,14 @@ class RelationshipAdapter(
     override fun onBindViewHolder(holder: FollowViewHolder, position: Int) {
         val user = relationshipList[position]
         holder.username.text = user.username
-        holder.profileImage.load(user.profileImageUrl) {
-            transformations(CircleCropTransformation())
+        if (user.profileImageUrl == null) {
+            holder.profileImage.load(R.drawable.default_profile_img) {
+                transformations(CircleCropTransformation())
+            }
+        } else {
+            holder.profileImage.load(user.profileImageUrl) {
+                transformations(CircleCropTransformation())
+            }
         }
     }
 
