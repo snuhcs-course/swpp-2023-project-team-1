@@ -36,7 +36,7 @@
     <!-- write text activity -->
     <string name="title_toolbar_write_text">Select Your Image</string>
     <string name="post_text_hint">What do you want to say?</string>
-    <string name="done_button">Upload</string>
+    <string name="done_button">Post!</string>
     <string name="loading_text">Recreating your image…</string>
     <string name="loading_time_text">Might take up to 20 seconds</string>
     <string name="swipe_text">Swipe to see more images</string>
