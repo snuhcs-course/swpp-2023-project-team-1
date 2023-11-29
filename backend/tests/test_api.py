@@ -26,6 +26,8 @@ profile_image_url_2 = None
 post_1 = {
     "content": "string",
     "image_url": "string",
+    "origin_image_url": "string",
+    "mask_image_url": "string",
     "id": "string",
     "created_at": "2023-11-11T13:56:04.008Z",
     "updated_at": "2023-11-11T13:56:04.008Z",
@@ -42,6 +44,8 @@ post_1 = {
 post_2 = {
     "content": "string",
     "image_url": "string",
+    "origin_image_url": "string",
+    "mask_image_url": "string",
     "id": "string",
     "created_at": "2023-11-11T13:56:04.008Z",
     "updated_at": "2023-11-11T13:56:04.008Z",
@@ -342,7 +346,7 @@ async def test_unregister_unauthorized_wrong():
     assert response.status_code == 401
 
 
-############## Code verify necessary ##############
+############## Code verify omitted ##############
 
 ############## User ##############
 @pytest.mark.asyncio
@@ -1006,6 +1010,10 @@ async def test_create_post_with_mask_correct():
     post_1['content'] = response_data['content']
     assert isinstance(response_data['image_url'], str)
     post_1['image_url'] = response_data['image_url']
+    assert isinstance(response_data['origin_image_url'], str)
+    post_1['origin_image_url'] = response_data['origin_image_url']
+    assert isinstance(response_data['mask_image_url'], str)
+    post_1['mask_image_url'] = response_data['mask_image_url']
     assert isinstance(response_data['id'], str)
     post_1['id'] = response_data['id']
     assert isinstance(response_data['created_at'], str)
@@ -1124,6 +1132,8 @@ async def test_get_post_correct():
     response_data = response.json()
     assert response_data['content'] == post_1['content']
     assert response_data['image_url'] == post_1['image_url']
+    assert response_data['origin_image_url'] == post_1['origin_image_url']
+    assert response_data['mask_image_url'] == post_1['mask_image_url']
     assert response_data['id'] == post_1['id']
     assert response_data['created_at'] == post_1['created_at']
     assert response_data['updated_at'] == post_1['updated_at']
@@ -1225,6 +1235,46 @@ async def test_get_posts_correct():
     assert response_data['total'] == 2
     assert isinstance(response_data['items'], list)
     assert response_data['next_cursor'] == None
+
+@pytest.mark.asyncio
+async def test_update_post_correct():
+    global post_1
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        response = await ac.patch(
+            "/api/post/" + post_1['id'],
+            headers=headers, 
+            content=json.dumps(
+                {
+                    "content": "update test", 
+                    "image_url": post_1['image_url'], 
+                    "origin_image_url": post_1['origin_image_url'],
+                    "mask_image_url": post_1['mask_image_url']
+
+                }
+            ),
+        )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['content'] == "update test"
+    post_1['content'] = response_data['content']
+    assert response_data['image_url'] == post_1['image_url']
+    assert response_data['origin_image_url'] == post_1['origin_image_url']
+    assert response_data['mask_image_url'] == post_1['mask_image_url']
+    assert response_data['id'] == post_1['id']
+    assert response_data['created_at'] == post_1['created_at']
+    assert response_data['updated_at'] != post_1['updated_at']
+    post_1['updated_at'] = response_data['updated_at']
+    assert response_data['user']['id'] == post_1['user']['id']
+    assert response_data['user']['username'] == post_1['user']['username']
+    assert response_data['user']['profile_image_url'] == post_1['user']['profile_image_url']
+    assert response_data['like_cnt'] == post_1['like_cnt']
+    assert response_data['comment_cnt'] == post_1['comment_cnt']
+    assert response_data['is_liked'] == post_1['is_liked']
 
 @pytest.mark.asyncio
 async def test_like_post_correct():
