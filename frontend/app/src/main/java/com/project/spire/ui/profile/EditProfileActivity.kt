@@ -1,12 +1,18 @@
 package com.project.spire.ui.profile
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
+import androidx.compose.runtime.rememberCompositionContext
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.spire.R
@@ -14,7 +20,17 @@ import com.example.spire.databinding.ActivityEditProfileBinding
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
 import com.project.spire.core.user.UserRepository
+import com.project.spire.ui.MainActivity
 import com.project.spire.ui.auth.LoginActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.net.URI
 
 class EditProfileActivity : AppCompatActivity() {
 
@@ -28,6 +44,9 @@ class EditProfileActivity : AppCompatActivity() {
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val usernameInput = binding.editProfileUsernameInput
+        val bioInput = binding.editProfileBioInput
+
         val authRepository = AuthRepository(this.authDataStore)
         val userRepository = UserRepository()
         val viewModelFactory = ProfileViewModelFactory(authRepository, userRepository)
@@ -37,6 +56,28 @@ class EditProfileActivity : AppCompatActivity() {
 
         binding.backButton.setOnClickListener {
             finish()
+        }
+
+
+        val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                Log.d("PhotoPicker", "Selected URI: $uri")
+                profileViewModel.setPhotoPickerUri(uri)
+                profileViewModel.photoPickerUri.observe(this) {
+                    binding.editProfileImage.load(it) {
+                        crossfade(true)
+                        transformations(CircleCropTransformation())
+                    }
+                }
+            } else {
+                Log.d("PhotoPicker", "No media selected")
+            }
+        }
+
+        binding.editProfileChangePhotoBtn.setOnClickListener {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            // TODO: add image cropper?
+            // TODO: add camera option?
         }
 
         binding.editProfileDropdownMenu.setOnClickListener {
@@ -49,8 +90,19 @@ class EditProfileActivity : AppCompatActivity() {
         }
 
         binding.editProfileSaveBtn.setOnClickListener {
-            // TODO: Save the changes to the user's profile
+            // TODO: create password change page
+            var username = usernameInput.editText?.text.toString()
+            var bio = bioInput.editText?.text.toString()
 
+            if (username.isEmpty()) username = profileViewModel.username.value!!
+            if (bio.isEmpty()) bio = profileViewModel.bio.value!!
+            profileViewModel.updateProfile(username, bio, profileViewModel.photoPickerUri.value, applicationContext)
+        }
+
+        profileViewModel.editProfileSuccess.observe(this) {
+            if (it) {
+                finish()
+            }
         }
     }
 
@@ -65,15 +117,27 @@ class EditProfileActivity : AppCompatActivity() {
         profileViewModel.bio.observe(this) {
             binding.editProfileBioInput.editText?.setText(it)
         }
+
         profileViewModel.profileImageUrl.observe(this) {
-            binding.editProfileImage.load(it) {
-                crossfade(true)
-                transformations(CircleCropTransformation())
+            if (it != null) {
+                binding.editProfileImage.load(it) {
+                    crossfade(true)
+                    transformations(CircleCropTransformation())
+                }
+            }
+            else {
+                binding.editProfileImage.load(R.drawable.default_profile_img) {
+                    crossfade(true)
+                    transformations(CircleCropTransformation())
+                }
             }
         }
+
         profileViewModel.logoutSuccess.observe(this) {
             if (it) {
-                startActivity(Intent(this, LoginActivity::class.java))
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)
                 finish()
             }
         }
@@ -111,8 +175,7 @@ class EditProfileActivity : AppCompatActivity() {
             .setMessage(getString(R.string.delete_account_dialog_text))
             .setPositiveButton("Delete") { dialog, _ ->
                 // TODO: Delete the user's account
-
-                dialog.dismiss()
+                profileViewModel.unregister()
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()

@@ -3,18 +3,23 @@ package com.project.spire.ui.feed
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.databinding.FragmentFeedBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 class FeedFragment : Fragment() {
     private var _binding: FragmentFeedBinding? = null
-    private var postAdapter: PostAdapter? = null
+    private lateinit var feedViewModel: FeedViewModel
 
     private val binding get() = _binding!!
     private lateinit var recyclerView: RecyclerView
@@ -24,43 +29,59 @@ class FeedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFeedBinding.inflate(inflater, container, false)
+        if (_binding == null) {
+            _binding = FragmentFeedBinding.inflate(inflater, container, false)
+            feedViewModel = ViewModelProvider(this)[FeedViewModel::class.java]
+            feedViewModel.getInitialPosts()
+            Log.d("FeedFragment", "Loaded initial posts")
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        val feedViewModel = ViewModelProvider(this)[FeedViewModel::class.java]
-
-        feedViewModel.getInitialPosts()
-
-        binding.appBar.setOutlineProvider(null);
-
         recyclerView = binding.recyclerViewFeed
         val linearLayoutManager = LinearLayoutManager(context)
-        linearLayoutManager.reverseLayout = true
-        linearLayoutManager.stackFromEnd = true
+        linearLayoutManager.reverseLayout = false
+        linearLayoutManager.stackFromEnd = false
 
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.addOnChildAttachStateChangeListener(onChildAttachStateChangeListener)
+        val adapter = FeedAdapter(emptyList(), findNavController(), feedViewModel)
+        recyclerView.adapter = adapter
 
         feedViewModel.posts.observe(viewLifecycleOwner) {
+            Log.i("FeedFragment", "Posts updated: ${it.size}")
             if (it.isNotEmpty()) {
                 recyclerView.run {
-                    adapter = PostAdapter(it)
+                    adapter.updateList(it)
                     binding.shimmerViewContainer.stopShimmer()
                     binding.shimmerViewContainer.visibility = View.GONE
-
                 }
             }
         }
 
-        recyclerView.adapter = postAdapter
-    }
+        feedViewModel.postLiked.observe(viewLifecycleOwner) {
+            if (it != null) {
+                adapter.notifyItemChanged(it)
+            }
+        }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        binding.appBar.outlineProvider = null
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            feedViewModel.getInitialPosts()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                // Loads more posts when the user scrolls to the bottom of the list
+                if (feedViewModel.nextCursor.value != null && !recyclerView.canScrollVertically(1)) {
+                    feedViewModel.getMorePosts()
+                }
+            }
+        })
     }
 
     private val onChildAttachStateChangeListener = object : RecyclerView.OnChildAttachStateChangeListener {

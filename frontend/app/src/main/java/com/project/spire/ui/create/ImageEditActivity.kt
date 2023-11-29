@@ -131,23 +131,10 @@ class ImageEditActivity : AppCompatActivity() {
             progressBar.visibility = ProgressBar.VISIBLE
             progressBar.isActivated = true
         }
-
-        /*
-        inferenceViewModel.maskOverallImage.observe(this) {
-            // TODO show or not?
-            if (it != null ) {
-                Log.d("ImageEditActivity", "Mask image received")
-                canvasViewModel.applyFetchedMask(it)
-            }
-        } */
-
         val recyclerView = binding.maskFetchRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-    //    val textColorDefault = ContextCompat.getColor(this, R.color.black)
-     //   val textColorClicked = ContextCompat.getColor(this, R.color.white)
-
-        val adapter = MaskFetchAdapter(canvasViewModel.masks.value!!, canvasViewModel.labels.value!!, canvasViewModel) //, textColorDefault, textColorClicked)
+        val adapter = MaskFetchAdapter(canvasViewModel.masks.value!!, canvasViewModel.labels.value!!, canvasViewModel)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(HorizontalSpaceDecoration(RECYCLER_VIEW_MARGIN))
         recyclerView.setHasFixedSize(false)
@@ -160,22 +147,7 @@ class ImageEditActivity : AppCompatActivity() {
             recyclerView.adapter?.run {
                 (this as MaskFetchAdapter).clearClickedItems()
             }
-            /*
-            for (i in 0 until recyclerView.childCount) {
-                val child = recyclerView.getChildAt(i)
-                //child.
-
-                recyclerView.getChildViewHolder(child).apply {
-                    isClicked = false
-                }
-
-
-                child.setBackgroundResource(R.drawable.btn_mask_fetch_bg)
-                child.setTextColor(textColorDefault)
-            } */
         }
-
-
 
         canvasViewModel.labels.observe(this) {
             if (it.isNotEmpty() and (canvasViewModel.masks.value!!.isNotEmpty())) {
@@ -225,6 +197,5 @@ class ImageEditActivity : AppCompatActivity() {
             }
             true
         }
-
     }
 }

@@ -3,7 +3,6 @@ package com.project.spire.ui.create
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -18,7 +17,6 @@ import com.example.spire.databinding.ActivityWriteTextBinding
 import com.project.spire.network.post.response.PostError
 import com.project.spire.network.post.response.PostSuccess
 import com.project.spire.ui.MainActivity
-import com.project.spire.ui.feed.PostActivity
 import com.project.spire.utils.InferenceUtils
 
 
@@ -93,15 +91,20 @@ class WriteTextActivity : AppCompatActivity() {
             }
         }
 
-        // Post upload result received
+        // Post upload success
         inferenceViewModel.postResult.observe(this) {
-            if (it is PostSuccess) {
+            if (it != null) {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
                 finish()
-            } else if (it is PostError) {
-                Toast.makeText(this, "Post upload failed, please try again", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Post upload failed
+        inferenceViewModel.postError.observe(this) {
+            if (it == true) {
+                Toast.makeText(this, "Post upload failed", Toast.LENGTH_SHORT).show()
                 binding.postUploadProgressBar.visibility = View.GONE
             }
         }

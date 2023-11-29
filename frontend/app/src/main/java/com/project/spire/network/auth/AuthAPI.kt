@@ -10,6 +10,7 @@ import com.project.spire.network.auth.response.RefreshSuccess
 import com.project.spire.network.auth.response.RegisterSuccess
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -33,6 +34,9 @@ interface AuthAPI {
 
     @POST("auth/verify/code")
     suspend fun verifyCode(@Body verifyCodeRequest: VerifyCodeRequest): Response<Void>
+
+    @DELETE("auth/unregister")
+    suspend fun unregister(@Header("Authorization") token: String): Response<Void>
 
 //    @GET("auth/check")
 //    suspend fun check(@Body checkRequest: CheckRequest): Response<CheckSuccess>

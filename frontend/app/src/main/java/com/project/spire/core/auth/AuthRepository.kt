@@ -29,12 +29,14 @@ object AuthPreferenceKeys {
     val ACCESS_TOKEN = stringPreferencesKey("access_token")
     val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
     val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
+    val USER_ID = stringPreferencesKey("user_id")
 }
 
 class AuthRepository (private val authDataStore: DataStore<Preferences>) {
 
     val accessTokenFlow = authDataStore.data.map { it[AuthPreferenceKeys.ACCESS_TOKEN] ?: "" }
     val refreshTokenFlow = authDataStore.data.map { it[AuthPreferenceKeys.REFRESH_TOKEN] ?: "" }
+    val userIdFlow = authDataStore.data.map { it[AuthPreferenceKeys.USER_ID] ?: "" }
     val isLoggedInFlow = authDataStore.data.map { it[AuthPreferenceKeys.IS_LOGGED_IN] ?: false }
 
     /**
@@ -52,6 +54,7 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
             authDataStore.edit {
                 it[AuthPreferenceKeys.ACCESS_TOKEN] = successBody.accessToken!!
                 it[AuthPreferenceKeys.REFRESH_TOKEN] = successBody.refreshToken!!
+                it[AuthPreferenceKeys.USER_ID] = successBody.userId!!
                 it[AuthPreferenceKeys.IS_LOGGED_IN] = true
             }
             successBody
@@ -94,9 +97,9 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
         val response = authAPI.refresh(request)
         Log.d("AuthRepository", "Refresh request: $accessToken")
         Log.d("AuthRepository", "Refresh request: $refreshToken")
-        return if (response.isSuccessful) {
+        return if (response.isSuccessful && response.code() == 200) {
             val successBody = response.body()!!
-            Log.d("AuthRepository", "Refresh success")
+            Log.d("AuthRepository", "Refresh success with new token: ${successBody.accessToken}")
 
             // Save new token to datastore
             authDataStore.edit {
@@ -123,8 +126,9 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
 
             // Save tokens to datastore
             authDataStore.edit {
-                it[AuthPreferenceKeys.ACCESS_TOKEN] = successBody.accessToken!!
-                it[AuthPreferenceKeys.REFRESH_TOKEN] = successBody.refreshToken!!
+                it[AuthPreferenceKeys.ACCESS_TOKEN] = successBody.accessToken
+                it[AuthPreferenceKeys.REFRESH_TOKEN] = successBody.refreshToken
+                it[AuthPreferenceKeys.USER_ID] = successBody.userId
                 it[AuthPreferenceKeys.IS_LOGGED_IN] = true
             }
             successBody
@@ -173,10 +177,24 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
         }
     }
 
+    suspend fun unregister(accessToken: String): Boolean {
+        val response = authAPI.unregister("Bearer $accessToken")
+
+        return if (response.isSuccessful) {
+            Log.d("AuthRepository", "Unregister response: ${response.code()}")
+            clearTokens()
+            true
+        } else {
+            Log.e("AuthRepository", "Unregister error ${response.code()}: ${response.message()}")
+            false
+        }
+    }
+
     private suspend fun clearTokens() {
         authDataStore.edit {
             it[AuthPreferenceKeys.ACCESS_TOKEN] = ""
             it[AuthPreferenceKeys.REFRESH_TOKEN] = ""
+            it[AuthPreferenceKeys.USER_ID] = ""
             it[AuthPreferenceKeys.IS_LOGGED_IN] = false
         }
     }

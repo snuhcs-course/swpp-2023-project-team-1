@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.project.spire.core.inference.InferenceRepository
+import com.project.spire.models.Post
 import com.project.spire.network.RetrofitClient
 import com.project.spire.network.inference.InferenceResponse
 import com.project.spire.network.inference.InferenceSuccess
@@ -15,8 +16,6 @@ import com.project.spire.network.post.request.NewImage
 import com.project.spire.network.post.request.NewPost
 import com.project.spire.network.post.request.NewPostRequest
 import com.project.spire.network.post.response.PostError
-import com.project.spire.network.post.response.PostResponse
-import com.project.spire.network.post.response.PostSuccess
 import com.project.spire.utils.AuthProvider
 import com.project.spire.utils.BitmapUtils
 import com.project.spire.utils.InferenceUtils
@@ -44,13 +43,14 @@ class InferenceViewModel(
     private val _previousInference = MutableLiveData<Inference?>().apply { value = null }
     private val _inferenceError = MutableLiveData<Int>().apply { value = 0 }
     // 0: no error, 1: retrying, 2: failed
-    private val _postResult = MutableLiveData<PostResponse?>().apply { value = null }
+    private val _postResult = MutableLiveData<Post?>().apply { value = null }
+    private val _postError = MutableLiveData<Boolean>().apply { value = false }
 
     val inferenceResult: LiveData<ArrayList<Bitmap>?> get() = _inferenceResult
     val previousInference: LiveData<Inference?> get() = _previousInference
     val inferenceError: LiveData<Int> get() = _inferenceError
-    val postResult: LiveData<PostResponse?> get() = _postResult
-
+    val postResult: LiveData<Post?> get() = _postResult
+    val postError: LiveData<Boolean> get() = _postError
 
     fun reset() {
         _inferenceResult.value = null
@@ -167,7 +167,7 @@ class InferenceViewModel(
 
             if (response.isSuccessful) {
                 // Post upload success
-                val result = response.body() as PostSuccess
+                val result = response.body() as Post
                 Log.d("InferenceViewModel", "Post upload success: ${result.postId}")
                 _postResult.postValue(result)
             } else {
@@ -177,7 +177,7 @@ class InferenceViewModel(
                     "InferenceViewModel",
                     "Post upload failed with error: ${response.code()} ${response.message()}"
                 )
-                _postResult.postValue(result)
+                _postError.postValue(true)
             }
         }
     }

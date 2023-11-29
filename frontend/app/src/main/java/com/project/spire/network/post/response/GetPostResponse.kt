@@ -15,7 +15,7 @@ data class GetPostsSuccess(
     val items: List<Post>,
 
     @SerializedName("next_cursor")
-    val nextCursor: Int
+    val nextCursor: Int?
 
 ) : GetPostsResponse
 
