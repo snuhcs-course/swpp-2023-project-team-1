@@ -7,8 +7,6 @@
     <Button
         android:id="@+id/mask_fetch_button"
         style="@style/MaskFetchBtn"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:text="@string/prompt_suggestion_button"
         app:backgroundTint="@null" />
 

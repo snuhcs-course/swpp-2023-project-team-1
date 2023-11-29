@@ -54,8 +54,8 @@
 
     <!-- image edit -->
     <dimen name="img_edit_btn_size">45dp</dimen>
-    <dimen name="mask_fetch_btn_height">40dp</dimen>
-    <dimen name="mask_fetch_layout_height">45dp</dimen>
+    <dimen name="mask_fetch_btn_height">35dp</dimen>
+    <dimen name="mask_fetch_layout_height">40dp</dimen>
     <dimen name="image_edit_toolbar_btn_size">60dp</dimen>
     <dimen name="image_edit_toolbar_btn_padding">20dp</dimen>
     <dimen name="image_edit_toolbar_title_font">20sp</dimen>

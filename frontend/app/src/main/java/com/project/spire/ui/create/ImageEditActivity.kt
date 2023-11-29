@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -20,6 +21,11 @@ import com.project.spire.core.inference.SegmentationRepository
 import com.project.spire.ui.MainActivity
 import com.project.spire.utils.BitmapUtils
 import com.project.spire.utils.InferenceUtils
+import com.skydoves.balloon.ArrowPositionRules
+import com.skydoves.balloon.Balloon
+import com.skydoves.balloon.BalloonAnimation
+import com.skydoves.balloon.BalloonSizeSpec
+import com.skydoves.balloon.iconForm
 
 const val RECYCLER_VIEW_MARGIN = 30
 
@@ -184,11 +190,6 @@ class ImageEditActivity : AppCompatActivity() {
             }
         }
 
-   //     canvasViewModel.backgroundMaskBitmap.observe(this) {
-  //          Log.d("ImageEditActivity", "Background mask bitmap received")
-  //          mCanvasView.invalidate()
-  //      }
-
         canvasViewModel.maskError.observe(this) {
             if (it == 1) {
                 //Toast.makeText(this, "Mask generate failed, retrying...", Toast.LENGTH_LONG).show()
@@ -201,5 +202,29 @@ class ImageEditActivity : AppCompatActivity() {
                 progressBar.visibility = ProgressBar.GONE
             }
         }
+
+        val balloon = Balloon.Builder(context = this)
+            .setLayout(R.layout.tooltip_balloon)
+            .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+            .setArrowPosition(0.5f)
+            .setArrowSize(10)
+            .setCornerRadius(10f)
+            .setBackgroundColor(ContextCompat.getColor(this, R.color.blue_500))
+            .setBalloonAnimation(BalloonAnimation.ELASTIC)
+            .build()
+
+        val tooltipButton = binding.maskFetchTooltipButton
+        tooltipButton.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    balloon.showAlignBottom(tooltipButton)
+                }
+                MotionEvent.ACTION_UP -> {
+                    balloon.dismissWithDelay(500L)
+                }
+            }
+            true
+        }
+
     }
 }
