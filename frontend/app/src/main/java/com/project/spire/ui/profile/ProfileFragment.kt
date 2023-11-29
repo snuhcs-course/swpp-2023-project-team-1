@@ -144,6 +144,11 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        binding.profileImage.setOnClickListener {
+            val dialog = ProfileImageDialogFragment(profileViewModel.profileImageUrl.value!!)
+            dialog.show(parentFragmentManager, "ProfileImageDialogFragment")
+        }
+
         binding.profileLargeButton.setOnClickListener {
             if (profileViewModel.isMyProfile.value == true) {
                 startActivity(Intent(requireContext(), EditProfileActivity::class.java))

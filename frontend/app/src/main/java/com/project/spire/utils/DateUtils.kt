@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 
 object DateUtils {
 
-    private const val OFFSET_TIME = 9L
+    private const val OFFSET_TIME = -3L
 
     fun formatTime(time: String): String {
         val dateTime: LocalDateTime = LocalDateTime.parse(time, DateTimeFormatter.ISO_DATE_TIME)
