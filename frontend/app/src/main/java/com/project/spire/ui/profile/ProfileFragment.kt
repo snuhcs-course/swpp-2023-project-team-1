@@ -134,13 +134,17 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        val postAdapter = PostAdapter(profileViewModel.posts.value!!, findNavController())
+        val layoutManager = GridLayoutManager(requireContext(), spanCount)
+        binding.profilePostRecyclerView.run {
+            this.adapter = postAdapter
+            this.layoutManager = layoutManager
+            addItemDecoration(GridSpaceItemDecoration(spanCount, (space * Resources.getSystem().displayMetrics.density).toInt()))
+        }
+
         profileViewModel.posts.observe(viewLifecycleOwner) { it ->
             if (it != null) {
-                val postAdapter = PostAdapter(it, findNavController())
-                binding.profilePostRecyclerView.adapter = postAdapter
-                binding.profilePostRecyclerView.layoutManager =
-                    GridLayoutManager(requireContext(), spanCount)
-                binding.profilePostRecyclerView.addItemDecoration(GridSpaceItemDecoration(spanCount, (space * Resources.getSystem().displayMetrics.density).toInt()))
+                postAdapter.updatePosts(it)
             }
         }
 
@@ -153,7 +157,6 @@ class ProfileFragment : Fragment() {
             if (profileViewModel.isMyProfile.value == true) {
                 startActivity(Intent(requireContext(), EditProfileActivity::class.java))
             } else {
-                // TODO: Follow user
                 profileViewModel.followRequest(null)
             }
         }

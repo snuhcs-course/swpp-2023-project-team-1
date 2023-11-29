@@ -100,6 +100,7 @@ class ProfileViewModel(
             _followingState.postValue(followInfo.followingStatus)
             // _posts.postValue(userInfo?.posts)
             _isMyProfile.postValue(false)
+            getUserPosts(userId)
         }
     }
 
@@ -147,10 +148,7 @@ class ProfileViewModel(
         }
     }
 
-    fun getMyPosts() {
-        if (_isMyProfile.value!!) {
-            return
-        }
+    private fun getMyPosts() {
         viewModelScope.launch {
             val accessToken = AuthProvider.getAccessToken()
             val response = postAPI.getMyPosts(accessToken, 30, 0)
@@ -162,6 +160,22 @@ class ProfileViewModel(
             } else {
                 val errorBody = response.errorBody()
                 Log.e("ProfileViewModel", "Get my posts error: ${errorBody?.string()!!}")
+            }
+        }
+    }
+
+    private fun getUserPosts(userId: String) {
+        viewModelScope.launch {
+            val accessToken = AuthProvider.getAccessToken()
+            val response = postAPI.getUserPosts(accessToken, userId, 30, 0)
+            // TODO: implement pagination
+            if (response.isSuccessful) {
+                val successBody = response.body()
+                Log.d("ProfileViewModel", "Get user posts response: ${successBody?.total}")
+                _posts.postValue(successBody?.items)
+            } else {
+                val errorBody = response.errorBody()
+                Log.e("ProfileViewModel", "Get user posts error: ${errorBody?.string()!!}")
             }
         }
     }
