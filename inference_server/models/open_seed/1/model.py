@@ -176,7 +176,7 @@ class TritonPythonModel:
                 kernel = torch.ones(10, 10).to("cuda") 
                 masks = dilation(masks, kernel) > 0.5
                 
-                color = np.asarray([73, 66, 228, 204]).astype("uint8")
+                color = np.asarray([73, 66, 228, 128]).astype("uint8")
                 masks = masks.cpu().numpy().astype("uint8")
                 mask_images = masks.reshape(-1, h, w, 1) * color.reshape(1, 1, 1, -1)
             
