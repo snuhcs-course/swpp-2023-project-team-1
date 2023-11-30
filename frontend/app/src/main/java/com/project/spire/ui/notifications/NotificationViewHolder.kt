@@ -19,10 +19,16 @@ open class NotificationViewHolder(private val view: View) : RecyclerView.ViewHol
         val profileImage = view.findViewById<ImageView>(R.id.notification_profile_image)
         val userName = view.findViewById<TextView>(R.id.notification_username)
         val time = view.findViewById<TextView>(R.id.notification_time)
-        profileImage.load(noti.sender.profileImage) {
-            crossfade(true)
-            placeholder(R.drawable.default_profile_img)
-            transformations(CircleCropTransformation())
+        if (noti.sender.profileImage == null) {
+            profileImage.load(R.drawable.default_profile_img) {
+                crossfade(true)
+                transformations(CircleCropTransformation())
+            }
+        } else {
+            profileImage.load(noti.sender.profileImage) {
+                crossfade(true)
+                transformations(CircleCropTransformation())
+            }
         }
         userName.text = noti.sender.userName
         time.text = DateUtils.formatTime(noti.createdAt)
