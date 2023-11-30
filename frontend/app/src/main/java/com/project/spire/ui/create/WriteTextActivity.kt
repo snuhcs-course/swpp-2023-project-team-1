@@ -1,6 +1,5 @@
 package com.project.spire.ui.create
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -14,18 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.spire.R
 import com.example.spire.databinding.ActivityWriteTextBinding
-import com.project.spire.network.post.response.PostError
-import com.project.spire.network.post.response.PostSuccess
 import com.project.spire.ui.MainActivity
 import com.project.spire.utils.InferenceUtils
-
 
 class WriteTextActivity : AppCompatActivity() {
     private lateinit var binding: ActivityWriteTextBinding
     private lateinit var carouselAdapter: CarouselAdapter
     private lateinit var inferenceViewModel: InferenceViewModel
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -47,8 +42,8 @@ class WriteTextActivity : AppCompatActivity() {
         val exitBtn = binding.writeTextAppBarLayout.exitButton
 
         inferenceViewModel.inferenceError.observe(this) {
-            if (it) {
-                Toast.makeText(this, "Inference failed", Toast.LENGTH_SHORT).show()
+            if (it == true) {
+                Toast.makeText(this, "Image edit failed, please try again.", Toast.LENGTH_LONG).show()
                 onBackPressedDispatcher.onBackPressed()
                 finish()
             }

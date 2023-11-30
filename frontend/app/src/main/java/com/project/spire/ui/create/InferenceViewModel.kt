@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.inference.InferenceRepository
 import com.project.spire.models.Post
 import com.project.spire.network.RetrofitClient
@@ -17,13 +16,9 @@ import com.project.spire.network.post.request.NewImage
 import com.project.spire.network.post.request.NewPost
 import com.project.spire.network.post.request.NewPostRequest
 import com.project.spire.network.post.response.PostError
-import com.project.spire.network.post.response.PostResponse
-import com.project.spire.network.post.response.PostSuccess
 import com.project.spire.utils.AuthProvider
 import com.project.spire.utils.BitmapUtils
-import com.project.spire.utils.DataStoreProvider
 import com.project.spire.utils.InferenceUtils
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 sealed interface Inference {
@@ -59,10 +54,10 @@ class InferenceViewModel(
     fun reset() {
         _inferenceResult.value = null
         Log.d("InferenceViewModel", "Reset LiveData")
-        // TODO: how to stall infer()?
     }
 
     fun infer(image: Bitmap, mask: Bitmap, prompt: String) {
+        _inferenceError.postValue(false)
         _previousInference.value = Inpainting(image, mask, prompt)
         Log.d("InferenceViewModel", "Input image size: ${image.byteCount}")
         Log.d("InferenceViewModel", "Input mask size: ${mask.byteCount}")
@@ -82,6 +77,7 @@ class InferenceViewModel(
                 } catch (e: Exception) {
                     Log.e("InferenceViewModel", "Inference failed")
                     _inferenceResult.postValue(null)
+                    _inferenceError.postValue(true)
                     return@launch
                 }
             }
@@ -101,6 +97,7 @@ class InferenceViewModel(
                     generatedBitmaps.add(generatedBitmap!!)
                 }
                 _inferenceResult.postValue(generatedBitmaps)
+                _inferenceError.postValue(false)
             } else {
                 Log.e("InferenceViewModel", "Inference failed")
                 _inferenceResult.postValue(null)
@@ -110,6 +107,7 @@ class InferenceViewModel(
     }
 
     fun infer(prompt: String) {
+        _inferenceError.postValue(false)
         _previousInference.value = Txt2Img(prompt)
         Log.d("InferenceViewModel", "Input prompt: $prompt")
         val request = InferenceUtils.getInferenceRequest(prompt)
@@ -128,6 +126,7 @@ class InferenceViewModel(
                 } catch (e: Exception) {
                     Log.e("InferenceViewModel", "Inference failed")
                     _inferenceResult.postValue(null)
+                    _inferenceError.postValue(true)
                     return@launch
                 }
             }
@@ -146,6 +145,7 @@ class InferenceViewModel(
                     generatedBitmaps.add(generatedBitmap!!)
                 }
                 _inferenceResult.postValue(generatedBitmaps)
+                _inferenceError.postValue(false)
 
             } else {
                 Log.e("InferenceViewModel", "Inference failed")
@@ -202,7 +202,6 @@ class InferenceViewModel(
         return request
     }
 }
-
 
 class InferenceViewModelFactory(private val inferenceRepository: InferenceRepository) :
     ViewModelProvider.Factory {

@@ -46,6 +46,14 @@ object InferenceUtils {
         return InferenceRequest(name, input)
     }
 
+    fun getMaskInferenceRequest(image: Bitmap): InferenceRequest {
+        val name = "open_seed"
+        val input = listOf(
+            Input("INPUT_IMAGE", listOf(1), "BYTES", listOf(BitmapUtils.BitmaptoBase64String(image)))
+        )
+        return InferenceRequest(name, input)
+    }
+
     fun saveImage(context: Context, bitmap: Bitmap) {
         try {
             saveImageToGallery(context, bitmap)
