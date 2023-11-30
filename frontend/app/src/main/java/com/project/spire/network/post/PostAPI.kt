@@ -43,6 +43,14 @@ interface PostAPI {
         @Query("offset") offset: Int
     ): Response<GetPostsSuccess>
 
+    @GET("post/user/{user_id}")
+    suspend fun getUserPosts(
+        @Header("Authorization") accessToken: String,
+        @Path("user_id") userId: String,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int
+    ): Response<GetPostsSuccess>
+
     @GET("post/{post_id}")
     suspend fun getPost(
         @Header("Authorization") accessToken: String,

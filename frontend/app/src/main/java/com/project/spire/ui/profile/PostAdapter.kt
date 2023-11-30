@@ -12,7 +12,7 @@ import com.example.spire.R
 import com.project.spire.models.Post
 
 class PostAdapter(
-    private val postList: List<Post>,
+    private var postList: List<Post>,
     private val navController: NavController
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
@@ -46,5 +46,10 @@ class PostAdapter(
             R.id.action_profile_to_post, // TODO
             bundle
         )
+    }
+
+    fun updatePosts(newList: List<Post>) {
+        postList = newList
+        notifyDataSetChanged()
     }
 }

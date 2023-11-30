@@ -96,15 +96,12 @@ class SearchFragment : Fragment() {
         text.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 Log.d("SearchFragment", "Text changed: ${s.toString()}")
-                //if (s.toString() != "")
-                searchViewModel.getInitialUsers(s.toString())
-                searchViewModel.users.observe(viewLifecycleOwner) {
-                    //if (it.isNotEmpty())
-                    recyclerView.run {
-                        adapter.updateList(it)
-                        adapter.notifyDataSetChanged()
-                    }
+                if (s.toString() != "") {
+                    searchViewModel.getInitialUsers(s.toString())
+                } else {
+                    searchViewModel.getEmptyList()
                 }
+
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // do nothing
@@ -113,6 +110,13 @@ class SearchFragment : Fragment() {
                 // do nothing
             }
         })
+
+        searchViewModel.users.observe(viewLifecycleOwner) {
+            Log.d("SearchFragment", "Users changed: ${it.size}")
+            recyclerView.run {
+                adapter.updateList(it)
+            }
+        }
     }
 
     override fun onDestroyView() {

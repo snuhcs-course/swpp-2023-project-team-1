@@ -134,21 +134,29 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        val postAdapter = PostAdapter(profileViewModel.posts.value!!, findNavController())
+        val layoutManager = GridLayoutManager(requireContext(), spanCount)
+        binding.profilePostRecyclerView.run {
+            this.adapter = postAdapter
+            this.layoutManager = layoutManager
+            addItemDecoration(GridSpaceItemDecoration(spanCount, (space * Resources.getSystem().displayMetrics.density).toInt()))
+        }
+
         profileViewModel.posts.observe(viewLifecycleOwner) { it ->
             if (it != null) {
-                val postAdapter = PostAdapter(it, findNavController())
-                binding.profilePostRecyclerView.adapter = postAdapter
-                binding.profilePostRecyclerView.layoutManager =
-                    GridLayoutManager(requireContext(), spanCount)
-                binding.profilePostRecyclerView.addItemDecoration(GridSpaceItemDecoration(spanCount, (space * Resources.getSystem().displayMetrics.density).toInt()))
+                postAdapter.updatePosts(it)
             }
+        }
+
+        binding.profileImage.setOnClickListener {
+            val dialog = ProfileImageDialogFragment(profileViewModel.profileImageUrl.value!!)
+            dialog.show(parentFragmentManager, "ProfileImageDialogFragment")
         }
 
         binding.profileLargeButton.setOnClickListener {
             if (profileViewModel.isMyProfile.value == true) {
                 startActivity(Intent(requireContext(), EditProfileActivity::class.java))
             } else {
-                // TODO: Follow user
                 profileViewModel.followRequest(null)
             }
         }
@@ -165,6 +173,21 @@ class ProfileFragment : Fragment() {
             bundle.putString("type", "following")
             bundle.putString("userId", profileViewModel.userId.value)
             findNavController().navigate(R.id.action_profile_to_relationship, bundle)
+        }
+
+        profileViewModel.profileLoaded.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.profileShimmer.stopShimmer()
+                binding.profileShimmer.visibility = View.INVISIBLE
+                binding.profileLayout.visibility = View.VISIBLE
+            }
+        }
+
+        profileViewModel.postLoaded.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.postShimmerLayout.stopShimmer()
+                binding.postShimmerLayout.visibility = View.GONE
+            }
         }
     }
 

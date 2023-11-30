@@ -136,7 +136,7 @@ class EditProfileActivity : AppCompatActivity() {
         profileViewModel.logoutSuccess.observe(this) {
             if (it) {
                 val intent = Intent(this, LoginActivity::class.java)
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
                 finish()
             }
@@ -174,8 +174,8 @@ class EditProfileActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setMessage(getString(R.string.delete_account_dialog_text))
             .setPositiveButton("Delete") { dialog, _ ->
-                // TODO: Delete the user's account
                 profileViewModel.unregister()
+                dialog.dismiss()
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
