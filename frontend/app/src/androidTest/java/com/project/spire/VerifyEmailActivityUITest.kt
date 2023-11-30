@@ -25,9 +25,7 @@ import com.project.spire.ui.MainActivity
 import com.project.spire.ui.auth.LoginActivity
 import com.project.spire.ui.auth.SignUpActivity
 import com.project.spire.ui.auth.VerifyEmailActivity
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.endsWith
-import org.hamcrest.Matchers.not
+import org.hamcrest.CoreMatchers.not
 import org.junit.After
 import org.junit.Before
 
@@ -70,9 +68,21 @@ class VerifyEmailActivityUITest {
     }
 
     @Test
-    fun test_emailInput_correct() {
+    fun test_emailInput_duplicated_email() {
         onView(withId(R.id.email_edit_text))
             .perform(typeText("uitest@google.com"), ViewActions.closeSoftKeyboard())
+
+        onView(withId(R.id.send_mail_button))
+            .perform(click())
+
+        onView(withId(R.id.email_input))
+            .check(matches(hasDescendant(withText("Email already exists"))))
+    }
+
+    @Test
+    fun test_emailInput_correct() {
+        onView(withId(R.id.email_edit_text))
+            .perform(typeText("uitest2@google.com"), ViewActions.closeSoftKeyboard())
 
         onView(withId(R.id.send_mail_button))
             .perform(click())
@@ -82,9 +92,9 @@ class VerifyEmailActivityUITest {
     }
 
     @Test
-    fun test_codeInput_correct() { // should be changed to wrong later
+    fun test_codeInput_wrong() {
         onView(withId(R.id.email_edit_text))
-            .perform(typeText("uitest@google.com"), ViewActions.closeSoftKeyboard())
+            .perform(typeText("uitest2@google.com"), ViewActions.closeSoftKeyboard())
 
         onView(withId(R.id.send_mail_button))
             .perform(click())
@@ -115,7 +125,8 @@ class VerifyEmailActivityUITest {
 
         Thread.sleep(1000)
 
-        intended(hasComponent(SignUpActivity::class.java.name))
+        onView(withId(R.id.verify_error_text))
+            .check(matches(withText("Check your code again")))
     }
 
     @Test

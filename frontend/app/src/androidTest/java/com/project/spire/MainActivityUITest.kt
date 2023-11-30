@@ -29,9 +29,6 @@ import com.project.spire.ui.create.CameraActivity
 import com.project.spire.ui.create.ImageEditActivity
 import com.project.spire.ui.create.WriteTextActivity
 import com.project.spire.ui.profile.EditProfileActivity
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.endsWith
-import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Before
 
@@ -83,6 +80,18 @@ class MainActivityUITest {
     }
 
     @Test
+    fun test_userSearch() {
+        onView(withId(R.id.tab_search))
+            .perform(click())
+
+        onView(withId(R.id.search_bar_edit_text))
+            .perform(typeText("ui_test_user"), ViewActions.closeSoftKeyboard())
+
+        onView(withId(R.id.search_recycler_view))
+            .check(matches(hasDescendant(withText("ui_test_user"))))
+    }
+
+    @Test
     fun test_createButton() {
         onView(withId(R.id.fab))
             .perform(click())
@@ -111,6 +120,8 @@ class MainActivityUITest {
 //        onView(withId(R.id.bottom_sheet_layout_2))
 //            .perform(click())
 //
+//        onView(withText("Photos"))
+//            .check(matches(isDisplayed()))
 //    }
 
     @Test

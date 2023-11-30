@@ -26,8 +26,6 @@ import com.project.spire.ui.MainActivity
 import com.project.spire.ui.auth.LoginActivity
 import com.project.spire.ui.auth.SignUpActivity
 import com.project.spire.ui.auth.VerifyEmailActivity
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.endsWith
 import org.junit.After
 import org.junit.Before
 
@@ -52,6 +50,21 @@ class SignUpActivityUITest {
     }
 
     @Test
+    fun test_register_wrong_password_format() {
+        onView(withId(R.id.email_edit_text))
+            .perform(replaceText("uitest2@google.com")) // can't really use the email
+
+        onView(withId(R.id.password_edit_text))
+            .perform(typeText("1234"), ViewActions.closeSoftKeyboard())
+
+        onView(withId(R.id.password_pattern))
+            .perform(click())
+
+        onView(withId(R.id.password_rule_popup))
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
     fun test_register_wrong_duplicated_username() {
         onView(withId(R.id.email_edit_text))
             .perform(replaceText("uitest2@google.com")) // can't really use the email
@@ -65,7 +78,10 @@ class SignUpActivityUITest {
         onView(withId(R.id.sign_up_btn))
             .perform(click())
 
-        Thread.sleep(1000)
+        Thread.sleep(200)
+
+        onView(withId(R.id.username_input))
+            .check(matches(hasDescendant(withText("Username already exists"))))
     }
 
     @Test
