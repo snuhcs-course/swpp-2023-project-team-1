@@ -5,6 +5,7 @@ import pytest
 import pytest_asyncio, asyncio
 from httpx import AsyncClient
 from tests.test_base64 import test_base64
+from app.core.config import settings as config
 
 fake_uuid4 = "8e6f6dc9-bfcf-44ac-8081-58db10f4e18c"
 
@@ -26,6 +27,8 @@ profile_image_url_2 = None
 post_1 = {
     "content": "string",
     "image_url": "string",
+    "origin_image_url": "string",
+    "mask_image_url": "string",
     "id": "string",
     "created_at": "2023-11-11T13:56:04.008Z",
     "updated_at": "2023-11-11T13:56:04.008Z",
@@ -42,6 +45,8 @@ post_1 = {
 post_2 = {
     "content": "string",
     "image_url": "string",
+    "origin_image_url": "string",
+    "mask_image_url": "string",
     "id": "string",
     "created_at": "2023-11-11T13:56:04.008Z",
     "updated_at": "2023-11-11T13:56:04.008Z",
@@ -243,7 +248,7 @@ async def test_check_wrong_params_wrong():
     assert response.status_code == 400
     
 @pytest.mark.asyncio
-async def test_verify_correct():
+async def test_verify_token_correct():
     async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
         response = await ac.post(
             "/api/auth/verify",
@@ -254,6 +259,59 @@ async def test_verify_correct():
             ),
         )
     assert response.status_code == 200
+
+@pytest.mark.asyncio
+async def test_refresh_token_correct():
+    global access_token, refresh_token
+
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        response = await ac.post(
+            "/api/auth/refresh",
+            content=json.dumps(
+                {
+                    "access_token": access_token,
+                    "refresh_token": refresh_token
+                }
+            ),
+        )
+    assert response.status_code == 200
+    response_data = response.json()
+    assert isinstance(response_data['access_token'], str)
+    access_token = response_data['access_token']
+    assert isinstance(response_data['refresh_token'], str)
+    refresh_token = response_data['refresh_token']
+
+# depends on email connection
+@pytest.mark.asyncio
+async def test_send_email_correct():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        response = await ac.post(
+            "/api/auth/email",
+            content=json.dumps(
+                {
+                    "email": [config.TESTING_MAIL]
+                }
+            ),
+        )
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['message'] == f"Email sent to email=['{config.TESTING_MAIL}']"
+
+@pytest.mark.asyncio
+async def test_verify_code_wrong():
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        response = await ac.post(
+            "/api/auth/verify/code",
+            content=json.dumps(
+                {
+                    "email": "test",
+                    "code": 123456
+                }
+            ),
+        )
+    assert response.status_code == 404
+    response_data = response.json()
+    assert response_data['message'] == "CODE__NOT_FOUND"
 
 @pytest.mark.asyncio
 async def test_verify_password_correct():
@@ -341,8 +399,6 @@ async def test_unregister_unauthorized_wrong():
         )
     assert response.status_code == 401
 
-
-############## Code verify necessary ##############
 
 ############## User ##############
 @pytest.mark.asyncio
@@ -1006,6 +1062,10 @@ async def test_create_post_with_mask_correct():
     post_1['content'] = response_data['content']
     assert isinstance(response_data['image_url'], str)
     post_1['image_url'] = response_data['image_url']
+    assert isinstance(response_data['origin_image_url'], str)
+    post_1['origin_image_url'] = response_data['origin_image_url']
+    assert isinstance(response_data['mask_image_url'], str)
+    post_1['mask_image_url'] = response_data['mask_image_url']
     assert isinstance(response_data['id'], str)
     post_1['id'] = response_data['id']
     assert isinstance(response_data['created_at'], str)
@@ -1124,6 +1184,8 @@ async def test_get_post_correct():
     response_data = response.json()
     assert response_data['content'] == post_1['content']
     assert response_data['image_url'] == post_1['image_url']
+    assert response_data['origin_image_url'] == post_1['origin_image_url']
+    assert response_data['mask_image_url'] == post_1['mask_image_url']
     assert response_data['id'] == post_1['id']
     assert response_data['created_at'] == post_1['created_at']
     assert response_data['updated_at'] == post_1['updated_at']
@@ -1225,6 +1287,46 @@ async def test_get_posts_correct():
     assert response_data['total'] == 2
     assert isinstance(response_data['items'], list)
     assert response_data['next_cursor'] == None
+
+@pytest.mark.asyncio
+async def test_update_post_correct():
+    global post_1
+    async with AsyncClient(app=spire_app, base_url=f"http://{server_ip_address}:{str(port_num)}") as ac:
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token_1)
+        }
+
+        response = await ac.patch(
+            "/api/post/" + post_1['id'],
+            headers=headers, 
+            content=json.dumps(
+                {
+                    "content": "update test", 
+                    "image_url": post_1['image_url'], 
+                    "origin_image_url": post_1['origin_image_url'],
+                    "mask_image_url": post_1['mask_image_url']
+
+                }
+            ),
+        )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data['content'] == "update test"
+    post_1['content'] = response_data['content']
+    assert response_data['image_url'] == post_1['image_url']
+    assert response_data['origin_image_url'] == post_1['origin_image_url']
+    assert response_data['mask_image_url'] == post_1['mask_image_url']
+    assert response_data['id'] == post_1['id']
+    assert response_data['created_at'] == post_1['created_at']
+    assert response_data['updated_at'] != post_1['updated_at']
+    post_1['updated_at'] = response_data['updated_at']
+    assert response_data['user']['id'] == post_1['user']['id']
+    assert response_data['user']['username'] == post_1['user']['username']
+    assert response_data['user']['profile_image_url'] == post_1['user']['profile_image_url']
+    assert response_data['like_cnt'] == post_1['like_cnt']
+    assert response_data['comment_cnt'] == post_1['comment_cnt']
+    assert response_data['is_liked'] == post_1['is_liked']
 
 @pytest.mark.asyncio
 async def test_like_post_correct():
