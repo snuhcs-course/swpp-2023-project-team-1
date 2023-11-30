@@ -177,7 +177,7 @@ class ImageEditActivity : AppCompatActivity() {
             .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
             .setArrowPosition(0.5f)
             .setArrowSize(10)
-            .setCornerRadius(10f)
+            .setCornerRadius(16f)
             .setBackgroundColor(ContextCompat.getColor(this, R.color.blue_200))
             .setBalloonAnimation(BalloonAnimation.ELASTIC)
             .build()
