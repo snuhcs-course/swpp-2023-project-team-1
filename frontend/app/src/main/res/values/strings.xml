@@ -31,7 +31,7 @@
     <string name="tooltip_title_1">Where do you want to edit?</string>
     <string name="tooltip_content_1">Please paint the part as blue.\nUnpainted parts will not be edited.</string>
     <string name="tooltip_title_2">How do you want to edit?</string>
-    <string name="tooltip_content_2">Please describe the subject clearly in English.\nPlease separate with commas.</string>
+    <string name="tooltip_content_2">Please describe the overall image clearly in English.\nPlease separate with commas.</string>
 
     <!-- write text activity -->
     <string name="title_toolbar_write_text">Select Your Image</string>
