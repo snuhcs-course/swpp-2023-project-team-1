@@ -47,8 +47,11 @@ class WriteTextActivity : AppCompatActivity() {
         val exitBtn = binding.writeTextAppBarLayout.exitButton
 
         inferenceViewModel.inferenceError.observe(this) {
-            if (it) {
-                Toast.makeText(this, "Inference failed", Toast.LENGTH_SHORT).show()
+            if (it == 1) {
+                //Toast.makeText(this, "Image edit failed, retrying...", Toast.LENGTH_LONG).show()
+            }
+            else if (it == 2) {
+                Toast.makeText(this, "Image edit failed, please try again.", Toast.LENGTH_LONG).show()
                 onBackPressedDispatcher.onBackPressed()
                 finish()
             }

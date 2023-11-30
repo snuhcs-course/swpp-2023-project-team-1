@@ -6,6 +6,7 @@ import com.project.spire.network.inference.InferenceError
 import com.project.spire.network.inference.InferenceRequest
 import com.project.spire.network.inference.InferenceResponse
 import com.project.spire.network.inference.InferenceSuccess
+import com.project.spire.network.inference.SegmentationClient
 
 class InferenceRepository {
 

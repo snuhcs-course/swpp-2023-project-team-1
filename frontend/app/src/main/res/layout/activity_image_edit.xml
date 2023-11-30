@@ -26,7 +26,7 @@
 
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/img_dummy" />
+            app:srcCompat="@drawable/logo_empty" />
 
         <com.project.spire.ui.create.SpireCanvasView
             android:id="@+id/spire_canvas_view"
@@ -80,33 +80,72 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/prompt_suggestion_constraint_layout"
+        android:id="@+id/mask_fetch_constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/prompt_suggestion_btn_height"
+        android:layout_height="@dimen/mask_fetch_layout_height"
         android:layout_marginHorizontal="15dp"
         android:layout_marginTop="15dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_view_constraint_layout">
+        app:layout_constraintTop_toBottomOf="@id/image_view_constraint_layout"
+        >
 
         <Button
-            android:id="@+id/prompt_suggestion_button"
-            style="@style/PromptSuggestBtn"
-            android:text="@string/prompt_suggestion_button"
+            android:id="@+id/fetch_button"
+            style="@style/ImgEditBtn"
+            android:layout_width="wrap_content"
+            android:text="@string/mask_generate_button"
             app:backgroundTint="@null"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintRight_toRightOf="parent" />
 
-        <ImageButton
-            android:id="@+id/suggestion_refresh_button"
-            android:layout_width="@dimen/prompt_suggestion_btn_height"
-            android:layout_height="@dimen/prompt_suggestion_btn_height"
-            android:background="@null"
-            android:padding="0dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_img_refresh"
+        <ProgressBar
+            android:id="@+id/mask_progress_bar"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:indeterminateDrawable="@drawable/loading_progress_bar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:visibility="invisible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:orientation="horizontal">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/mask_fetch_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_weight="1"
+                android:paddingRight="10dp"
+                android:visibility="invisible" />
+
+            <ImageButton
+                android:id="@+id/mask_fetch_tooltip_button"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="right"
+                android:layout_weight="0"
+
+                android:background="@null"
+                android:padding="5dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_tooltip"
+                />
+
+        </LinearLayout>
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -118,9 +157,8 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="15dp"
         android:hint="@string/prompt_hint"
-
         app:layout_constraintBottom_toTopOf="@id/next_button"
-        app:layout_constraintTop_toBottomOf="@id/prompt_suggestion_constraint_layout">
+        app:layout_constraintTop_toBottomOf="@id/mask_fetch_constraint_layout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/prompt_input"
@@ -148,7 +186,8 @@
         android:layout_height="match_parent"
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_edit_app_bar_layout" />
+        app:layout_constraintTop_toBottomOf="@id/image_edit_app_bar_layout"
+        />
 
     <Button
         android:id="@+id/crop_done_button"
