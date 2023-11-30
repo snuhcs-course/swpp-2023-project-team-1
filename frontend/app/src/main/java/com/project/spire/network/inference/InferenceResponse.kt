@@ -27,7 +27,7 @@ data class InferenceError(
 data class Output (
     // OUTPUT_IMAGE
     @SerializedName("name")
-    val name: String,
+    val name: String, // OUTPUT_OVERALL_IMAGE, OUTPUT_MASKS, OUTPUT_LABELS
 
     @SerializedName("datatype")
     val datatype: String,

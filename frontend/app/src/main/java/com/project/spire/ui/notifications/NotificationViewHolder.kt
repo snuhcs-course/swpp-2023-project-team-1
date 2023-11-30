@@ -53,7 +53,6 @@ open class NotificationViewHolder(private val view: View) : RecyclerView.ViewHol
             postImage.load(noti.postImageUrl) {
                 Log.i("NotificationViewHolder", "Loading image: ${noti.postImageUrl}")
                 crossfade(true)
-                transformations(CircleCropTransformation())
             }
             view.setOnClickListener {
                 super.showPost(navController, noti.postId!!)

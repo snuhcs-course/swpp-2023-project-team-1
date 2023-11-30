@@ -94,7 +94,6 @@ dependencies {
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
     implementation 'androidx.datastore:datastore-core:1.0.0'
 
-
     // Skeleton UI
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
@@ -111,4 +110,7 @@ dependencies {
 
     // Pager Index Indicator
     implementation 'me.relex:circleindicator:2.1.6'
+
+    // balloon tooltip
+    implementation 'com.github.skydoves:balloon:1.6.3'
 }
