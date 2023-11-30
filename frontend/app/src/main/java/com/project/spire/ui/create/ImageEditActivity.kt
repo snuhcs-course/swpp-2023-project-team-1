@@ -163,11 +163,8 @@ class ImageEditActivity : AppCompatActivity() {
         }
 
         canvasViewModel.maskError.observe(this) {
-            if (it == 1) {
-                //Toast.makeText(this, "Mask generate failed, retrying...", Toast.LENGTH_LONG).show()
-            }
-            else if (it == 2) {
-                Toast.makeText(this, "Mask generate failed, please try again.", Toast.LENGTH_LONG).show()
+            if (it == true) {
+                Toast.makeText(this, "Auto-painting failed, please try again.", Toast.LENGTH_LONG).show()
                 fetchButton.visibility = Button.VISIBLE
                 recyclerView.visibility = RecyclerView.INVISIBLE
                 progressBar.isActivated = false
