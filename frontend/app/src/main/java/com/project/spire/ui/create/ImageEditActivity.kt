@@ -2,28 +2,41 @@ package com.project.spire.ui.create
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
-import androidx.activity.viewModels
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.R
 import com.example.spire.databinding.ActivityImageEditBinding
+import com.project.spire.core.inference.SegmentationRepository
 import com.project.spire.ui.MainActivity
 import com.project.spire.utils.BitmapUtils
 import com.project.spire.utils.InferenceUtils
+import com.skydoves.balloon.ArrowPositionRules
+import com.skydoves.balloon.Balloon
+import com.skydoves.balloon.BalloonAnimation
+import com.skydoves.balloon.BalloonSizeSpec
+import com.skydoves.balloon.iconForm
+
+const val RECYCLER_VIEW_MARGIN = 30
 
 class ImageEditActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityImageEditBinding
     private lateinit var inferenceViewModel: InferenceViewModel
-    private val canvasViewModel: CanvasViewModel by viewModels()
+
+    private val segmentationRepository = SegmentationRepository()
+    private val canvasViewModelFactory = CanvasViewModelFactory(segmentationRepository)
+    private val canvasViewModel = canvasViewModelFactory.create(CanvasViewModel::class.java)
+
     private var mImageBitmap: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +47,7 @@ class ImageEditActivity : AppCompatActivity() {
         setContentView(binding.root)
         inferenceViewModel = InferenceUtils.inferenceViewModel
 
+        // crop image
         val uri = Uri.parse(intent.getStringExtra("imageUri"))
         val cropImageView = binding.cropImageView
         val cropDoneButton = binding.cropDoneButton
@@ -60,49 +74,32 @@ class ImageEditActivity : AppCompatActivity() {
         val mCanvasView = binding.spireCanvasView
         mCanvasView.initViewModel(canvasViewModel)
 
-        canvasViewModel.setBackgroundMaskBitmap(BitmapFactory.decodeResource(resources, R.drawable.img_dummy_mask), mCanvasView.COLOR_BLUE)
-
+        // enable or disable pen or erase mode
         val editBtn = binding.editButton
         editBtn.setOnClickListener { canvasViewModel.changePenMode() }
-        val penModeObserver = Observer<Boolean> { isPenMode ->
-            if (isPenMode) {
+        canvasViewModel.isPenMode.observe(this) {
+            if (it) {
                 editBtn.setImageResource(R.drawable.ic_img_edit_selected)
             } else {
                 editBtn.setImageResource(R.drawable.ic_img_edit)
             }
         }
-        canvasViewModel.isPenMode.observe(this, penModeObserver)
 
         val eraseBtn = binding.eraseButton
         eraseBtn.setOnClickListener { canvasViewModel.changeEraseMode() }
-        val eraseModeObserver = Observer<Boolean> { isEraseMode ->
-            if (isEraseMode) {
+        canvasViewModel.isEraseMode.observe(this) {
+            if (it) {
                 eraseBtn.setImageResource(R.drawable.ic_img_erase_selected)
             } else {
                 eraseBtn.setImageResource(R.drawable.ic_img_erase)
             }
         }
-        canvasViewModel.isEraseMode.observe(this, eraseModeObserver)
 
-        val isDrawingObserver = Observer<Boolean> { mCanvasView.invalidate() }
-        canvasViewModel.isDrawing.observe(this, isDrawingObserver)
-
-        val resetBtn = binding.resetButton
-        resetBtn.setOnClickListener {
-            canvasViewModel.clearCanvas()
-            editBtn.setImageResource(R.drawable.ic_img_edit)
-            eraseBtn.setImageResource(R.drawable.ic_img_erase)
+        canvasViewModel.redraw.observe(this) {
+            mCanvasView.invalidate()
         }
 
-        val promptSuggestBtn = binding.promptSuggestionButton
         val promptInput = binding.promptInput
-        promptSuggestBtn.setOnClickListener {
-            val currentText = promptInput.text.toString()
-            if (currentText == "") promptInput.setText(promptSuggestBtn.text)
-            else {
-                promptInput.setText(currentText + ", " + promptSuggestBtn.text.toString())
-            }
-        }
 
         val nextBtn = binding.nextButton
         nextBtn.setOnClickListener {
@@ -123,6 +120,79 @@ class ImageEditActivity : AppCompatActivity() {
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
             finish()
+        }
+
+        val fetchButton = binding.fetchButton
+        val progressBar = binding.maskProgressBar
+
+        fetchButton.setOnClickListener {
+            canvasViewModel.inferMask(mImageBitmap!!, mImageView.width, mImageView.height)
+            fetchButton.visibility = Button.GONE
+            progressBar.visibility = ProgressBar.VISIBLE
+            progressBar.isActivated = true
+        }
+        val recyclerView = binding.maskFetchRecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+        val adapter = MaskFetchAdapter(canvasViewModel.masks.value!!, canvasViewModel.labels.value!!, canvasViewModel)
+        recyclerView.adapter = adapter
+        recyclerView.addItemDecoration(HorizontalSpaceDecoration(RECYCLER_VIEW_MARGIN))
+        recyclerView.setHasFixedSize(false)
+
+        val resetBtn = binding.resetButton
+        resetBtn.setOnClickListener {
+            canvasViewModel.clearCanvas()
+            editBtn.setImageResource(R.drawable.ic_img_edit)
+            eraseBtn.setImageResource(R.drawable.ic_img_erase)
+            recyclerView.adapter?.run {
+                (this as MaskFetchAdapter).clearClickedItems()
+            }
+        }
+
+        canvasViewModel.labels.observe(this) {
+            if (it.isNotEmpty() and (canvasViewModel.masks.value!!.isNotEmpty())) {
+                Log.d("ImageEditActivity", "Masks received")
+                recyclerView.run {
+                    adapter.updateList(canvasViewModel.masks.value!!, it)
+                    Log.d("ImageEditActivity", "Adapter updated label observer: ${it}")
+                    visibility = RecyclerView.VISIBLE
+                }
+                progressBar.isActivated = false
+                progressBar.visibility = ProgressBar.GONE
+            }
+        }
+
+        canvasViewModel.maskError.observe(this) {
+            if (it == true) {
+                Toast.makeText(this, "Auto-painting failed, please try again.", Toast.LENGTH_LONG).show()
+                fetchButton.visibility = Button.VISIBLE
+                recyclerView.visibility = RecyclerView.INVISIBLE
+                progressBar.isActivated = false
+                progressBar.visibility = ProgressBar.GONE
+            }
+        }
+
+        val balloon = Balloon.Builder(context = this)
+            .setLayout(R.layout.tooltip_balloon)
+            .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+            .setArrowPosition(0.5f)
+            .setArrowSize(10)
+            .setCornerRadius(10f)
+            .setBackgroundColor(ContextCompat.getColor(this, R.color.blue_200))
+            .setBalloonAnimation(BalloonAnimation.ELASTIC)
+            .build()
+
+        val tooltipButton = binding.maskFetchTooltipButton
+        tooltipButton.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    balloon.showAlignBottom(tooltipButton)
+                }
+                MotionEvent.ACTION_UP -> {
+                    balloon.dismissWithDelay(500L)
+                }
+            }
+            true
         }
     }
 }
