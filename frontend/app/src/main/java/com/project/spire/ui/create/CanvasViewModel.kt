@@ -33,9 +33,7 @@ class CanvasViewModel(
     private var _maskOverallImage = MutableLiveData<Bitmap?>().apply { value = null }
     private var _masks = MutableLiveData<List<Bitmap>>().apply { value = emptyList() }
     private var _labels = MutableLiveData<List<String>>().apply { value = emptyList() }
-    private var _maskError = MutableLiveData<Int>().apply { value = 0 }
-    // 0: no error, 1: retrying, 2: failed
-
+    private var _maskError = MutableLiveData<Boolean>().apply { value = false }
     private var _originImageBitmap = MutableLiveData<Bitmap>()
     private var _paths = LinkedHashMap<Any, PaintOptions>() // drawing until now, ORDER MATTERS
     // Path for user touch input, Bitmap for fetched mask
@@ -48,7 +46,7 @@ class CanvasViewModel(
     val maskOverallImage: LiveData<Bitmap?> get() = _maskOverallImage
     val masks: LiveData<List<Bitmap>> get() = _masks
     val labels: LiveData<List<String>> get() = _labels
-    val maskError: LiveData<Int> get() = _maskError
+    val maskError: LiveData<Boolean> get() = _maskError
     val originImageBitmap: LiveData<Bitmap> get() = _originImageBitmap
     val paths: LinkedHashMap<Any, PaintOptions> get() = _paths
     val paintOptions: PaintOptions get() = _paintOptions
@@ -142,7 +140,7 @@ class CanvasViewModel(
         // width and height of the image view
         Log.d("CanvasViewModel", "infer mask")
         val request = InferenceUtils.getMaskInferenceRequest(image)
-        _maskError.postValue(0)
+        _maskError.postValue(false)
         viewModelScope.launch {
             var response: InferenceResponse?
             try {
@@ -153,14 +151,13 @@ class CanvasViewModel(
                         "CanvasViewModel",
                         "Inference mask failed with exception: ${e.message}, retrying..."
                     )
-                    _maskError.postValue(1)
                     response = segmentationRepository.inferMask(request) // just retry
                 } catch (e: Exception) {
                     Log.e("CanvasViewModel", "Inference mask failed")
                     _maskOverallImage.postValue(null)
                     _masks.postValue(emptyList())
                     _labels.postValue(emptyList())
-                    _maskError.postValue(2)
+                    _maskError.postValue(true)
                     return@launch
                 }
             }
@@ -181,14 +178,14 @@ class CanvasViewModel(
                 }
                 _masks.postValue(generatedBitmaps) // OUTPUT_MASKS
                 _labels.postValue(response.outputs[2].data) // OUTPUT_LABELS
-                _maskError.postValue(0)
+                _maskError.postValue(false)
             }
             else {
                 Log.e("CanvasViewModel", "Inference mask failed")
                 _maskOverallImage.postValue(null)
                 _masks.postValue(emptyList())
                 _labels.postValue(emptyList())
-                _maskError.postValue(2)
+                _maskError.postValue(true)
             }
         }
     }

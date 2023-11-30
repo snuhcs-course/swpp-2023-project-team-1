@@ -41,14 +41,13 @@ class InferenceViewModel(
 
     private val _inferenceResult = MutableLiveData<ArrayList<Bitmap>?>().apply { value = null }
     private val _previousInference = MutableLiveData<Inference?>().apply { value = null }
-    private val _inferenceError = MutableLiveData<Int>().apply { value = 0 }
-    // 0: no error, 1: retrying, 2: failed
+    private val _inferenceError = MutableLiveData<Boolean>().apply { value = false }
     private val _postResult = MutableLiveData<Post?>().apply { value = null }
     private val _postError = MutableLiveData<Boolean>().apply { value = false }
 
     val inferenceResult: LiveData<ArrayList<Bitmap>?> get() = _inferenceResult
     val previousInference: LiveData<Inference?> get() = _previousInference
-    val inferenceError: LiveData<Int> get() = _inferenceError
+    val inferenceError: LiveData<Boolean> get() = _inferenceError
     val postResult: LiveData<Post?> get() = _postResult
     val postError: LiveData<Boolean> get() = _postError
 
@@ -58,7 +57,7 @@ class InferenceViewModel(
     }
 
     fun infer(image: Bitmap, mask: Bitmap, prompt: String) {
-        _inferenceError.postValue(0)
+        _inferenceError.postValue(false)
         _previousInference.value = Inpainting(image, mask, prompt)
         Log.d("InferenceViewModel", "Input image size: ${image.byteCount}")
         Log.d("InferenceViewModel", "Input mask size: ${mask.byteCount}")
@@ -74,12 +73,11 @@ class InferenceViewModel(
                         "InferenceViewModel",
                         "Inference failed with exception: ${e.message}, retrying..."
                     )
-                    _inferenceError.postValue(1)
                     result = inferenceRepository.infer(request) // just retry
                 } catch (e: Exception) {
                     Log.e("InferenceViewModel", "Inference failed")
                     _inferenceResult.postValue(null)
-                    _inferenceError.postValue(2)
+                    _inferenceError.postValue(true)
                     return@launch
                 }
             }
@@ -99,17 +97,17 @@ class InferenceViewModel(
                     generatedBitmaps.add(generatedBitmap!!)
                 }
                 _inferenceResult.postValue(generatedBitmaps)
-                _inferenceError.postValue(0)
+                _inferenceError.postValue(false)
             } else {
                 Log.e("InferenceViewModel", "Inference failed")
                 _inferenceResult.postValue(null)
-                _inferenceError.postValue(2)
+                _inferenceError.postValue(true)
             }
         }
     }
 
     fun infer(prompt: String) {
-        _inferenceError.postValue(0)
+        _inferenceError.postValue(false)
         _previousInference.value = Txt2Img(prompt)
         Log.d("InferenceViewModel", "Input prompt: $prompt")
         val request = InferenceUtils.getInferenceRequest(prompt)
@@ -124,12 +122,11 @@ class InferenceViewModel(
                         "InferenceViewModel",
                         "Inference failed with exception: ${e.message}, retrying..."
                     )
-                    _inferenceError.postValue(1)
                     result = inferenceRepository.infer(request) // just retry
                 } catch (e: Exception) {
                     Log.e("InferenceViewModel", "Inference failed")
                     _inferenceResult.postValue(null)
-                    _inferenceError.postValue(2)
+                    _inferenceError.postValue(true)
                     return@launch
                 }
             }
@@ -148,12 +145,12 @@ class InferenceViewModel(
                     generatedBitmaps.add(generatedBitmap!!)
                 }
                 _inferenceResult.postValue(generatedBitmaps)
-                _inferenceError.postValue(0)
+                _inferenceError.postValue(false)
 
             } else {
                 Log.e("InferenceViewModel", "Inference failed")
                 _inferenceResult.postValue(null)
-                _inferenceError.postValue(2)
+                _inferenceError.postValue(true)
             }
         }
     }
