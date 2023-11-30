@@ -168,7 +168,8 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
      * Verify Code API
      * Returns true if verification is successful */
     suspend fun verifyCode(email: String, code: String): Boolean {
-        val request = VerifyCodeRequest(email, code)
+        Log.d("AuthRepository", "Verify code request: $code")
+        val request = VerifyCodeRequest(email, code.toInt())
         val response = authAPI.verifyCode(request)
 
         return if (response.isSuccessful) {

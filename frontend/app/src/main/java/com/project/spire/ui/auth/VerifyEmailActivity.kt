@@ -131,7 +131,7 @@ class VerifyEmailActivity : AppCompatActivity() {
                 if (codeFilled.all { it != -1 }) {
                     viewModel.verifyCode(
                         emailInput.editText?.text.toString(),
-                        codeInput.editText?.text.toString()
+                        codeFilled.joinToString("")
                     )
                 }
             }

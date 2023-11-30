@@ -52,6 +52,7 @@ class WriteTextActivity : AppCompatActivity() {
         // Inference result received
         inferenceViewModel.inferenceResult.observe(this) {
             if (it != null) {
+                doneButton.isEnabled = true
                 Log.d("WriteTextActivity", "Inference result received. Changing image.")
 
                 binding.resultImageView.visibility = View.INVISIBLE
@@ -96,6 +97,7 @@ class WriteTextActivity : AppCompatActivity() {
         // Post upload failed
         inferenceViewModel.postError.observe(this) {
             if (it == true) {
+                doneButton.isEnabled = true
                 Toast.makeText(this, "Post upload failed", Toast.LENGTH_SHORT).show()
                 binding.postUploadProgressBar.visibility = View.GONE
             }
@@ -107,6 +109,7 @@ class WriteTextActivity : AppCompatActivity() {
             val currentImage: Bitmap = inferenceViewModel.inferenceResult.value!![currentPosition]
             val content = binding.postTextInputLayout.editText?.text.toString()
             inferenceViewModel.postUpload(currentImage, content)
+            doneButton.isEnabled = false
         }
 
         regenerateBtn.setOnClickListener {
