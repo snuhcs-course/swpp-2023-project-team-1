@@ -19,18 +19,19 @@
     <string name="bottom_sheet_camera">Take a picture</string>
     <string name="bottom_sheet_gallery">Choose from gallery</string>
     <string name="bottom_sheet_new">Generate new image</string>
-    <string name="title_toolbar_image_edit">Edit Your Image</string>
+    <string name="title_toolbar_image_edit">Recreate Your Image</string>
     <string name="prompt_suggestion_button">sunglasses</string>
     <string name="prompt_hint">How do you want to change?</string>
     <string name="next_button">Next</string>
     <string name="title_create_post">Create Post</string>
     <string name="title_edit_profile">Edit Profile</string>
     <string name="mask_generate_button">Try Auto-Painting!</string>
+    <string name="recreate_your_image">Recreate Your Image as You Like!</string>
 
     <!-- image edit tooltip -->
-    <string name="tooltip_title_1">Where do you want to edit?</string>
+    <string name="tooltip_title_1">Where do you want to change?</string>
     <string name="tooltip_content_1">Please paint the part as blue.\nUnpainted parts will not be edited.</string>
-    <string name="tooltip_title_2">How do you want to edit?</string>
+    <string name="tooltip_title_2">How do you want to change?</string>
     <string name="tooltip_content_2">Please describe the overall image clearly in English.\nPlease separate with commas.</string>
 
     <!-- write text activity -->
