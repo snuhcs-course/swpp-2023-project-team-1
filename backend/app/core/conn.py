@@ -2,6 +2,7 @@ from uuid import UUID
 from fastapi import WebSocket
 from starlette.websockets import WebSocketState
 
+
 class ConnectionManager:
     def __init__(self):
         self.active_connections: dict[str, WebSocket] = {}

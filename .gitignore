@@ -165,4 +165,6 @@ cython_debug/
 # firebase
 firebase.json
 traefik-public-certificates
+
+# frontend network config
 frontend/app/src/main/java/com/project/spire/network/NetworkConfig.kt
