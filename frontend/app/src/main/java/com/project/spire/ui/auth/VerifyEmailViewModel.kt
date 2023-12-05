@@ -76,10 +76,12 @@ class VerifyEmailViewModel(
 
     fun verifyCode(email: String, code: String) {
         viewModelScope.launch {
-            val success = authRepository.verifyCode(email, code)
+            val responseCode = authRepository.verifyCode(email, code)
             Log.d("VerifyEmailViewModel", "Verify request with code $code")
-            if (success) {
+            if (responseCode == 200) {
                 _verifyEmailResult.postValue(true)
+            } else if (responseCode == 400) {
+                _verifyErrorMessage.postValue("Code expired")
             } else {
                 _verifyErrorMessage.postValue("Check your code again")
             }

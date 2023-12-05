@@ -167,17 +167,21 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
     /**
      * Verify Code API
      * Returns true if verification is successful */
-    suspend fun verifyCode(email: String, code: String): Boolean {
+    suspend fun verifyCode(email: String, code: String): Int {
         Log.d("AuthRepository", "Verify code request: $code")
         val request = VerifyCodeRequest(email, code.toInt())
         val response = authAPI.verifyCode(request)
 
         return if (response.isSuccessful) {
             Log.d("AuthRepository", "Verify code response: ${response.code()}")
-            true
+            200
+        } else if (response.code() == 400) {
+            // Code expired
+            Log.e("AuthRepository", "Verify code error ${response.code()}: ${response.message()}")
+            400
         } else {
             Log.e("AuthRepository", "Verify code error ${response.code()}: ${response.message()}")
-            false
+            401
         }
     }
 
