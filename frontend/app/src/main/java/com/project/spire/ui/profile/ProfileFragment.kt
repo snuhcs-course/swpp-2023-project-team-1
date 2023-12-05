@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.compose.material3.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -156,6 +158,9 @@ class ProfileFragment : Fragment() {
         binding.profileLargeButton.setOnClickListener {
             if (profileViewModel.isMyProfile.value == true) {
                 startActivity(Intent(requireContext(), EditProfileActivity::class.java))
+            } else if (profileViewModel.followingState.value == 1) {
+                // Unfollow warning
+                unfollowDialog(profileViewModel.username.value!!)
             } else {
                 profileViewModel.followRequest(null)
             }
@@ -189,6 +194,19 @@ class ProfileFragment : Fragment() {
                 binding.postShimmerLayout.visibility = View.GONE
             }
         }
+    }
+
+    private fun unfollowDialog(username: String) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Unfollow")
+            .setMessage("Are you sure you want to unfollow ${username}?")
+            .setPositiveButton("Yes") { _, _ ->
+                profileViewModel.followRequest(null)
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun onDestroyView() {
