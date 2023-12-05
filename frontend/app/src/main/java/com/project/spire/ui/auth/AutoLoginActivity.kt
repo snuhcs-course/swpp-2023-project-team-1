@@ -3,34 +3,50 @@ package com.project.spire.ui.auth
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.project.spire.core.DataStoreProvider
+import android.widget.Toast
+import com.example.spire.databinding.ActivityAutoLoginBinding
+import com.project.spire.utils.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.ui.MainActivity
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 
 /**
  * This Activity is invisible
  * For automated login
  * Must be the initial launch Activity */
-class AutoLoginActivity : AppCompatActivity() {
+class   AutoLoginActivity : AppCompatActivity() {
+
+    private val binding: ActivityAutoLoginBinding by lazy {
+        ActivityAutoLoginBinding.inflate(layoutInflater)
+    }
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        supportActionBar?.hide()
+        setContentView(binding.root)
 
         val authDataStore = DataStoreProvider.authDataStore
         val authRepository = AuthRepository(authDataStore)
 
         // Auto login
         GlobalScope.launch {
-            val success = authRepository.refresh()
-            if (success) {
-                goto<MainActivity>()
-            } else {
+            try {
+                val success = authRepository.refresh()
+                if (success) {
+                    goto<MainActivity>()
+                } else {
+                    goto<LoginActivity>()
+                }
+            } catch (e: SocketTimeoutException) {
+                runOnUiThread{Toast.makeText(this@AutoLoginActivity, "Connection timed out", Toast.LENGTH_SHORT).show()}
                 goto<LoginActivity>()
             }
+
         }
     }
 

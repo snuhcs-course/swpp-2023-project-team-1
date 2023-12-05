@@ -3,14 +3,12 @@ package com.project.spire.ui.auth
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.PopupWindow
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
@@ -18,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.spire.R
 import com.example.spire.databinding.ActivitySignUpBinding
 import com.google.android.material.textfield.TextInputLayout
-import com.project.spire.core.DataStoreProvider
+import com.project.spire.utils.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.Validation
 import com.project.spire.ui.MainActivity
@@ -55,6 +53,8 @@ class SignUpActivity : AppCompatActivity() {
         val popupView = LayoutInflater.from(this).inflate(R.layout.password_pattern_popup, null)
         val popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true)
         passwordPatternButton.isActivated = false
+        signUpBtn.background = resources.getDrawable(R.drawable.btn_bg_disabled, null)
+        signUpBtn.isEnabled = false
 
         emailInput.editText?.setOnFocusChangeListener { _, hasFocus ->
             setHelperText(emailInput, hasFocus, resources.getString(R.string.email_helper_text))
@@ -118,7 +118,7 @@ class SignUpActivity : AppCompatActivity() {
 
         viewModel.errorMessage.observe(this) {
             binding.loadingIndicator.hide()
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            usernameInput.error = it
         }
     }
 

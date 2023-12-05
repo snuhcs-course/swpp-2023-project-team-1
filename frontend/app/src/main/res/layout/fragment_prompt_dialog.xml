@@ -1,0 +1,59 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/prompt_dialog_margin"
+    android:orientation="vertical"
+    android:padding="@dimen/prompt_dialog_padding"
+    tools:context="com.project.spire.ui.create.PromptDialogFragment">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/prompt_input_layout"
+        style="@style/ImgEditTextBox"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/prompt_dialog_height"
+        app:layout_constraintTop_toTopOf="parent"
+        android:hint="@string/prompt_dialog_hint">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/prompt_input"
+            style="@style/ImgEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textMultiLine" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/generate_button"
+        style="@style/ImgEditBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:text="@string/prompt_dialog_button"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/prompt_input_layout" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/ImgEditBtn"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/transparent"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:text="@string/prompt_dialog_cancel"
+        android:textSize="14sp"
+        android:textColor="@color/blue_500"
+        app:layout_constraintEnd_toStartOf="@id/generate_button"
+        android:layout_marginHorizontal="10dp"
+        app:layout_constraintTop_toBottomOf="@id/prompt_input_layout" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.project.spire.ui.create.WriteTextActivity">
+
+    <include
+        android:id="@+id/write_text_app_bar_layout"
+        layout="@layout/toolbar_image_edit" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/result_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="15dp"
+        android:background="@drawable/bg_gradient_loading"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/write_text_app_bar_layout" />
+
+    <ProgressBar
+        android:id="@+id/loading_progress_bar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:indeterminateDrawable="@drawable/loading_progress_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/result_image_view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/result_image_view" />
+
+    <TextView
+        android:id="@+id/loading_text"
+        style="@style/loading_text_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="@string/loading_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/carousel_recycler_view" />
+
+    <TextView
+        android:id="@+id/loading_time_text"
+        style="@style/loading_text_gray"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/loading_time_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loading_text" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/describe_your_image_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:text="@string/describe_your_image"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/loading_time_text" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/post_text_input_layout"
+        style="@style/ImgEditTextBox"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="15dp"
+        android:hint="@string/post_text_hint"
+        app:layout_constraintBottom_toTopOf="@id/only_this_image_text"
+        app:layout_constraintTop_toBottomOf="@id/describe_your_image_text">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/post_text_input"
+            style="@style/ImgEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textMultiLine"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ProgressBar
+        android:id="@+id/post_upload_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@id/post_text_input_layout"
+        app:layout_constraintBottom_toBottomOf="@id/post_text_input_layout"
+        app:layout_constraintStart_toStartOf="@id/post_text_input_layout"
+        app:layout_constraintEnd_toEndOf="@id/post_text_input_layout" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/only_this_image_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/done_button"
+        android:text="@string/only_this_image"
+        android:textAlignment="center"
+        android:layout_marginVertical="5dp" />
+
+    <Button
+        android:id="@+id/done_button"
+        style="@style/ImgEditBtn"
+        android:layout_marginBottom="20dp"
+        android:text="@string/done_button"
+        android:enabled="false"
+        app:backgroundTint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <!-- Inference Result Images -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/carousel_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="15dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:visibility="invisible"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/write_text_app_bar_layout" />
+
+    <me.relex.circleindicator.CircleIndicator2
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_marginTop="13dp"
+        android:visibility="visible"
+        app:ci_drawable="@drawable/indicator_active"
+        app:ci_drawable_unselected="@drawable/indicator_inactive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/carousel_recycler_view" />
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:id="@+id/regenerate_btn"
+        style="@style/SelectImageUtilBtn"
+        android:layout_width="wrap_content"
+        android:layout_margin="15dp"
+        android:elevation="2dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/carousel_recycler_view">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/select_image_btn_icon_size"
+            android:layout_height="@dimen/select_image_btn_icon_size"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_regenerate" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            android:text="@string/regenerate"
+            android:textColor="@color/black"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/original_image_btn"
+        style="@style/SelectImageUtilBtn"
+        android:layout_width="@dimen/select_image_btn_height"
+        android:layout_margin="15dp"
+        android:elevation="2dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/download_btn"
+        app:layout_constraintTop_toBottomOf="@id/carousel_recycler_view">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/select_image_btn_icon_size"
+            android:layout_height="@dimen/select_image_btn_icon_size"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_original_image" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/download_btn"
+        style="@style/SelectImageUtilBtn"
+        android:layout_width="@dimen/select_image_btn_height"
+        android:layout_margin="15dp"
+        android:elevation="2dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/carousel_recycler_view">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/select_image_btn_icon_size"
+            android:layout_height="@dimen/select_image_btn_icon_size"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_download" />
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/original_image_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="15dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:visibility="invisible"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/write_text_app_bar_layout">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/original_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:transitionName="image"
+            android:scaleType="centerCrop" />
+
+    </androidx.cardview.widget.CardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

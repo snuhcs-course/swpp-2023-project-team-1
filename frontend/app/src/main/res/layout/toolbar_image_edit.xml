@@ -31,7 +31,9 @@
             style="@style/ToolbarText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/title_toolbar"
+            android:text="@string/title_toolbar_image_edit"
+            android:textSize="@dimen/image_edit_toolbar_title_font"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/back_button"
             app:layout_constraintTop_toTopOf="parent" />

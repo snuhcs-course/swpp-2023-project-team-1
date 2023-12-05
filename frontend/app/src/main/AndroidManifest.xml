@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:name="com.project.spire.SpireApplication"
@@ -17,12 +22,30 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name="com.project.spire.ui.create.CameraActivity"
+            android:screenOrientation="portrait"
+            android:exported="true" />
+        <activity
+            android:name="com.project.spire.ui.create.WriteTextActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            android:exported="true" />
+        <activity
+            android:name="com.project.spire.ui.feed.PostFragment"
+            android:screenOrientation="portrait"
+            android:exported="true" />
+        <activity
+            android:name="com.project.spire.ui.profile.EditProfileActivity"
+            android:screenOrientation="portrait"
+            android:exported="true" />
+        <activity
             android:name="com.project.spire.ui.auth.VerifyEmailActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.project.spire.ui.auth.AutoLoginActivity"
-            android:exported="true"
-            android:theme="@style/TransparentTheme">
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,20 +53,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.project.spire.ui.create.image.ImageEditActivity"
+            android:name="com.project.spire.ui.create.ImageEditActivity"
+            android:screenOrientation="portrait"
             android:exported="true"
-            android:label="@string/title_activity_image_edit"></activity>
+            android:windowSoftInputMode="adjustPan"
+            android:label="@string/title_activity_image_edit" />
         <activity
             android:name="com.project.spire.ui.auth.SignUpActivity"
+            android:screenOrientation="portrait"
             android:exported="true"
-            android:label="@string/title_activity_sign_up"></activity>
+            android:label="@string/title_activity_sign_up" />
         <activity
             android:name="com.project.spire.ui.auth.LoginActivity"
+            android:screenOrientation="portrait"
             android:exported="true"
-            android:label="@string/title_activity_sign_in"></activity>
+            android:label="@string/title_activity_sign_in" />
         <activity
             android:name="com.project.spire.ui.MainActivity"
-            android:exported="true"></activity>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"
+            android:exported="true" />
     </application>
 
 </manifest>

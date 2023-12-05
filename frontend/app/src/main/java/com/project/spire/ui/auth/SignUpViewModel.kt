@@ -1,9 +1,12 @@
 package com.project.spire.ui.auth
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.spire.core.auth.AuthRepository
+import com.project.spire.network.auth.response.CheckError
+import com.project.spire.network.auth.response.CheckSuccess
 import com.project.spire.network.auth.response.RegisterError
 import com.project.spire.network.auth.response.RegisterSuccess
 import kotlinx.coroutines.launch
@@ -26,14 +29,28 @@ class SignUpViewModel(
 
     fun register(password: String, username: String) {
         viewModelScope.launch {
-            val response = authRepository.register(_email.value!!, password, username)
-            if (response is RegisterSuccess) {
-                _registerResult.postValue(true)
-            } else if (response is RegisterError) {
-                _errorMessage.postValue(response.message)
+            // Check if username exists
+            val checkUsernameResponse = authRepository.check("", username)
+            if (checkUsernameResponse is CheckSuccess) {
+                if (checkUsernameResponse.usernameExists) {
+                    Log.d("SignUpViewModel", "Username already exists")
+                    _errorMessage.postValue("Username already exists")
+                    return@launch
+                } else {
+                    // Username is available
+                    val response = authRepository.register(_email.value!!, username, password)
+                    if (response is RegisterSuccess) {
+                        _registerResult.postValue(true)
+                    } else if (response is RegisterError) {
+                        _errorMessage.postValue(response.message)
+                    }
+                }
+            } else if (checkUsernameResponse is CheckError) {
+                _errorMessage.postValue(checkUsernameResponse.message)
             }
         }
     }
+
 
     fun updateEmail(email: String) {
         _email.postValue(email)

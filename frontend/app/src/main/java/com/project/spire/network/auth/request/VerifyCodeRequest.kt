@@ -8,5 +8,5 @@ data class VerifyCodeRequest (
     val email: String,
 
     @SerializedName("code")
-    val code: String,
+    val code: Int,
 )

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.Validation
+import com.project.spire.network.auth.response.CheckSuccess
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
@@ -33,6 +34,9 @@ class VerifyEmailViewModel(
     private val _verifyErrorMessage = MutableLiveData<String>().apply { value = "" }
     val verifyErrorMessage = _verifyErrorMessage
 
+    private val _canSendAgain = MutableLiveData<Boolean>().apply { value = false }
+    val canSendAgain = _canSendAgain
+
     fun sendEmail(email: String) {
         when (Validation.isValidEmail(email)) {
             Validation.EMAIL_EMPTY -> {
@@ -48,17 +52,23 @@ class VerifyEmailViewModel(
             Validation.EMAIL_VALID -> {
                 _errorMessage.postValue("")
                 viewModelScope.launch {
-                    // TODO: Check if email exists
-
-                    val success = authRepository.email(email)
-                    if (success) {
-                        _emailSent.postValue(true)
-                        startTimer()
+                    // Check if email exists
+                    val checkEmailResponse = authRepository.check(email, "")
+                    if (checkEmailResponse is CheckSuccess) {
+                        if (checkEmailResponse.emailExists) {
+                            _emailExists.postValue(true)
+                            return@launch
+                        }
+                        else {
+                            // Send email
+                            val success = authRepository.email(email)
+                            if (success) {
+                                _emailSent.postValue(true)
+                            }
+                        }
+                    } else {
+                        _errorMessage.postValue("Something went wrong")
                     }
-
-                    // FIXME: Remove these two lines after testing
-                    _emailSent.postValue(true)
-                    startTimer()
                 }
             }
         }
@@ -72,19 +82,19 @@ class VerifyEmailViewModel(
                 _verifyEmailResult.postValue(true)
             } else {
                 _verifyErrorMessage.postValue("Check your code again")
-
-                // FIXME: Remove this after testing
-                _verifyEmailResult.postValue(true)
             }
         }
     }
 
     fun startTimer() {
         viewModelScope.launch {
+            _remainingSeconds.postValue(EMAIL_TIMER)
+            _canSendAgain.postValue(false)
             for (i in EMAIL_TIMER downTo 0) {
                 _remainingSeconds.postValue(i)
                 kotlinx.coroutines.delay(1000)
             }
+            _canSendAgain.postValue(true)
         }
     }
 

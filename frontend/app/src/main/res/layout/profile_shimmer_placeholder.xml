@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/profile_header_background"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/profile_header_background_height"
+        android:foreground="@drawable/ic_profile_header_bg"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/profile_image"
+        android:layout_width="@dimen/profile_image_size"
+        android:layout_height="@dimen/profile_image_size"
+        android:layout_marginTop="@dimen/profile_image_margin_top"
+        android:background="@drawable/bg_profile_image"
+        android:padding="@dimen/profile_image_border_width"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/profile_header_background" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/profile_username"
+        style="@style/profile_username_text"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/profile_username_margin_top"
+        android:background="@color/grey_300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_image" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/profile_bio"
+        style="@style/profile_bio_text"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/profile_bio_margin_top"
+        android:background="@color/grey_300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_username" />
+
+    <LinearLayout
+        android:id="@+id/profile_follow_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/profile_button_margin_top"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        app:layout_constraintTop_toBottomOf="@id/profile_bio">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/follower_button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/profile_button_height"
+            android:layout_margin="2dp"
+            android:layout_weight="1"
+            android:background="@color/grey_300" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/following_button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/profile_button_height"
+            android:layout_margin="2dp"
+            android:layout_weight="1"
+            android:background="@color/grey_300" />
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/profile_large_button_shimmer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/profile_button_height"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginVertical="4dp"
+        android:background="@color/grey_300"
+        app:layout_constraintTop_toBottomOf="@id/profile_follow_button_layout" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
