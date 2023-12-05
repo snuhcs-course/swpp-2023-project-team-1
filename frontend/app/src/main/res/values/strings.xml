@@ -22,7 +22,8 @@
     <string name="title_toolbar_image_edit">Recreate Your Image</string>
     <string name="prompt_suggestion_button">sunglasses</string>
     <string name="prompt_hint">How do you want to change?</string>
-    <string name="next_button">Generate</string>
+    <string name="next_button">Next</string>
+    <string name="generate_button">Generate</string>
     <string name="title_create_post">Create Post</string>
     <string name="title_edit_profile">Edit Profile</string>
     <string name="mask_generate_button">Try Auto-Painting!</string>
