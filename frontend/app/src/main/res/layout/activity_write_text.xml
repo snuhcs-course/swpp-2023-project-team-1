@@ -109,6 +109,7 @@
         style="@style/ImgEditBtn"
         android:layout_marginBottom="20dp"
         android:text="@string/done_button"
+        android:enabled="false"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

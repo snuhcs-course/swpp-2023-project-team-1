@@ -45,8 +45,7 @@
         <activity
             android:name="com.project.spire.ui.auth.AutoLoginActivity"
             android:screenOrientation="portrait"
-            android:exported="true"
-            android:theme="@style/TransparentTheme">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

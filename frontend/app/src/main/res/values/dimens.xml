@@ -67,6 +67,7 @@
     <dimen name="image_edit_toolbar_title_font">20sp</dimen>
     <dimen name="select_image_btn_height">36dp</dimen>
     <dimen name="select_image_btn_icon_size">16dp</dimen>
+    <dimen name="tooltip_button_size">30dp</dimen>
 
     <!-- feed, post and comment -->
     <dimen name="bottom_sheet_height">200dp</dimen>
