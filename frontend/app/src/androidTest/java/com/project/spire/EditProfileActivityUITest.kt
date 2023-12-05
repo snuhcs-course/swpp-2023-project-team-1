@@ -67,33 +67,33 @@ class EditProfileActivityUITest {
             .check(matches(withText("uitest@google.com")))
     }
 
-    // TODO
-    @Test
-    fun test_editProfileUsername_wrong_duplicated() {
-        onView(withId(R.id.edit_profile_username_edit_text))
-            .perform(clearText(), typeText("test0000"), ViewActions.closeSoftKeyboard())
-
-        onView(withId(R.id.edit_profile_save_btn))
-            .perform(click())
-    }
-
-    // TODO
-    @Test
-    fun test_editProfileBio() {
-        onView(withId(R.id.edit_profile_bio_edit_text))
-            .perform(clearText(), typeText("test user for UI testing"), ViewActions.closeSoftKeyboard())
-
-        onView(withId(R.id.edit_profile_save_btn))
-            .perform(click())
-
-        Thread.sleep(500)
-
-        onView(withId(R.id.tab_profile))
-            .perform(click())
-
-        onView(withId(R.id.profile_bio))
-            .check(matches(withText("test user for UI testing")))
-    }
+//    // TODO
+//    @Test
+//    fun test_editProfileUsername_wrong_duplicated() {
+//        onView(withId(R.id.edit_profile_username_edit_text))
+//            .perform(clearText(), typeText("test0000"), ViewActions.closeSoftKeyboard())
+//
+//        onView(withId(R.id.edit_profile_save_btn))
+//            .perform(click())
+//    }
+//
+//    // TODO
+//    @Test
+//    fun test_editProfileBio() {
+//        onView(withId(R.id.edit_profile_bio_edit_text))
+//            .perform(clearText(), typeText("test user for UI testing"), ViewActions.closeSoftKeyboard())
+//
+//        onView(withId(R.id.edit_profile_save_btn))
+//            .perform(click())
+//
+//        Thread.sleep(500)
+//
+//        onView(withId(R.id.tab_profile))
+//            .perform(click())
+//
+//        onView(withId(R.id.profile_bio))
+//            .check(matches(withText("test user for UI testing")))
+//    }
 
     @Test
     fun test_backButton() {

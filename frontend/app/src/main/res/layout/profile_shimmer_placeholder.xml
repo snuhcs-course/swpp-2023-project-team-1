@@ -73,7 +73,7 @@
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/profile_large_button_shimmer"
+        android:id="@+id/profile_large_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/profile_button_height"
         android:layout_marginHorizontal="12dp"

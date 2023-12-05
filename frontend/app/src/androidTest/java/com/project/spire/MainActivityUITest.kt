@@ -62,11 +62,13 @@ class MainActivityUITest {
         Intents.release()
     }
 
+//    // TODO
 //    @Test
 //    fun test_postLikeButton() {
 //        onView(withId(R.id.recycler_view_feed))
 //            .perform(RecyclerViewActions.actionOnItemAtPosition<>(hasDescendant(withText("whatever")), click()))
 //    }
+
 
     @Test
     fun test_editProfileButton() {
