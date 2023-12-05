@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.compose.material3.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -134,21 +136,32 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        val postAdapter = PostAdapter(profileViewModel.posts.value!!, findNavController())
+        val layoutManager = GridLayoutManager(requireContext(), spanCount)
+        binding.profilePostRecyclerView.run {
+            this.adapter = postAdapter
+            this.layoutManager = layoutManager
+            addItemDecoration(GridSpaceItemDecoration(spanCount, (space * Resources.getSystem().displayMetrics.density).toInt()))
+        }
+
         profileViewModel.posts.observe(viewLifecycleOwner) { it ->
             if (it != null) {
-                val postAdapter = PostAdapter(it, findNavController())
-                binding.profilePostRecyclerView.adapter = postAdapter
-                binding.profilePostRecyclerView.layoutManager =
-                    GridLayoutManager(requireContext(), spanCount)
-                binding.profilePostRecyclerView.addItemDecoration(GridSpaceItemDecoration(spanCount, (space * Resources.getSystem().displayMetrics.density).toInt()))
+                postAdapter.updatePosts(it)
             }
+        }
+
+        binding.profileImage.setOnClickListener {
+            val dialog = ProfileImageDialogFragment(profileViewModel.profileImageUrl.value!!)
+            dialog.show(parentFragmentManager, "ProfileImageDialogFragment")
         }
 
         binding.profileLargeButton.setOnClickListener {
             if (profileViewModel.isMyProfile.value == true) {
                 startActivity(Intent(requireContext(), EditProfileActivity::class.java))
+            } else if (profileViewModel.followingState.value == 1) {
+                // Unfollow warning
+                unfollowDialog(profileViewModel.username.value!!)
             } else {
-                // TODO: Follow user
                 profileViewModel.followRequest(null)
             }
         }
@@ -166,6 +179,34 @@ class ProfileFragment : Fragment() {
             bundle.putString("userId", profileViewModel.userId.value)
             findNavController().navigate(R.id.action_profile_to_relationship, bundle)
         }
+
+        profileViewModel.profileLoaded.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.profileShimmer.stopShimmer()
+                binding.profileShimmer.visibility = View.INVISIBLE
+                binding.profileLayout.visibility = View.VISIBLE
+            }
+        }
+
+        profileViewModel.postLoaded.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.postShimmerLayout.stopShimmer()
+                binding.postShimmerLayout.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun unfollowDialog(username: String) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Unfollow")
+            .setMessage("Are you sure you want to unfollow ${username}?")
+            .setPositiveButton("Yes") { _, _ ->
+                profileViewModel.followRequest(null)
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun onDestroyView() {

@@ -13,6 +13,7 @@ import com.project.spire.network.post.request.NewCommentRequest
 import com.project.spire.network.post.request.UpdatePostRequest
 import com.project.spire.network.user.response.UserSuccess
 import com.project.spire.utils.AuthProvider
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val COMMENT_LIMIT = 10
@@ -73,7 +74,8 @@ class PostViewModel: ViewModel() {
 
             if (response.code() == 200 && response.isSuccessful && response.body() != null) {
                 Log.d("PostViewModel", "${response.body() as Comment}")
-                _comments.value = _comments.value?.plus(response.body()!!)
+                _post.value = _post.value?.copy(commentCount = _post.value!!.commentCount + 1)
+                _comments.value = listOf(response.body() as Comment).plus(_comments.value!!)
             } else {
                 Log.e("PostViewModel", "Error commenting with ${response.code()} ${response.message()}")
             }
@@ -158,6 +160,7 @@ class PostViewModel: ViewModel() {
 
             if (response.code() == 200 && response.isSuccessful) {
                 Log.d("PostViewModel", "Comment deleted")
+                _post.postValue(_post.value?.copy(commentCount = _post.value!!.commentCount - 1))
             } else {
                 Log.e("PostViewModel", "Error deleting comment with ${response.code()} ${response.message()}")
             }

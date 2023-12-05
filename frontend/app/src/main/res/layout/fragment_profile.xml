@@ -20,78 +20,113 @@
         android:layout_height="@dimen/profile_image_size"
         android:layout_marginTop="@dimen/profile_image_margin_top"
         android:background="@drawable/bg_profile_image"
+        android:padding="@dimen/profile_image_border_width"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:padding="@dimen/profile_image_border_width"
         app:layout_constraintTop_toTopOf="@id/profile_header_background" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/profile_username"
-        style="@style/profile_username_text"
+    <!-- Invisible while shimmering -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/profile_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         android:layout_marginTop="@dimen/profile_username_margin_top"
-        android:text="@string/profile_username"
-        app:layout_constraintTop_toBottomOf="@id/profile_image" />
+        app:layout_constraintTop_toBottomOf="@id/profile_image">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/profile_bio"
-        style="@style/profile_bio_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/profile_bio_margin_top"
-        android:text="@string/profile_bio"
-        app:layout_constraintTop_toBottomOf="@id/profile_username" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/profile_username"
+            style="@style/profile_username_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/profile_username"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-    <LinearLayout
-        android:id="@+id/profile_follow_button_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/profile_button_margin_top"
-        android:orientation="horizontal"
-        android:paddingHorizontal="10dp"
-        app:layout_constraintTop_toBottomOf="@id/profile_bio">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/profile_bio"
+            style="@style/profile_bio_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/profile_bio_margin_top"
+            android:text="@string/profile_bio"
+            app:layout_constraintTop_toBottomOf="@id/profile_username" />
+
+        <LinearLayout
+            android:id="@+id/profile_follow_button_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/profile_button_margin_top"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            app:layout_constraintTop_toBottomOf="@id/profile_bio">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/follower_button"
+                style="@style/profile_button_blue"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/profile_button_height"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:text="@string/profile_followers" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/following_button"
+                style="@style/profile_button_blue"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/profile_button_height"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:text="@string/profile_following" />
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/follower_button"
-            style="@style/profile_button_blue"
-            android:layout_width="0dp"
+            android:id="@+id/profile_large_button"
+            style="@style/profile_button_grey"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/profile_button_height"
-            android:layout_weight="1"
-            android:layout_margin="2dp"
-            android:text="@string/profile_followers" />
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginVertical="4dp"
+            android:text="@string/profile_edit_btn"
+            app:layout_constraintTop_toBottomOf="@id/profile_follow_button_layout" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/following_button"
-            style="@style/profile_button_blue"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/profile_button_height"
-            android:layout_weight="1"
-            android:layout_margin="2dp"
-            android:text="@string/profile_following" />
-
-    </LinearLayout>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/profile_large_button"
-        style="@style/profile_button_grey"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/profile_button_height"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginVertical="4dp"
-        android:text="@string/profile_edit_btn"
-        app:layout_constraintTop_toBottomOf="@id/profile_follow_button_layout" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/profile_post_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/profile_large_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:clipToPadding="false"
         android:nestedScrollingEnabled="false"
         android:paddingBottom="@dimen/nav_bar_total_height"
-        android:clipToPadding="false"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_layout" />
+
+    <!-- Shimmer -->
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/profile_shimmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha="1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shimmer_duration="800">
+
+        <include layout="@layout/profile_shimmer_placeholder" />
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/post_shimmer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha="1"
+        app:layout_constraintTop_toBottomOf="@id/profile_shimmer"
+        app:shimmer_duration="800">
+
+        <include layout="@layout/profile_post_shimmer_placeholder" />
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

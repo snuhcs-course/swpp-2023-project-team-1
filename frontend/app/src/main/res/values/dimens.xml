@@ -67,6 +67,7 @@
     <dimen name="image_edit_toolbar_title_font">20sp</dimen>
     <dimen name="select_image_btn_height">36dp</dimen>
     <dimen name="select_image_btn_icon_size">16dp</dimen>
+    <dimen name="tooltip_button_size">30dp</dimen>
 
     <!-- feed, post and comment -->
     <dimen name="bottom_sheet_height">200dp</dimen>
@@ -96,7 +97,7 @@
     <dimen name="search_bar_height">60dp</dimen>
     <dimen name="search_bar_margin">20dp</dimen>
     <dimen name="search_bar_icon_size">30dp</dimen>
-    <dimen name="search_bar_text_size">20sp</dimen>
+    <dimen name="search_bar_text_size">18sp</dimen>
     <dimen name="search_bar_text_padding">46dp</dimen>
     <dimen name="search_profile_image_width">70dp</dimen>
     <dimen name="search_profile_image_height">70dp</dimen>

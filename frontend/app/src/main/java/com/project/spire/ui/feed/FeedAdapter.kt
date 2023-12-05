@@ -48,6 +48,9 @@ class FeedAdapter(
         holder.username.setOnClickListener {
             showProfile(post.user.id)
         }
+        holder.postImage.setOnClickListener {
+            showPost(post.postId)
+        }
         holder.content.setOnClickListener {
             showPost(post.postId)
         }

@@ -8,7 +8,7 @@ class UserListItem(
     @SerializedName("username")
     val username: String,
     @SerializedName("profile_image_url")
-    val profileImageUrl: String,
+    val profileImageUrl: String?,
     @SerializedName("is_following")
     val isFollowing: Boolean,
     @SerializedName("is_follower")
