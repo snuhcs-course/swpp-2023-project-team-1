@@ -31,6 +31,7 @@ class WriteTextActivity : AppCompatActivity() {
         appbar.toolbarText.setText(R.string.title_toolbar_write_text)
 
         inferenceViewModel = InferenceUtils.inferenceViewModel
+        //inferenceViewModel.resetViewModel()
 
         val carousel = binding.carouselRecyclerView
         val doneButton = binding.doneButton
@@ -182,6 +183,7 @@ class WriteTextActivity : AppCompatActivity() {
     private fun regenerateImage() {
         when (val previousInference = inferenceViewModel.previousInference.value) {
             is Inpainting -> {
+                //inferenceViewModel.resetViewModel()
                 inferenceViewModel.infer(
                     previousInference.image,
                     previousInference.mask,
@@ -192,6 +194,7 @@ class WriteTextActivity : AppCompatActivity() {
             }
 
             is Txt2Img -> {
+                //inferenceViewModel.resetViewModel()
                 inferenceViewModel.infer(previousInference.prompt)
                 startActivity(Intent(this, WriteTextActivity::class.java))
                 finish()
