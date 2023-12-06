@@ -51,11 +51,6 @@ class InferenceViewModel(
     val postResult: LiveData<Post?> get() = _postResult
     val postError: LiveData<Boolean> get() = _postError
 
-    fun reset() {
-        _inferenceResult.value = null
-        Log.d("InferenceViewModel", "Reset LiveData")
-    }
-
     fun infer(image: Bitmap, mask: Bitmap, prompt: String) {
         _inferenceError.postValue(false)
         _previousInference.value = Inpainting(image, mask, prompt)

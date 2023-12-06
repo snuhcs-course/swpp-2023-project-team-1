@@ -31,6 +31,7 @@ import com.project.spire.ui.feed.FeedFragment
 import com.project.spire.ui.notifications.NotificationsFragment
 import com.project.spire.ui.profile.ProfileFragment
 import com.project.spire.ui.search.SearchFragment
+import com.project.spire.utils.InferenceUtils
 import java.lang.NullPointerException
 
 class MainActivity : AppCompatActivity() {
@@ -96,22 +97,26 @@ class MainActivity : AppCompatActivity() {
             bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_2)
         val bottomSheetNew = bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_3)
         val createPostBtn: FloatingActionButton = binding.fab
+        val inferenceViewModel = InferenceUtils.inferenceViewModel
 
         createPostBtn.setOnClickListener {
             bottomSheetDialog.show()
         }
 
         bottomSheetCamera.setOnClickListener {
+            inferenceViewModel.resetViewModel()
             val intent = Intent(this, CameraActivity::class.java)
             startActivity(intent)
             bottomSheetDialog.hide()
         }
 
         bottomSheetGallery.setOnClickListener {
+            inferenceViewModel.resetViewModel()
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         bottomSheetNew.setOnClickListener {
+            inferenceViewModel.resetViewModel()
             PromptDialogFragment().show(supportFragmentManager, "PromptDialogFragment")
             bottomSheetDialog.hide()
         }

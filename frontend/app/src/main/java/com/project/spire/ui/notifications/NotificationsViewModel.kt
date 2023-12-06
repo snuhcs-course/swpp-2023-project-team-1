@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.spire.models.Noti
-import com.project.spire.models.User
 import com.project.spire.network.RetrofitClient
 import com.project.spire.utils.AuthProvider
 import kotlinx.coroutines.launch

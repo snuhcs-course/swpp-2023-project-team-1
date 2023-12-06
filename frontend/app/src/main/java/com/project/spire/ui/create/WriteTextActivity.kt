@@ -31,7 +31,6 @@ class WriteTextActivity : AppCompatActivity() {
         appbar.toolbarText.setText(R.string.title_toolbar_write_text)
 
         inferenceViewModel = InferenceUtils.inferenceViewModel
-        inferenceViewModel.reset()
 
         val carousel = binding.carouselRecyclerView
         val doneButton = binding.doneButton
@@ -87,7 +86,7 @@ class WriteTextActivity : AppCompatActivity() {
         // Post upload success
         inferenceViewModel.postResult.observe(this) {
             if (it != null) {
-                inferenceViewModel.resetViewModel()
+                //inferenceViewModel.resetViewModel()
                 val intent = Intent(this, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
