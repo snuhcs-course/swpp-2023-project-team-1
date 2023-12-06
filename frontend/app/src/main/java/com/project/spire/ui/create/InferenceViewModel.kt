@@ -201,6 +201,15 @@ class InferenceViewModel(
         }
         return request
     }
+
+    // Singleton view model always needs to be reset
+    fun resetViewModel() {
+        _inferenceResult.value = null
+        _previousInference.value = null
+        _inferenceError.value = false
+        _postResult.value = null
+        _postError.value = false
+    }
 }
 
 class InferenceViewModelFactory(private val inferenceRepository: InferenceRepository) :

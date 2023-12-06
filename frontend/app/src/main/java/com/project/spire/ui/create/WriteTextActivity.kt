@@ -87,6 +87,7 @@ class WriteTextActivity : AppCompatActivity() {
         // Post upload success
         inferenceViewModel.postResult.observe(this) {
             if (it != null) {
+                inferenceViewModel.resetViewModel()
                 val intent = Intent(this, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
