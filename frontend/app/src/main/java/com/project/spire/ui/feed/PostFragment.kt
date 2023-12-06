@@ -120,10 +120,12 @@ class PostFragment : Fragment() {
         }
 
         commentButton.setOnClickListener {
-            commentButton.visibility = View.GONE
-            binding.commentWriteProgressBar.visibility = View.VISIBLE
             val commentContent = binding.commentWriteEditText.text.toString()
-            postViewModel.comment(commentContent)
+            if (!commentContent.isBlank()) {
+                commentButton.visibility = View.GONE
+                binding.commentWriteProgressBar.visibility = View.VISIBLE
+                postViewModel.comment(commentContent)
+            }
         }
 
         backButton.setOnClickListener {
