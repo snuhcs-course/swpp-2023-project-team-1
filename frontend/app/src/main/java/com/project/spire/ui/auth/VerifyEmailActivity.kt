@@ -50,7 +50,6 @@ class VerifyEmailActivity : AppCompatActivity() {
 
         sendMailButton.setOnClickListener {
             viewModel.sendEmail(emailInput.editText?.text.toString())
-            viewModel.startTimer()
         }
 
         sendAgainButton.setOnClickListener {
@@ -62,6 +61,7 @@ class VerifyEmailActivity : AppCompatActivity() {
         viewModel.emailSent.observe(this) {
             when (it) {
                 true -> {
+                    viewModel.startTimer()
                     sendMailButton.visibility = View.GONE
                     verificationLayout.visibility = View.VISIBLE
                     emailInput.isEnabled = false

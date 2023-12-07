@@ -14,7 +14,7 @@ class VerifyEmailViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val EMAIL_TIMER = 30
+    private val EMAIL_TIMER = 60
 
     private val _emailExists = MutableLiveData<Boolean>().apply { value = false }
     val emailExists = _emailExists
