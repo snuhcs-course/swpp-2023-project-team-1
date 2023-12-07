@@ -15,6 +15,7 @@ import coil.transform.CircleCropTransformation
 import com.example.spire.R
 import com.example.spire.databinding.ActivityEditProfileBinding
 import com.project.spire.core.auth.AuthRepository
+import com.project.spire.core.auth.Validation
 import com.project.spire.core.auth.authDataStore
 import com.project.spire.core.user.UserRepository
 import com.project.spire.ui.auth.LoginActivity
@@ -83,12 +84,30 @@ class EditProfileActivity : AppCompatActivity() {
 
             if (username.isEmpty()) username = profileViewModel.username.value!!
             if (bio.isEmpty()) bio = profileViewModel.bio.value!!
-            profileViewModel.updateProfile(username, bio, profileViewModel.photoPickerUri.value, applicationContext)
+            when (Validation.isValidUsername(username)) {
+                Validation.USERNAME_VALID -> {
+                    profileViewModel.updateProfile(username, bio, profileViewModel.photoPickerUri.value, applicationContext)
+                }
+                Validation.USERNAME_EMPTY -> {
+                    usernameInput.error = "Username cannot be empty"
+                }
+                Validation.USERNAME_INVALID -> {
+                    usernameInput.error = "Username must be 6 to 15 characters"
+                }
+            }
         }
 
         profileViewModel.editProfileSuccess.observe(this) {
             if (it) {
                 finish()
+            }
+        }
+
+        profileViewModel.editProfileErrorMessage.observe(this) {
+            if (it == "Username already exists") {
+                usernameInput.error = it
+            } else {
+                Log.e("EditProfileActivity", "Edit profile error: $it")
             }
         }
     }

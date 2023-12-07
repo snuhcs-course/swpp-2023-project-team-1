@@ -46,6 +46,18 @@ class LoginActivity : AppCompatActivity() {
         val emailInput = binding.emailInput
         val passwordInput = binding.passwordInput
 
+
+        passwordInput.editText?.setOnFocusChangeListener { _, hasFocus ->
+            setHelperText(passwordInput, hasFocus, resources.getString(R.string.password_helper_text))
+        }
+
+        loginBtn.setOnClickListener {
+            viewModel.login(emailInput, passwordInput)
+        }
+
+        viewModel.loginResult.observe(this) { loginResult ->
+            handleLoginResult(loginResult, emailInput, passwordInput)
+        }
         emailInput.editText?.setOnFocusChangeListener { _, hasFocus ->
             setHelperText(emailInput, hasFocus, resources.getString(R.string.email_helper_text))
         }
