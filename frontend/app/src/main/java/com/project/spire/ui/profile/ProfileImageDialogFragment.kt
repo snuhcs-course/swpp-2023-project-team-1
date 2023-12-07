@@ -11,7 +11,7 @@ import coil.transform.CircleCropTransformation
 import com.example.spire.R
 
 class ProfileImageDialogFragment(
-    private val profileImageUrl: String
+    private val profileImageUrl: String?
 ): DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -30,9 +30,17 @@ class ProfileImageDialogFragment(
         super.onStart()
         val dialog = dialog as AlertDialog?
         if (dialog != null) {
-            dialog.findViewById<ImageView>(R.id.iv_profile_image)?.load(profileImageUrl) {
-                crossfade(true)
+            if (profileImageUrl == null) {
+                dialog.findViewById<ImageView>(R.id.iv_profile_image)?.load(R.drawable.default_profile_img) {
+                    crossfade(true)
+                }
+            } else {
+                dialog.findViewById<ImageView>(R.id.iv_profile_image).load(profileImageUrl) {
+                    crossfade(true)
+                }
             }
+
+
         }
     }
 }

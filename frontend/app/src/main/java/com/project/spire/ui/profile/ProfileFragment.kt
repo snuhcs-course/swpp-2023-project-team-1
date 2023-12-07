@@ -151,7 +151,7 @@ class ProfileFragment : Fragment() {
         }
 
         binding.profileImage.setOnClickListener {
-            val dialog = ProfileImageDialogFragment(profileViewModel.profileImageUrl.value!!)
+            val dialog = ProfileImageDialogFragment(profileViewModel.profileImageUrl.value)
             dialog.show(parentFragmentManager, "ProfileImageDialogFragment")
         }
 
