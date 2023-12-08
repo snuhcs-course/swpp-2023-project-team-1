@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.compose.material3.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -20,7 +19,7 @@ import com.example.spire.databinding.FragmentProfileBinding
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.authDataStore
 import com.project.spire.core.user.UserRepository
-import com.project.spire.ui.profile.GridSpaceItemDecoration
+import com.project.spire.utils.ProfileViewModelFactory
 
 class ProfileFragment : Fragment() {
 

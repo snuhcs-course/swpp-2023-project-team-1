@@ -106,13 +106,3 @@ class VerifyEmailViewModel(
     }
 }
 
-class VerifyEmailViewModelFactory(private val repository: AuthRepository) :
-    androidx.lifecycle.ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(VerifyEmailViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return VerifyEmailViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}

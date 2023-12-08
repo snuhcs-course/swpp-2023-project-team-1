@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.R
 import com.example.spire.databinding.FragmentRelationshipBinding
 import com.project.spire.network.user.response.FollowItems
+import com.project.spire.ui.search.SearchViewModel
+import com.project.spire.utils.RelationshipViewModelFactory
 
 class RelationshipFragment : Fragment() {
 
@@ -30,7 +32,8 @@ class RelationshipFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        relationshipViewModel = ViewModelProvider(this)[RelationshipViewModel::class.java]
+        val viewModelFactory = RelationshipViewModelFactory()
+        relationshipViewModel = ViewModelProvider(this, viewModelFactory)[RelationshipViewModel::class.java]
         val userId = arguments?.getString("userId")
         val type = arguments?.getString("type")
 

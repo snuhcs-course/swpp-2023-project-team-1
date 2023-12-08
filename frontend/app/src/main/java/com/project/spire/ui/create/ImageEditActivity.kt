@@ -12,7 +12,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.R
@@ -20,12 +20,11 @@ import com.example.spire.databinding.ActivityImageEditBinding
 import com.project.spire.core.inference.SegmentationRepository
 import com.project.spire.ui.MainActivity
 import com.project.spire.utils.BitmapUtils
+import com.project.spire.utils.CanvasViewModelFactory
 import com.project.spire.utils.InferenceUtils
 import com.skydoves.balloon.ArrowPositionRules
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
-import com.skydoves.balloon.BalloonSizeSpec
-import com.skydoves.balloon.iconForm
 
 const val RECYCLER_VIEW_MARGIN = 30
 
@@ -35,13 +34,14 @@ class ImageEditActivity : AppCompatActivity() {
 
     private val segmentationRepository = SegmentationRepository()
     private val canvasViewModelFactory = CanvasViewModelFactory(segmentationRepository)
-    private val canvasViewModel = canvasViewModelFactory.create(CanvasViewModel::class.java)
+    private lateinit var canvasViewModel: CanvasViewModel
 
     private var mImageBitmap: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
+        canvasViewModel = ViewModelProvider(this, canvasViewModelFactory)[CanvasViewModel::class.java]
 
         binding = ActivityImageEditBinding.inflate(layoutInflater)
         setContentView(binding.root)

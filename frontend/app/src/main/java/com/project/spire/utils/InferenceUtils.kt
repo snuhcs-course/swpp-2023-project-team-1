@@ -9,7 +9,6 @@ import com.project.spire.core.inference.InferenceRepository
 import com.project.spire.network.inference.InferenceRequest
 import com.project.spire.network.inference.Input
 import com.project.spire.ui.create.InferenceViewModel
-import com.project.spire.ui.create.InferenceViewModelFactory
 
 object InferenceUtils {
     //For prompt engineering

@@ -19,6 +19,7 @@ import com.project.spire.core.auth.Validation
 import com.project.spire.core.auth.authDataStore
 import com.project.spire.core.user.UserRepository
 import com.project.spire.ui.auth.LoginActivity
+import com.project.spire.utils.ProfileViewModelFactory
 
 class EditProfileActivity : AppCompatActivity() {
 

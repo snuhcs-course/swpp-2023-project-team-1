@@ -11,12 +11,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.databinding.FragmentNotificationsBinding
+import com.project.spire.utils.NotificationsViewModelFactory
 
 class NotificationsFragment : Fragment() {
 
     private var _binding: FragmentNotificationsBinding? = null
+
+    private val viewModelFactory = NotificationsViewModelFactory()
     private val notificationsViewModel: NotificationsViewModel by lazy {
-        ViewModelProvider(this)[NotificationsViewModel::class.java]
+        ViewModelProvider(this, viewModelFactory)[NotificationsViewModel::class.java]
     }
 
     // This property is only valid between onCreateView and

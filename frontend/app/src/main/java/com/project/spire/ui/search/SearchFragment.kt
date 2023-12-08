@@ -1,6 +1,5 @@
 package com.project.spire.ui.search
 
-import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,12 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.activity.viewModels
-import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,8 +18,8 @@ import com.example.spire.R
 import com.example.spire.databinding.FragmentSearchBinding
 import com.google.android.material.textfield.TextInputEditText
 import com.project.spire.core.search.SearchRepository
-import com.project.spire.ui.feed.FeedAdapter
-import com.project.spire.ui.profile.ProfileViewModelFactory
+
+import com.project.spire.utils.SearchViewModelFactory
 
 class SearchFragment : Fragment() {
 
