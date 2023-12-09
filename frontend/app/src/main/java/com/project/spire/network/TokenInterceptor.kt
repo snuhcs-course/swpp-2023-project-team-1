@@ -1,6 +1,5 @@
 package com.project.spire.network
 
-import android.net.http.NetworkException
 import android.util.Log
 import com.project.spire.utils.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
