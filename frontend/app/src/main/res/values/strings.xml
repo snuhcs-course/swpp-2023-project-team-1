@@ -118,5 +118,14 @@
     <string name="notifications_follow_accept">accepted your follow request</string>
     <string name="notifications_liked_your_comment">likes your comment</string>
 
+    <!-- Error -->
+    <string name="error_title">Oops!</string>
+    <string name="error_text">We\'re so sorry. Something went wrong.</string>
+    <string name="error_text_2">Please try again later.</string>
+    <string name="error_text_connection">Please check your internet connection and try again.</string>
+
+    <string name="error_exit_button">Exit</string>
+    <string name="error_restart_button">Restart</string>
+
 
 </resources>

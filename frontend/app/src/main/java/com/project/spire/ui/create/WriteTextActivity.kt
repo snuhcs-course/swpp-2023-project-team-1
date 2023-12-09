@@ -105,12 +105,15 @@ class WriteTextActivity : AppCompatActivity() {
         }
 
         doneButton.setOnClickListener {
+            doneButton.isEnabled = false
+            doneButton.setBackgroundResource(R.drawable.btn_edit_bg_disabled)
+            doneButton.setTextColor(resources.getColor(R.color.grey_600, null))
+
             binding.postUploadProgressBar.visibility = View.VISIBLE
             val currentPosition = (carousel.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             val currentImage: Bitmap = inferenceViewModel.inferenceResult.value!![currentPosition]
             val content = binding.postTextInputLayout.editText?.text.toString()
             inferenceViewModel.postUpload(currentImage, content)
-            doneButton.isEnabled = false
         }
 
         regenerateBtn.setOnClickListener {

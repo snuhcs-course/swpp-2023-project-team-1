@@ -60,18 +60,12 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/follow_accept_btn"
-            android:background="@drawable/btn_follow_accept"
-            android:layout_margin="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
+            style="@style/notifications_follow_accept_btn"
             android:text="Accept" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/follow_decline_btn"
-            android:background="@drawable/btn_follow_decline"
-            android:layout_margin="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
+            style="@style/notifications_follow_decline_btn"
             android:text="Reject" />
 
     </LinearLayout>

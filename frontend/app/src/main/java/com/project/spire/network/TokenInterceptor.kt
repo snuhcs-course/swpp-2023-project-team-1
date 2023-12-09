@@ -1,8 +1,10 @@
 package com.project.spire.network
 
+import android.net.http.NetworkException
 import android.util.Log
 import com.project.spire.utils.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
+import com.project.spire.utils.SpireConnectionException
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -14,7 +16,7 @@ import okhttp3.Response
 class TokenInterceptor : Interceptor {
 
     companion object {
-        private const val MAX_RETRY = 100
+        private const val MAX_RETRY = 1 //00
     }
 
     @OptIn(InternalCoroutinesApi::class)
@@ -54,6 +56,6 @@ class TokenInterceptor : Interceptor {
             }
         }
         // Connection failed
-        throw java.lang.Exception("Connection failed")
+        throw SpireConnectionException("Connection failed by TokenInterceptor")
     }
 }
