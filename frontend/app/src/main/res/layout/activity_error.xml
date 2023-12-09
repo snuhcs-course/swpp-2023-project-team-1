@@ -74,25 +74,26 @@
 
 
     <Button
-        android:id="@+id/restart_button"
-        style="@style/ImgEditBtn"
-        android:text="@string/error_restart_button"
-        app:backgroundTint="@null"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/exit_button" />
-
-    <Button
         android:id="@+id/exit_button"
         style="@style/ImgEditBtnGray"
         android:text="@string/error_exit_button"
         app:backgroundTint="@null"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/restart_button"
-        app:layout_constraintRight_toRightOf="parent"
-        />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/restart_button" />
+
+    <Button
+        android:id="@+id/restart_button"
+        style="@style/ImgEditBtn"
+        android:text="@string/error_restart_button"
+        app:backgroundTint="@null"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/exit_button"
+        app:layout_constraintRight_toRightOf="parent" />
+
+
 
 
 
