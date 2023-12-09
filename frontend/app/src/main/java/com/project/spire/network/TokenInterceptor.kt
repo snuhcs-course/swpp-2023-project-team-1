@@ -16,7 +16,7 @@ import okhttp3.Response
 class TokenInterceptor : Interceptor {
 
     companion object {
-        private const val MAX_RETRY = 1 //00
+        private const val MAX_RETRY = 100
     }
 
     @OptIn(InternalCoroutinesApi::class)
