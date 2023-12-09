@@ -2,9 +2,7 @@ package com.project.spire
 
 import android.app.AlertDialog
 import android.app.Application
-import com.project.spire.network.TokenInterceptor
 import com.project.spire.utils.DataStoreProvider
-import kotlinx.coroutines.delay
 
 class SpireApplication : Application() {
 

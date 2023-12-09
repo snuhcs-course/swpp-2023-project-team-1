@@ -1,21 +1,12 @@
 package com.project.spire.network
 
-import android.app.AlertDialog
-import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
-import com.project.spire.SpireApplication
 import com.project.spire.utils.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.internal.synchronized
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response

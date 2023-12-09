@@ -38,6 +38,20 @@ class SearchAdapter(
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
         val search = searchList[position]
 
+        CoroutineScope(Dispatchers.Main).launch {
+
+            val myUserId = AuthProvider.getMyUserId()
+            Log.d("SearchAdapter", "User: ${myUserId}, searched: ${search.userId}")
+
+            if (myUserId == search.userId) {
+                holder.followingStatus.text = "It's me!"
+            } else if (search.isFollowing) {
+                holder.followingStatus.text = "Following"
+            } else {
+                holder.followingStatus.text = "Not following"
+            }
+        }
+
         if (search.profileImageUrl == null) {
             holder.profileImage.load(R.drawable.default_profile_img) {
                 transformations(CircleCropTransformation())
@@ -48,11 +62,6 @@ class SearchAdapter(
             }
         }
         holder.username.text = search.username
-        if (search.isFollowing) {
-            holder.followingStatus.text = "following"
-        } else {
-            holder.followingStatus.text = "not following"
-        }
 
         holder.view.setOnClickListener {
             Log.d("SearchAdapter", "Clicked on user: ${search.username}")

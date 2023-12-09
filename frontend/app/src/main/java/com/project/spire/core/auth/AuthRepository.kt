@@ -52,6 +52,7 @@ class AuthRepository (private val authDataStore: DataStore<Preferences>) {
         return if (response.isSuccessful) {
             val successBody = response.body() as LoginSuccess
             Log.d("AuthRepository", "Login response: ${successBody.username}")
+            Log.d("AuthRepository", "Login response: ${successBody.userId}")
 
             // Save tokens to datastore
             authDataStore.edit {
