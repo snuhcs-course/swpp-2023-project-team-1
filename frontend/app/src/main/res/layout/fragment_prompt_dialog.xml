@@ -29,6 +29,7 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/generate_button"
         style="@style/ImgEditBtn"
+        android:enabled="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"

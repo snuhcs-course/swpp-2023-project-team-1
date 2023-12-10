@@ -183,6 +183,7 @@
     <Button
         android:id="@+id/next_button"
         style="@style/ImgEditBtn"
+        android:enabled="false"
         android:layout_marginBottom="20dp"
         android:text="@string/generate_button"
         app:backgroundTint="@null"
