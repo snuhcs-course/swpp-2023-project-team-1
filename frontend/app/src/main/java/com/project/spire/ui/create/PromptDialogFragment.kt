@@ -3,6 +3,8 @@ package com.project.spire.ui.create
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.WindowManager
 import android.widget.EditText
@@ -47,7 +49,21 @@ class PromptDialogFragment() : DialogFragment() {
     }
 
     private fun generateImage() {
-        val prompt = dialog?.findViewById<EditText>(R.id.prompt_input)?.text
+        val promptInput = dialog?.findViewById<EditText>(R.id.prompt_input)
+        val generateBtn = dialog?.findViewById<AppCompatButton>(R.id.generate_button)
+        promptInput?.addTextChangedListener(object: TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s.toString().isBlank()) {
+                    generateBtn?.isEnabled = false
+                } else {
+                    generateBtn?.isEnabled = true
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+        })
+
+        val prompt = promptInput?.text
         if (prompt != null) {
             // TODO: Generate image with prompt
             dialog?.dismiss()
