@@ -19,15 +19,13 @@ spec:
         - name: spire-pv-pretrained-model
           hostPath:
             path: "/pretrained_model"
-            type: DirectoryOrCreate
+            type: Directory
       containers:
         - name: spire-container
           image: "spire_ai:latest"
           command: ["/bin/sh","-c"]
           args:
-            - cd /opt/tritonserver/pretrained_model;
-              wget -N https://github.com/IDEA-Research/OpenSeeD/releases/download/openseed/model_state_dict_swint_51.2ap.pt;
-              cd /opt/tritonserver/models/open_seed/1/Mask2Former/mask2former/modeling/pixel_decoder/ops;
+            - cd /opt/tritonserver/models/open_seed/1/Mask2Former/mask2former/modeling/pixel_decoder/ops;
               sh make.sh;
               cd /opt/tritonserver;
               tritonserver --model-repository=/opt/tritonserver/models
@@ -35,7 +33,7 @@ spec:
           volumeMounts:
             - mountPath: "/opt/tritonserver/pretrained_model"
               name: spire-pv-pretrained-model
-
+              readOnly: true
           resources:
             limits:
               cpu: 27

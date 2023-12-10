@@ -12,19 +12,21 @@ import com.project.spire.ui.create.InferenceViewModel
 import com.project.spire.ui.create.InferenceViewModelFactory
 
 object InferenceUtils {
-
+    //For prompt engineering
+    private val positivePromptSuffix = ", (photorealistic, highly detailed, 4K, Canon 5d mark iii photo, Canon 5d 50 mm lens)"
+    private val negativePrompt = "(worst quality, low quality), (illustration, 3d, 2d, painting, cartoons, sketch), (bad hands, bad anatomy)"
     fun getInferenceRequest(image: Bitmap, mask: Bitmap, prompt: String): InferenceRequest {
         val name = "stable_diffusion"
         val input = listOf(
             Input("INPUT_IMAGE", listOf(1), "BYTES", listOf(BitmapUtils.BitmaptoBase64String(image))),
             Input("MASK", listOf(1), "BYTES", listOf(BitmapUtils.BitmaptoBase64String(mask))),
-            Input("PROMPT", listOf(1), "BYTES", listOf(prompt)),
-            Input("NEGATIVE_PROMPT", listOf(1), "BYTES", listOf("")),
+            Input("PROMPT", listOf(1), "BYTES", listOf(prompt+positivePromptSuffix)),
+            Input("NEGATIVE_PROMPT", listOf(1), "BYTES", listOf(negativePrompt)),
             Input("SAMPLES", listOf(1), "INT32", listOf(4)),
             Input("BASE_STEPS", listOf(1), "INT32", listOf(20)),
             Input("REFINER_STEPS", listOf(1), "INT32", listOf(10)),
-            Input("GUIDANCE_SCALE_BASE", listOf(1), "FP32", listOf(7.5)),
-            Input("GUIDANCE_SCALE_REFINER", listOf(1), "FP32", listOf(7.5)),
+            Input("GUIDANCE_SCALE_BASE", listOf(1), "FP32", listOf(15.0)),
+            Input("GUIDANCE_SCALE_REFINER", listOf(1), "FP32", listOf(12.5)),
             Input("STRENGTH_BASE", listOf(1), "FP32", listOf(0.8)),
             Input("STRENGTH_REFINER", listOf(1), "FP32", listOf(0.4))
         )
@@ -34,8 +36,8 @@ object InferenceUtils {
     fun getInferenceRequest(prompt: String): InferenceRequest {
         val name = "stable_diffusion"
         val input = listOf(
-            Input("PROMPT", listOf(1), "BYTES", listOf(prompt)),
-            Input("NEGATIVE_PROMPT", listOf(1), "BYTES", listOf("")),
+            Input("PROMPT", listOf(1), "BYTES", listOf(prompt+positivePromptSuffix)),
+            Input("NEGATIVE_PROMPT", listOf(1), "BYTES", listOf(negativePrompt)),
             Input("SAMPLES", listOf(1), "INT32", listOf(4)),
             Input("BASE_STEPS", listOf(1), "INT32", listOf(20)),
             Input("REFINER_STEPS", listOf(1), "INT32", listOf(10)),

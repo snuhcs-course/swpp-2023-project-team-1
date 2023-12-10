@@ -31,6 +31,7 @@ import com.project.spire.ui.feed.FeedFragment
 import com.project.spire.ui.notifications.NotificationsFragment
 import com.project.spire.ui.profile.ProfileFragment
 import com.project.spire.ui.search.SearchFragment
+import com.project.spire.utils.InferenceUtils
 import java.lang.NullPointerException
 
 class MainActivity : AppCompatActivity() {
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var toolbar: Toolbar
     private var currentTab: String? = null
+    private var bottomSheetDialog: BottomSheetDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,33 +89,38 @@ class MainActivity : AppCompatActivity() {
 
         // New Post Button
         val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet_image_source, null)
-        val bottomSheetDialog = BottomSheetDialog(this)
-        bottomSheetDialog.setContentView(bottomSheetView)
-        bottomSheetDialog.hide()
+        bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog?.setContentView(bottomSheetView)
+        bottomSheetDialog?.hide()
         val bottomSheetCamera =
             bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_1)
         val bottomSheetGallery =
             bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_2)
         val bottomSheetNew = bottomSheetView.findViewById<LinearLayout>(R.id.bottom_sheet_layout_3)
         val createPostBtn: FloatingActionButton = binding.fab
+        val inferenceViewModel = InferenceUtils.inferenceViewModel
 
         createPostBtn.setOnClickListener {
-            bottomSheetDialog.show()
+            bottomSheetDialog?.show()
         }
 
         bottomSheetCamera.setOnClickListener {
+            inferenceViewModel.resetViewModel()
             val intent = Intent(this, CameraActivity::class.java)
             startActivity(intent)
-            bottomSheetDialog.hide()
+            bottomSheetDialog?.dismiss()
         }
 
         bottomSheetGallery.setOnClickListener {
+            inferenceViewModel.resetViewModel()
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            bottomSheetDialog?.dismiss()
         }
 
         bottomSheetNew.setOnClickListener {
+            inferenceViewModel.resetViewModel()
             PromptDialogFragment().show(supportFragmentManager, "PromptDialogFragment")
-            bottomSheetDialog.hide()
+            bottomSheetDialog?.dismiss()
         }
     }
 
@@ -148,5 +155,14 @@ class MainActivity : AppCompatActivity() {
             transaction.addToBackStack(null)
         }
         transaction.commit()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (bottomSheetDialog != null) {
+            bottomSheetDialog?.dismiss()
+            bottomSheetDialog = null
+        }
+
     }
 }

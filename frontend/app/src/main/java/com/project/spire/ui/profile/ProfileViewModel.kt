@@ -12,6 +12,8 @@ import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.user.UserRepository
 import com.project.spire.models.Post
 import com.project.spire.network.RetrofitClient.Companion.postAPI
+import com.project.spire.network.user.response.UserError
+import com.project.spire.network.user.response.UserSuccess
 import com.project.spire.utils.AuthProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -34,6 +36,7 @@ class ProfileViewModel(
     private val _isMyProfile = MutableLiveData<Boolean>().apply { value = false }
     private val _photoPickerUri = MutableLiveData<Uri?>().apply { value = null }
     private val _editProfileSuccess = MutableLiveData<Boolean>().apply { value = false }
+    private val _editProfileErrorMessage = MutableLiveData<String?>().apply { value = null }
     private val _profileLoaded = MutableLiveData<Boolean>().apply { value = false }
     private val _postLoaded = MutableLiveData<Boolean>().apply { value = false }
 
@@ -49,6 +52,7 @@ class ProfileViewModel(
     val isMyProfile: LiveData<Boolean> = _isMyProfile
     val photoPickerUri: LiveData<Uri?> = _photoPickerUri
     val editProfileSuccess: LiveData<Boolean> = _editProfileSuccess
+    val editProfileErrorMessage: LiveData<String?> = _editProfileErrorMessage
     val profileLoaded: LiveData<Boolean> = _profileLoaded
     val postLoaded: LiveData<Boolean> = _postLoaded
 
@@ -115,15 +119,18 @@ class ProfileViewModel(
         viewModelScope.launch {
             val accessToken = AuthProvider.getAccessToken()
             val updateProfile = userRepository.updateMyInfo(accessToken, username, bio, profileImage, context)
-            if (updateProfile != null) {
+            if (updateProfile is UserSuccess) {
                 _username.postValue(updateProfile.username)
                 _bio.postValue(updateProfile.bio)
                 _profileImageUrl.postValue(updateProfile.profileImageUrl)
                 _editProfileSuccess.postValue(true)
+            } else if (updateProfile is UserError) {
+                Log.e("ProfileViewModel", "Update profile error")
+                _editProfileErrorMessage.postValue(updateProfile.message)
             } else {
                 Log.e("ProfileViewModel", "Update profile error")
+                _editProfileErrorMessage.postValue("Unknown error")
             }
-
         }
     }
 

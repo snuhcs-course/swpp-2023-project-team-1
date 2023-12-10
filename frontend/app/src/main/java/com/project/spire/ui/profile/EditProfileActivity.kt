@@ -1,36 +1,24 @@
 package com.project.spire.ui.profile
 
 import android.content.Intent
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
-import androidx.compose.runtime.rememberCompositionContext
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.spire.R
 import com.example.spire.databinding.ActivityEditProfileBinding
 import com.project.spire.core.auth.AuthRepository
+import com.project.spire.core.auth.Validation
 import com.project.spire.core.auth.authDataStore
 import com.project.spire.core.user.UserRepository
-import com.project.spire.ui.MainActivity
 import com.project.spire.ui.auth.LoginActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
-import java.net.URI
 
 class EditProfileActivity : AppCompatActivity() {
 
@@ -96,12 +84,30 @@ class EditProfileActivity : AppCompatActivity() {
 
             if (username.isEmpty()) username = profileViewModel.username.value!!
             if (bio.isEmpty()) bio = profileViewModel.bio.value!!
-            profileViewModel.updateProfile(username, bio, profileViewModel.photoPickerUri.value, applicationContext)
+            when (Validation.isValidUsername(username)) {
+                Validation.USERNAME_VALID -> {
+                    profileViewModel.updateProfile(username, bio, profileViewModel.photoPickerUri.value, applicationContext)
+                }
+                Validation.USERNAME_EMPTY -> {
+                    usernameInput.error = "Username cannot be empty"
+                }
+                Validation.USERNAME_INVALID -> {
+                    usernameInput.error = "Username must be 6 to 15 characters"
+                }
+            }
         }
 
         profileViewModel.editProfileSuccess.observe(this) {
             if (it) {
                 finish()
+            }
+        }
+
+        profileViewModel.editProfileErrorMessage.observe(this) {
+            if (it == "Username already exists") {
+                usernameInput.error = it
+            } else {
+                Log.e("EditProfileActivity", "Edit profile error: $it")
             }
         }
     }
@@ -136,7 +142,9 @@ class EditProfileActivity : AppCompatActivity() {
         profileViewModel.logoutSuccess.observe(this) {
             if (it) {
                 val intent = Intent(this, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                intent.flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
                 finish()
             }

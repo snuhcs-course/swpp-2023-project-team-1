@@ -51,13 +51,8 @@ class InferenceViewModel(
     val postResult: LiveData<Post?> get() = _postResult
     val postError: LiveData<Boolean> get() = _postError
 
-    fun reset() {
-        _inferenceResult.value = null
-        Log.d("InferenceViewModel", "Reset LiveData")
-    }
-
     fun infer(image: Bitmap, mask: Bitmap, prompt: String) {
-        _inferenceError.postValue(false)
+        resetViewModel(true)
         _previousInference.value = Inpainting(image, mask, prompt)
         Log.d("InferenceViewModel", "Input image size: ${image.byteCount}")
         Log.d("InferenceViewModel", "Input mask size: ${mask.byteCount}")
@@ -107,7 +102,7 @@ class InferenceViewModel(
     }
 
     fun infer(prompt: String) {
-        _inferenceError.postValue(false)
+        resetViewModel(true)
         _previousInference.value = Txt2Img(prompt)
         Log.d("InferenceViewModel", "Input prompt: $prompt")
         val request = InferenceUtils.getInferenceRequest(prompt)
@@ -200,6 +195,15 @@ class InferenceViewModel(
             )
         }
         return request
+    }
+
+    // Singleton view model always needs to be reset
+    fun resetViewModel(currentOnly: Boolean = false) {
+        _inferenceResult.value = null
+        _inferenceError.value = false
+        _postResult.value = null
+        _postError.value = false
+        if (!currentOnly) _previousInference.value = null
     }
 }
 

@@ -31,7 +31,7 @@ class WriteTextActivity : AppCompatActivity() {
         appbar.toolbarText.setText(R.string.title_toolbar_write_text)
 
         inferenceViewModel = InferenceUtils.inferenceViewModel
-        inferenceViewModel.reset()
+        //inferenceViewModel.resetViewModel()
 
         val carousel = binding.carouselRecyclerView
         val doneButton = binding.doneButton
@@ -87,6 +87,7 @@ class WriteTextActivity : AppCompatActivity() {
         // Post upload success
         inferenceViewModel.postResult.observe(this) {
             if (it != null) {
+                //inferenceViewModel.resetViewModel()
                 val intent = Intent(this, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
@@ -104,12 +105,15 @@ class WriteTextActivity : AppCompatActivity() {
         }
 
         doneButton.setOnClickListener {
+            doneButton.isEnabled = false
+            doneButton.setBackgroundResource(R.drawable.btn_edit_bg_disabled)
+            doneButton.setTextColor(resources.getColor(R.color.grey_600, null))
+
             binding.postUploadProgressBar.visibility = View.VISIBLE
             val currentPosition = (carousel.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             val currentImage: Bitmap = inferenceViewModel.inferenceResult.value!![currentPosition]
             val content = binding.postTextInputLayout.editText?.text.toString()
             inferenceViewModel.postUpload(currentImage, content)
-            doneButton.isEnabled = false
         }
 
         regenerateBtn.setOnClickListener {
@@ -182,6 +186,7 @@ class WriteTextActivity : AppCompatActivity() {
     private fun regenerateImage() {
         when (val previousInference = inferenceViewModel.previousInference.value) {
             is Inpainting -> {
+                //inferenceViewModel.resetViewModel()
                 inferenceViewModel.infer(
                     previousInference.image,
                     previousInference.mask,
@@ -192,6 +197,7 @@ class WriteTextActivity : AppCompatActivity() {
             }
 
             is Txt2Img -> {
+                //inferenceViewModel.resetViewModel()
                 inferenceViewModel.infer(previousInference.prompt)
                 startActivity(Intent(this, WriteTextActivity::class.java))
                 finish()

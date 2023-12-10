@@ -139,6 +139,7 @@ class PostViewModel: ViewModel() {
             val accessToken = AuthProvider.getAccessToken()
             val request = UpdatePostRequest(content, _post.value?.imageUrl!!, _post.value?.originalImageUrl, _post.value?.maskImageUrl)
             val response = RetrofitClient.postAPI.updatePost("Bearer $accessToken", _post.value?.postId!!, request)
+            Log.d("PostViewModel", "Edit post request: $request")
 
             if (response.code() == 200 && response.isSuccessful) {
                 Log.d("PostViewModel", "Post edited")

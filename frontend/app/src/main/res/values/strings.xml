@@ -22,7 +22,8 @@
     <string name="title_toolbar_image_edit">Recreate Your Image</string>
     <string name="prompt_suggestion_button">sunglasses</string>
     <string name="prompt_hint">How do you want to change?</string>
-    <string name="next_button">Generate</string>
+    <string name="next_button">Next</string>
+    <string name="generate_button">Generate</string>
     <string name="title_create_post">Create Post</string>
     <string name="title_edit_profile">Edit Profile</string>
     <string name="mask_generate_button">Try Auto-Painting!</string>
@@ -116,6 +117,15 @@
     <string name="notifications_commented_your_post">commented on your post</string>
     <string name="notifications_follow_accept">accepted your follow request</string>
     <string name="notifications_liked_your_comment">likes your comment</string>
+
+    <!-- Error -->
+    <string name="error_title">Oops!</string>
+    <string name="error_text">We\'re so sorry. Something went wrong.</string>
+    <string name="error_text_2">Please try again later.</string>
+    <string name="error_text_connection">Please check your internet connection and try again.</string>
+
+    <string name="error_exit_button">Exit</string>
+    <string name="error_restart_button">Restart</string>
 
 
 </resources>

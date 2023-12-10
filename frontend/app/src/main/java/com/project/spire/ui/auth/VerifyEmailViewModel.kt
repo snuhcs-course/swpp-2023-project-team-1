@@ -14,7 +14,7 @@ class VerifyEmailViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val EMAIL_TIMER = 30
+    private val EMAIL_TIMER = 60
 
     private val _emailExists = MutableLiveData<Boolean>().apply { value = false }
     val emailExists = _emailExists
@@ -76,10 +76,12 @@ class VerifyEmailViewModel(
 
     fun verifyCode(email: String, code: String) {
         viewModelScope.launch {
-            val success = authRepository.verifyCode(email, code)
+            val responseCode = authRepository.verifyCode(email, code)
             Log.d("VerifyEmailViewModel", "Verify request with code $code")
-            if (success) {
+            if (responseCode == 200) {
                 _verifyEmailResult.postValue(true)
+            } else if (responseCode == 400) {
+                _verifyErrorMessage.postValue("Code expired")
             } else {
                 _verifyErrorMessage.postValue("Check your code again")
             }
