@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.project.spire.ui.ErrorActivity">
+
+    <TextView
+        android:id="@+id/error_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/error_title"
+        app:backgroundTint="@null"
+        android:textAlignment="center"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/grey_700"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintVertical_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/error_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/error_text"
+        app:backgroundTint="@null"
+        android:textAlignment="center"
+        android:fontFamily="@font/roboto_light"
+        android:textColor="@color/grey_600"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintVertical_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/error_text_2"
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/error_text_2"
+        app:backgroundTint="@null"
+        android:textAlignment="center"
+        android:fontFamily="@font/roboto_light"
+        android:textColor="@color/grey_600"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/error_text" />
+
+    <TextView
+        android:id="@+id/error_text_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@null"
+        android:textAlignment="center"
+        android:fontFamily="@font/roboto_light"
+        android:textColor="@color/grey_600"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/error_text_2" />
+
+
+    <Button
+        android:id="@+id/exit_button"
+        style="@style/ImgEditBtnGray"
+        android:text="@string/error_exit_button"
+        app:backgroundTint="@null"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/restart_button" />
+
+    <Button
+        android:id="@+id/restart_button"
+        style="@style/ImgEditBtn"
+        android:text="@string/error_restart_button"
+        app:backgroundTint="@null"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/exit_button"
+        app:layout_constraintRight_toRightOf="parent" />
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

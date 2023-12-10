@@ -224,60 +224,7 @@ alembic downgrade -1
 * * *
 
 # Inference server
-## 1. Initial Setup
-### Accessing GPU server
-Enabling Kubernetes with Docker Desktop makes life much easy. Refer to https://isn-t.tistory.com/45
-
-Please refer to https://gpu.snucse.org/kubectl.html `서버 접근 방법` and follow the instructions.
-
-### Quickstart (Run GPU server)
-Download `spire-deployment.yaml` and `spire-service.yaml` in discord. And run following command will create a deployment.
-
-```bash
-kubectl apply -f spire-deployment.yaml
-```
-
-A deployment create and manages pods, and a pod execute a container in Kubernetes.
-
-```bash
-kubectl apply -f spire-service.yaml
-```
-This will create a service, which expose a deployment and one can access it via following. Please refer to secret. And also note that it takes time to server to be ready.
-
-```bash
-http://<public-node-ip>:<node-port>
-```
-
-You can run inference if at least one of pod created by a deployment is ready. Run follow command to check this.
-
-```bash
-kubectl get pods
-kubectl get deployments
-```
-
-<img width="562" alt="스크린샷 2023-10-27 오후 8 43 39" src="https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/a667b322-2873-4e8a-9829-a42d8adef02e">
-
-<img width="565" alt="스크린샷 2023-10-27 오후 8 44 02" src="https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/37a51ae6-148b-4167-88d3-d3b5f0a2f34b">
-
-You can see what happening inside a pod via following command.
-
-```bash
-kubectl logs -f <name of a pod>
-```
-
-If everything is okay and ready, it should be something like this.
-
-<img width="1795" alt="스크린샷 2023-10-26 오후 12 00 33" src="https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/722dab90-4c49-48ae-aaa9-1597c613a43a">
-
-
-Don't forget to delete all services, deployments and pods once you are done.
-
-```bash
-kubectl delete services --all
-kubectl delete deployments --all
-kubectl delete pods --all
-```
-## 2. Build Triton server image and deploy on k8s on-premise environment
+## 1. Build Triton server image
 ### Build Triton server image
 Download `Dockerfile` in `/inference_server`. Following command will build a docker image for our Triton inference server.
 
@@ -303,6 +250,7 @@ exit
 docker commit spire_open_seed spire_ai_open_seed
 ```
 
+## 2. Deploy on k8s on-premise environment
 ### Deploy on k8s on-premise environment
 Triton server can be deployed on various environment, but below is how we deployed this on our on-premise server. Please refer to https://github.com/triton-inference-server/server/tree/main for greater details. Our method is essentially adhoc since our permission on SNU GPU server is limited and we don't have any prior experience with k8s.
 
@@ -316,7 +264,7 @@ First, following command will download all pretrained weights of our Triton infe
 kubectl apply -f pod.yaml
 ```
 
-Again, if everything is okay and ready, it should be something like this.
+If everything is okay and ready, it should be something like this.
 
 <img width="1679" alt="스크린샷 2023-11-24 오전 5 26 43" src="https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/0ba32dc8-556e-4aab-a177-d07e3191adbe">
 
