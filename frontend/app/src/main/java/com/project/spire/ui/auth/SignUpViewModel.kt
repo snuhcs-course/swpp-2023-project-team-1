@@ -57,13 +57,3 @@ class SignUpViewModel(
     }
 }
 
-class SignUpViewModelFactory(private val repository: AuthRepository) :
-    androidx.lifecycle.ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SignUpViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return SignUpViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}

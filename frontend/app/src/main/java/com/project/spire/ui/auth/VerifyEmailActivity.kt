@@ -13,6 +13,7 @@ import com.example.spire.databinding.ActivityVerifyEmailBinding
 import com.google.android.material.textfield.TextInputLayout
 import com.project.spire.utils.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
+import com.project.spire.utils.VerifyEmailViewModelFactory
 
 class VerifyEmailActivity : AppCompatActivity() {
 
@@ -24,10 +25,8 @@ class VerifyEmailActivity : AppCompatActivity() {
         setContentView(binding.root)
         val authDataStore = DataStoreProvider.authDataStore
         val authRepository = AuthRepository(authDataStore)
-        val viewModel = ViewModelProvider(
-            this,
-            VerifyEmailViewModelFactory(authRepository)
-        )[VerifyEmailViewModel::class.java]
+        val viewModelFactory = VerifyEmailViewModelFactory(authRepository)
+        val viewModel = ViewModelProvider(this, viewModelFactory)[VerifyEmailViewModel::class.java]
 
         // Hide the action bar
         if (supportActionBar != null) {

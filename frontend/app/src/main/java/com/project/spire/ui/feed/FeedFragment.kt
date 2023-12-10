@@ -9,13 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spire.databinding.FragmentFeedBinding
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import com.project.spire.utils.FeedViewModelFactory
 
 class FeedFragment : Fragment() {
     private var _binding: FragmentFeedBinding? = null
@@ -31,7 +29,8 @@ class FeedFragment : Fragment() {
     ): View {
         if (_binding == null) {
             _binding = FragmentFeedBinding.inflate(inflater, container, false)
-            feedViewModel = ViewModelProvider(this)[FeedViewModel::class.java]
+            val viewModelFactory = FeedViewModelFactory()
+            feedViewModel = ViewModelProvider(this, viewModelFactory)[FeedViewModel::class.java]
             feedViewModel.getInitialPosts()
             Log.d("FeedFragment", "Loaded initial posts")
         }

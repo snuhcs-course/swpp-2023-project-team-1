@@ -207,12 +207,3 @@ class InferenceViewModel(
     }
 }
 
-class InferenceViewModelFactory(private val inferenceRepository: InferenceRepository) :
-    ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(InferenceViewModel::class.java)) {
-            return InferenceViewModel(inferenceRepository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}

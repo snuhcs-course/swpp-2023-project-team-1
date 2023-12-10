@@ -9,7 +9,6 @@ import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.PopupWindow
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +19,7 @@ import com.project.spire.utils.DataStoreProvider
 import com.project.spire.core.auth.AuthRepository
 import com.project.spire.core.auth.Validation
 import com.project.spire.ui.MainActivity
+import com.project.spire.utils.SignUpViewModelFactory
 
 
 class SignUpActivity : AppCompatActivity() {

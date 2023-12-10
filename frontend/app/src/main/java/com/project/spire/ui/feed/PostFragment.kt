@@ -3,7 +3,6 @@ package com.project.spire.ui.feed
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -20,8 +19,8 @@ import com.example.spire.R
 import com.example.spire.databinding.FragmentPostBinding
 import com.project.spire.models.Comment
 import com.project.spire.models.Post
-import com.project.spire.ui.profile.ProfileFragment
 import com.project.spire.utils.DateUtils
+import com.project.spire.utils.PostViewModelFactory
 
 class PostFragment : Fragment() {
     private var _binding: FragmentPostBinding? = null
@@ -43,7 +42,9 @@ class PostFragment : Fragment() {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        postViewModel = ViewModelProvider(this)[PostViewModel::class.java]
+
+        val viewModelFactory = PostViewModelFactory()
+        postViewModel = ViewModelProvider(this, viewModelFactory)[PostViewModel::class.java]
 
         val postView = binding.post
         val backButton = binding.backButton

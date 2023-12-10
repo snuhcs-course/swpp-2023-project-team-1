@@ -198,12 +198,3 @@ class CanvasViewModel(
     }
 }
 
-class CanvasViewModelFactory(private val segmentationRepository: SegmentationRepository) :
-    ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CanvasViewModel::class.java)) {
-            return CanvasViewModel(segmentationRepository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
