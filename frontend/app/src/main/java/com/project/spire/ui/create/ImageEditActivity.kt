@@ -4,6 +4,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.Button
@@ -97,8 +99,20 @@ class ImageEditActivity : AppCompatActivity() {
         }
 
         val promptInput = binding.promptInput
-
         val nextBtn = binding.nextButton
+        promptInput.addTextChangedListener(object: TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s.toString().isBlank()) {
+                    nextBtn.isEnabled = false
+                } else {
+                    nextBtn.isEnabled = true
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+        })
+
+
         nextBtn.setOnClickListener {
             val intent = Intent(this, WriteTextActivity::class.java)
             startActivity(intent)
