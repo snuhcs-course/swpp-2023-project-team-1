@@ -39,37 +39,35 @@ class PromptDialogFragment() : DialogFragment() {
         super.onStart()
         val dialog = dialog as AlertDialog?
         if (dialog != null) {
+            val generateBtn = dialog?.findViewById<AppCompatButton>(R.id.generate_button)
             dialog.findViewById<AppCompatButton>(R.id.cancel_button)?.setOnClickListener {
                 dialog.dismiss()
             }
             dialog.findViewById<AppCompatButton>(R.id.generate_button)?.setOnClickListener {
                 generateImage()
             }
+            dialog.findViewById<EditText>(R.id.prompt_input)?.addTextChangedListener(object: TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    if (s.toString().isBlank()) {
+                        generateBtn?.isEnabled = false
+                    } else {
+                        generateBtn?.isEnabled = true
+                    }
+                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+                override fun onTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            })
+
         }
     }
 
     private fun generateImage() {
-        val promptInput = dialog?.findViewById<EditText>(R.id.prompt_input)
-        val generateBtn = dialog?.findViewById<AppCompatButton>(R.id.generate_button)
-        promptInput?.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (s.toString().isBlank()) {
-                    generateBtn?.isEnabled = false
-                } else {
-                    generateBtn?.isEnabled = true
-                }
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-        })
-
-        val prompt = promptInput?.text
+        val prompt = dialog?.findViewById<EditText>(R.id.prompt_input)?.text
         if (prompt != null) {
-            // TODO: Generate image with prompt
+            Log.d("PromptDialogFragment", "Prompt is: ${prompt.toString()}")
             dialog?.dismiss()
             val intent = Intent(requireContext(), WriteTextActivity::class.java)
             startActivity(intent)
-
             InferenceUtils.inferenceViewModel.infer(prompt.toString())
         } else {
             Log.e("PromptDialogFragment", "Prompt is null")
