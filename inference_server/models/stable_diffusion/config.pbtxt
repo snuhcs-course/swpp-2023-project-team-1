@@ -31,36 +31,11 @@ input [
         dims: [1]
     },
     {
-        name: "BASE_STEPS"
-        data_type: TYPE_INT32
-        dims: [1]
-    },
-    {
-        name: "REFINER_STEPS"
-        data_type: TYPE_INT32
-        dims: [1]
-    },
-    {
-        name: "GUIDANCE_SCALE_BASE"
-        data_type: TYPE_FP32
-        dims: [1]
-    },
-    {
-        name: "GUIDANCE_SCALE_REFINER"
-        data_type: TYPE_FP32
-        dims: [1]
-    },
-    {
         name: "STRENGTH_BASE"
         data_type: TYPE_FP32
         dims: [1]
         optional: true
     },
-    {
-        name: "STRENGTH_REFINER"
-        data_type: TYPE_FP32
-        dims: [1]
-    }
 ]
 
 output [
@@ -73,7 +48,7 @@ output [
 
 instance_group [
   {
-    count: 2
+    count: 1
     kind: KIND_GPU
   }
 ]

@@ -3,7 +3,9 @@ import numpy as np
 import torch
 import triton_python_backend_utils as pb_utils
 
-from diffusers import AutoPipelineForText2Image, AutoPipelineForImage2Image, AutoPipelineForInpainting, EulerDiscreteScheduler
+from diffusers import AutoPipelineForText2Image, AutoPipelineForInpainting, UNet2DConditionModel,  EulerDiscreteScheduler
+from huggingface_hub import hf_hub_download
+from safetensors.torch import load_file
 
 from io import BytesIO
 import base64
@@ -16,41 +18,21 @@ class TritonPythonModel:
                 json.loads(args["model_config"]), "OUTPUT_IMAGES"
             )["data_type"]
         )
-                
-        self.pipe = AutoPipelineForText2Image.from_pretrained(
-            "stabilityai/stable-diffusion-xl-base-1.0",
-            torch_dtype=torch.float16,
-            variant="fp16",
-            use_safetensors=True,
-            cache_dir="pretrained_model"
-            ).to("cuda")
-        self.pipe.scheduler = EulerDiscreteScheduler.from_config(self.pipe.scheduler.config,use_karras_sigmas=True)
         
-        self.inpainting_pipe = AutoPipelineForInpainting.from_pipe(self.pipe).to("cuda")
-        self.inpainting_pipe.scheduler = EulerDiscreteScheduler.from_config(self.inpainting_pipe.scheduler.config,use_karras_sigmas=True)
-        
-        self.refiner_pipe =  AutoPipelineForImage2Image.from_pretrained(
-            "stabilityai/stable-diffusion-xl-refiner-1.0",
-            text_encoder_2=self.pipe.text_encoder_2,
-            vae=self.pipe.vae,
-            torch_dtype=torch.float16,
-            use_safetensors=True,
-            variant="fp16",
-            cache_dir="pretrained_model"
-            ).to("cuda") 
-        self.refiner_pipe.scheduler = EulerDiscreteScheduler.from_config(self.refiner_pipe.scheduler.config,use_karras_sigmas=True)
+        self.base = "stabilityai/stable-diffusion-xl-base-1.0"
+        self.repo = "ByteDance/SDXL-Lightning"
+        self.ckpt = "sdxl_lightning_4step_unet.safetensors" # Use the correct ckpt for your step setting!
+        # Load model.
+        self.unet = UNet2DConditionModel.from_config(self.base, subfolder="unet", use_safetensors=True, cache_dir="pretrained_model").to("cuda", torch.float16)
+        self.unet.load_state_dict(load_file(hf_hub_download(self.repo, self.ckpt, local_dir="pretrained_model", local_dir_use_symlinks=True), device="cuda"))
+        self.pipe = AutoPipelineForText2Image.from_pretrained(self.base, unet=self.unet, torch_dtype=torch.float16, variant="fp16", use_safetensors=True, cache_dir="pretrained_model").to("cuda")
 
-        self.inpainting_refiner_pipe = AutoPipelineForInpainting.from_pipe(
-            self.refiner_pipe,
-            text_encoder_2=self.inpainting_pipe.text_encoder_2,
-            vae=self.inpainting_pipe.vae,
-            torch_dtype=torch.float16,
-            use_safetensors=True,
-            variant="fp16",
-            cache_dir="pretrained_model"
-            ).to("cuda")
-        self.inpainting_refiner_pipe.scheduler = EulerDiscreteScheduler.from_config(self.inpainting_refiner_pipe.scheduler.config,use_karras_sigmas=True)
-        
+        # Ensure sampler uses "trailing" timesteps.
+        self.pipe.scheduler = EulerDiscreteScheduler.from_config(self.pipe.scheduler.config, timestep_spacing="trailing")
+
+        self.inpainting_pipe = AutoPipelineForInpainting.from_pipe(self.pipe).to("cuda")
+        self.inpainting_pipe.scheduler = EulerDiscreteScheduler.from_config(self.inpainting_pipe.scheduler.config, timestep_spacing="trailing")
+                
     def execute(self, requests):
         responses = []
         for request in requests:
@@ -61,30 +43,15 @@ class TritonPythonModel:
             prompt = pb_utils.get_input_tensor_by_name(request, "PROMPT").as_numpy()[0].decode()
             negative_prompt = pb_utils.get_input_tensor_by_name(request, "NEGATIVE_PROMPT").as_numpy()[0].decode()      
             num_images_per_prompt =  pb_utils.get_input_tensor_by_name(request, "SAMPLES").as_numpy()[0]
-            num_base_inference_steps =  pb_utils.get_input_tensor_by_name(request, "BASE_STEPS").as_numpy()[0]
-            num_refiner_inference_steps =  pb_utils.get_input_tensor_by_name(request, "REFINER_STEPS").as_numpy()[0]
-            guidance_scale_base =  pb_utils.get_input_tensor_by_name(request, "GUIDANCE_SCALE_BASE").as_numpy()[0]
-            guidance_scale_refiner =  pb_utils.get_input_tensor_by_name(request, "GUIDANCE_SCALE_REFINER").as_numpy()[0]
-            strength_refiner = pb_utils.get_input_tensor_by_name(request, "STRENGTH_REFINER").as_numpy()[0]
               
             pipe_args = {
                 "prompt": prompt,
                 "negative_prompt": negative_prompt,
-                "guidance_scale": guidance_scale_base,
-                "num_inference_steps": num_base_inference_steps,
+                "guidance_scale": 0,
+                "num_inference_steps": 4,
                 "num_images_per_prompt": num_images_per_prompt,
-                "output_type": "latent",
             }
-            
-            refiner_pipe_args = {
-                "prompt": prompt,
-                "negative_prompt": negative_prompt,
-                "guidance_scale": guidance_scale_refiner,
-                "num_inference_steps": num_refiner_inference_steps.item(),
-                "num_images_per_prompt": num_images_per_prompt.item(),
-                "strength": strength_refiner,
-            }
-            
+                        
             image = None
             inference_response = None
             
@@ -94,11 +61,10 @@ class TritonPythonModel:
                 strength_base =  strength_base_tensor.as_numpy()[0]
                 
                 image = self.inpainting_pipe(image=input_image, mask_image=mask, strength=strength_base, **pipe_args,).images                   
-                image = self.inpainting_refiner_pipe(image=image, mask_image=mask, **refiner_pipe_args,).images
+                
             
             elif (input_image_tensor is None) and (mask_tensor is None) and (strength_base_tensor is None):
                 image = self.pipe(**pipe_args,).images         
-                image = self.refiner_pipe(image=image, **refiner_pipe_args,).images
 
             if image is not None:
                 img_str = np.zeros(shape = (len(image),), dtype = self.output_dtype)
