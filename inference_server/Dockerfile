@@ -18,6 +18,4 @@ RUN python3 -m pip install 'git+https://github.com/MaureenZOU/detectron2-xyz.git
 WORKDIR /opt/tritonserver/models/open_seed/1/Mask2Former
 RUN pip install -r requirements.txt
 
-RUN python3 -m pip install "tensorflow[and-cuda]==2.15" --extra-index-url https://pypi.nvidia.com
-
 WORKDIR /opt/tritonserver
