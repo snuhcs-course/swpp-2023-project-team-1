@@ -4,7 +4,7 @@ import torch
 import triton_python_backend_utils as pb_utils
 
 from diffusers import AutoPipelineForText2Image, AutoPipelineForInpainting, UNet2DConditionModel,  EulerDiscreteScheduler
-from huggingface_hub import hf_hub_download
+from huggingface_hub import hf_hub_download, login
 from safetensors.torch import load_file
 
 from io import BytesIO
@@ -18,6 +18,8 @@ class TritonPythonModel:
                 json.loads(args["model_config"]), "OUTPUT_IMAGES"
             )["data_type"]
         )
+        
+        login("ADD YOUR HF TOKEN HERE")
         
         self.base = "stabilityai/stable-diffusion-xl-base-1.0"
         self.repo = "ByteDance/SDXL-Lightning"
