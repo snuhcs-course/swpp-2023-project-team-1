@@ -4,7 +4,7 @@ import torch
 import triton_python_backend_utils as pb_utils
 
 from diffusers import AutoPipelineForText2Image, AutoPipelineForInpainting, UNet2DConditionModel,  EulerDiscreteScheduler
-from huggingface_hub import hf_hub_download
+from huggingface_hub import hf_hub_download, login
 from safetensors.torch import load_file
 
 from io import BytesIO
@@ -19,11 +19,13 @@ class TritonPythonModel:
             )["data_type"]
         )
         
+        login("ADD YOUR HF TOKEN HERE")
+        
         self.base = "stabilityai/stable-diffusion-xl-base-1.0"
         self.repo = "ByteDance/SDXL-Lightning"
         self.ckpt = "sdxl_lightning_4step_unet.safetensors" # Use the correct ckpt for your step setting!
         # Load model.
-        self.unet = UNet2DConditionModel.from_config(self.base, subfolder="unet", use_safetensors=True, cache_dir="pretrained_model").to("cuda", torch.float16)
+        self.unet = UNet2DConditionModel.from_pretrained(self.base, subfolder="unet", use_safetensors=True, cache_dir="pretrained_model").to("cuda", torch.float16)
         self.unet.load_state_dict(load_file(hf_hub_download(self.repo, self.ckpt, local_dir="pretrained_model", local_dir_use_symlinks=True), device="cuda"))
         self.pipe = AutoPipelineForText2Image.from_pretrained(self.base, unet=self.unet, torch_dtype=torch.float16, variant="fp16", use_safetensors=True, cache_dir="pretrained_model").to("cuda")
 
@@ -38,7 +40,7 @@ class TritonPythonModel:
         for request in requests:
             input_image_tensor=pb_utils.get_input_tensor_by_name(request, "INPUT_IMAGE")
             mask_tensor=pb_utils.get_input_tensor_by_name(request, "MASK")
-            strength_base_tensor=pb_utils.get_input_tensor_by_name(request, "STRENGTH_BASE")
+            strength_tensor=pb_utils.get_input_tensor_by_name(request, "STRENGTH")
             
             prompt = pb_utils.get_input_tensor_by_name(request, "PROMPT").as_numpy()[0].decode()
             negative_prompt = pb_utils.get_input_tensor_by_name(request, "NEGATIVE_PROMPT").as_numpy()[0].decode()      
@@ -55,15 +57,16 @@ class TritonPythonModel:
             image = None
             inference_response = None
             
-            if (input_image_tensor is not None) and (mask_tensor is not None) and (strength_base_tensor is not None):
+            if (input_image_tensor is not None) and (mask_tensor is not None):
                 input_image = Image.open(BytesIO(base64.b64decode(input_image_tensor.as_numpy()[0].decode()))).convert("RGB").resize((1024, 1024))
                 mask = Image.open(BytesIO(base64.b64decode(mask_tensor.as_numpy()[0].decode()))).convert("RGB").resize((1024, 1024))
-                strength_base =  strength_base_tensor.as_numpy()[0]
                 
-                image = self.inpainting_pipe(image=input_image, mask_image=mask, strength=strength_base, **pipe_args,).images                   
+                if strength_tensor is not None:
+                    pipe_args["strength"] = strength_tensor.as_numpy()[0]
                 
-            
-            elif (input_image_tensor is None) and (mask_tensor is None) and (strength_base_tensor is None):
+                image = self.inpainting_pipe(image=input_image, mask_image=mask, **pipe_args,).images                   
+                
+            elif (input_image_tensor is None) and (mask_tensor is None):
                 image = self.pipe(**pipe_args,).images         
 
             if image is not None:
