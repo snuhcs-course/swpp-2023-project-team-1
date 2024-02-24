@@ -1,5 +1,0 @@
-# Chosen to match the CUDA 11.8 installed on this machine
-FROM 0jihunlee/tritonserver:stable_diffusion_latest 
-
-COPY ./models/stable_diffusion /opt/tritonserver/models/stable_diffusion
-WORKDIR /opt/tritonserver
