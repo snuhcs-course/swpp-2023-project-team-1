@@ -11,6 +11,6 @@ You can also watch our demo videos: [demo](https://drive.google.com/file/d/1oLXO
 Please visit our [wiki](https://github.com/snuhcs-course/swpp-2023-project-team-1/wiki) for more information.
 
 ## M1522.002400 SWPP
-Team 1
+Team 1  
 Software Development Principles and Practices, Fall 2023  
 Seoul Nat'l University
