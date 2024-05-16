@@ -8,6 +8,10 @@ Spire is designed to be a dedicated hub where users can easily integrate and sha
 ## Demo 
 You can also watch our demo videos: [demo](https://drive.google.com/file/d/1oLXOV89ui6qauRwpj3ivJA3GOeYdpDWs/view?usp=sharing) and [demo_inpainting](https://drive.google.com/file/d/1duIfvJ2qBPCapHPUp97AW-Da3trl1BAl/view?usp=sharing).  
 ## Wiki
+This is a poster overviewing our project.
+
+![A0](https://github.com/snuhcs-course/swpp-2023-project-team-1/assets/125340163/178374fa-15d0-4750-9c59-d51fe38c80ce)
+
 Please visit our [wiki](https://github.com/snuhcs-course/swpp-2023-project-team-1/wiki) for more information.
 
 ## M1522.002400 SWPP
